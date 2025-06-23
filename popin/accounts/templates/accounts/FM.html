@@ -1,0 +1,462 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>최애 멤버 선택하기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 800px;
+            height: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        h1 {
+            text-align: center;
+             color : #764ba2;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .selected-count {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .groups-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .group-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .group-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .group-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .group-type {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .boy-group {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .girl-group {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .member-toggle {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .member-toggle:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .member-toggle.selected {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .member-toggle.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .selection-limit-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .selected-members {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .selected-members h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .selected-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .selected-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remove-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            color: white;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90vw;
+                height: 90vh;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .members-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 최애 멤버 선택하기🎵</h1>
+        
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="searchInput">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">전체</button>
+                <button class="filter-btn" data-filter="boy">보이그룹</button>
+                <button class="filter-btn" data-filter="girl">걸그룹</button>
+            </div>
+        </div>
+
+        <div class="selected-count">선택된 멤버: <span id="selectedCount">0</span>/2명</div>
+
+        <div class="selected-members" id="selectedMembers" style="display: none;">
+            <h3>🌟 내 최애 멤버들</h3>
+            <div class="selected-list" id="selectedList"></div>
+        </div>
+
+        <div class="search-notice" id="searchNotice">
+            <div style="text-align: center; padding: 50px; color: #666; font-size: 18px;">
+                <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
+                <div>검색어를 입력하여 아이돌 그룹을 찾아보세요!</div>
+                <div style="font-size: 14px; margin-top: 10px; color: #999;">그룹명 또는 멤버명으로 검색 가능합니다</div>
+            </div>
+        </div>
+        <div class="groups-container" id="groupsContainer"></div>
+    </div>
+
+    <script>
+        const groups = {
+            boyGroups: {
+                "RIIZE": ["성찬", "원빈", "쇼타로", "은석", "소희", "앤톤"],
+                "BTS": ["RM", "진", "슈가", "제이홉", "지민", "뷔", "정국"],
+                "SEVENTEEN": ["에스쿱스", "정한", "조슈아", "준", "호시", "원우", "우지", "디에잇", "민규", "도겸", "승관", "버논", "디노"],
+                "TWS": ["신유", "도훈", "영재", "한진", "지훈", "경민"],
+                "THE BOYZ": ["상연", "제이콥", "영훈", "현재", "주연", "케빈", "뉴", "큐", "선우", "에릭"],
+                "EXO": ["수호", "시우민", "디오", "백현", "찬열", "카이", "세훈"],
+                "NCT WISH": ["시온", "리쿠", "유우시", "재희", "료", "사쿠야"],
+                "NCT DREAM": ["마크", "런쥔", "제노", "해찬", "재민", "천러", "지성"],
+                "ENHYPEN": ["정원", "희승", "제이", "제이크", "성훈", "선우", "니키"],
+                "NCT 127": ["쟈니", "태용", "유타", "도영", "재현", "윈윈", "정우", "마크", "해찬"],
+                "Stray Kids": ["방찬", "리노", "창빈", "현진", "한", "필릭스", "승민", "아이엔"],
+                "TOMORROW X TOGETHER": ["연준", "수빈", "범규", "태현", "휴닝카이"],
+                "ZEROBASEONE": ["성한빈", "김지웅", "장하오", "석매튜", "김태래", "리키", "김규빈", "박건욱", "한유진"],
+                "ATEEZ": ["성화", "홍중", "윤호", "여상", "산", "민기", "우영", "종호"],
+                "ASTRO": ["MJ", "진진", "차은우", "문빈", "라키", "윤산하"],
+                "N.Flying": ["이승협", "차훈", "김재현", "유회승", "서동성"],
+                "BOYNEXTDOOR": ["성호", "리우", "명재현", "태산", "이한", "운학"],
+                "MONSTA X": ["셔누", "민혁", "기현", "형원", "주헌", "아이엠"],
+                "82MAJOR": ["조성일", "윤예찬", "남성모", "황성빈", "박석준", "김도균"],
+                "&TEAM": ["케이", "후마", "니콜라스", "의주", "유마", "조", "하루아", "타키", "마키"],
+                "KickFlip": ["계훈", "아마루", "동화", "주왕", "민제", "케이주", "동현"],
+                "PLAVE": ["예준", "노아", "밤비", "은호", "하민"],
+                "TREASURE": ["최현석", "지훈", "요시", "준규", "윤재혁", "아사히", "도영", "하루토", "박정우", "소정환"]
+            },
+            girlGroups: {
+                "BLACKPINK": ["지수", "제니", "로제", "리사"],
+                "aespa": ["카리나", "지젤", "윈터", "닝닝"],
+                "IVE": ["안유진", "가을", "레이", "원영", "리즈", "이서"],
+                "(G)I-DLE": ["미연", "민니", "소연", "우기", "슈화"],
+                "TWICE": ["나연", "정연", "모모", "사나", "지효", "미나", "다현", "채영", "쯔위"],
+                "NewJeans": ["민지", "하니", "다니엘", "해린", "혜인"],
+                "Red Velvet": ["아이린", "슬기", "웬디", "조이", "예리"],
+                "LE SSERAFIM": ["사쿠라", "채원", "윤진", "카즈하", "은채"],
+                "ILLIT": ["윤아", "민주", "모카", "원희", "이로하"],
+                "KISS OF LIFE": ["쥴리", "나띠", "벨", "하늘"],
+                "Hearts2Hearts": ["지우", "카르멘", "유하", "스텔라", "주은", "에이나", "이안", "예온"]
+            }
+        };
+
+        let selectedMembers = new Set();
+        let currentFilter = 'all';
+
+        function renderGroups() {
+            const container = document.getElementById('groupsContainer');
+            const searchNotice = document.getElementById('searchNotice');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            // 검색어가 없으면 안내 메시지만 표시
+            if (!searchTerm) {
+                container.innerHTML = '';
+                searchNotice.style.display = 'block';
+                return;
+            }
+            
+            searchNotice.style.display = 'none';
+            container.innerHTML = '';
+
+            const renderGroupType = (groupsObj, type) => {
+                Object.entries(groupsObj).forEach(([groupName, members]) => {
+                    if (currentFilter !== 'all' && currentFilter !== type) return;
+                    
+                    // 검색 필터링
+                    const groupMatches = groupName.toLowerCase().includes(searchTerm);
+                    const memberMatches = members.some(member => member.toLowerCase().includes(searchTerm));
+                    
+                    if (groupMatches || memberMatches) {
+                        const groupCard = document.createElement('div');
+                        groupCard.className = 'group-card';
+                        
+                        const filteredMembers = searchTerm ? 
+                            members.filter(member => member.toLowerCase().includes(searchTerm) || groupMatches) : 
+                            members;
+
+                        groupCard.innerHTML = `
+                            <div class="group-header">
+                                <div class="group-name">${groupName}</div>
+                                <div class="group-type ${type === 'boy' ? 'boy-group' : 'girl-group'}">
+                                    ${type === 'boy' ? '보이그룹' : '걸그룹'}
+                                </div>
+                            </div>
+                            ${selectedMembers.size >= 2 ? '<div class="selection-limit-notice">최애 멤버는 2명까지만 선택할 수 있습니다!</div>' : ''}
+                            <div class="members-grid">
+                                ${filteredMembers.map(member => {
+                                    const isSelected = selectedMembers.has(`${groupName}-${member}`);
+                                    const isDisabled = !isSelected && selectedMembers.size >= 2;
+                                    return `
+                                        <button class="member-toggle ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                                                data-group="${groupName}" data-member="${member}">
+                                            ${member}
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
+                        
+                        container.appendChild(groupCard);
+                    }
+                });
+            };
+
+            renderGroupType(groups.boyGroups, 'boy');
+            renderGroupType(groups.girlGroups, 'girl');
+        }
+
+        function updateSelectedDisplay() {
+            const count = document.getElementById('selectedCount');
+            const container = document.getElementById('selectedMembers');
+            const list = document.getElementById('selectedList');
+            
+            count.textContent = selectedMembers.size;
+            
+            if (selectedMembers.size === 0) {
+                container.style.display = 'none';
+            } else {
+                container.style.display = 'block';
+                list.innerHTML = Array.from(selectedMembers).map(item => {
+                    const [group, member] = item.split('-');
+                    return `
+                        <div class="selected-item">
+                            <span>${group} - ${member}</span>
+                            <button class="remove-btn" data-item="${item}">×</button>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // 이벤트 리스너
+        document.getElementById('searchInput').addEventListener('input', renderGroups);
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.filter;
+                renderGroups();
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('member-toggle') && !e.target.classList.contains('disabled')) {
+                const group = e.target.dataset.group;
+                const member = e.target.dataset.member;
+                const key = `${group}-${member}`;
+                
+                if (selectedMembers.has(key)) {
+                    selectedMembers.delete(key);
+                    e.target.classList.remove('selected');
+                } else {
+                    if (selectedMembers.size < 2) {
+                        selectedMembers.add(key);
+                        e.target.classList.add('selected');
+                    }
+                }
+                
+                updateSelectedDisplay();
+                renderGroups(); // 선택 제한 상태 업데이트를 위해 다시 렌더링
+            }
+            
+            if (e.target.classList.contains('remove-btn')) {
+                const item = e.target.dataset.item;
+                selectedMembers.delete(item);
+                updateSelectedDisplay();
+                renderGroups(); // 토글 상태 업데이트를 위해 다시 렌더링
+            }
+        });
+
+        // 초기 렌더링
+        renderGroups();
+        updateSelectedDisplay();
+    </script>
+</body>
+</html>

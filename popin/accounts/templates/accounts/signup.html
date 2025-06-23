@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+
+<!-- saved from url=(0064)file:///C:/workspace/PO-PIN/popin/signupFT/templates/signup.html -->
+<html lang="ko"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>회원가입 - PO-PIN</title>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .page-title{
+        text-align: center;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color:  #7E6EB0;;
+        margin-bottom: 1.3rem;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        .subtitle {
+            font-size: 20px;
+            font-weight: 500;
+            color : #BFB2D6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .signup-container {
+    transform: scale(0.75);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 80%;
+            box-shadow: 0 30px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        @font-face {
+        font-family: 'Paperlogy-8ExtraBold';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2');
+        font-weight: 800;
+        font-style: normal;
+}
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+    text-align: left;
+    display: block;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e1e8ed;
+            margin-top: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+
+        .email-verification {
+            display: flex;
+            gap: 0.5rem;
+            align-items: end;
+        }
+
+        .email-verification input {
+            flex: 1;
+        }
+
+        .btn-verify {
+            padding: 1rem 1.5rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-verify:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
+        .btn-verify:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .favorite-section {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .favorite-section h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            text-align: center;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .member-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .member-card {
+            background: white;
+            padding: 1.5rem 1rem;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .member-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .member-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .member-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .member-card.selected .member-avatar {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .member-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .terms-agreement {
+    border: 2px solid #667eea;
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .success-message {
+            color: #27ae60;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .page-transition {
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s ease;
+        }
+
+        .page-transition.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .step {
+            width: 40px;
+            height: 4px;
+            background: #e1e8ed;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        .btn-primary {
+  margin-top: 1.5rem;
+ }
+
+        @media (max-width: 768px) {
+            .signup-container {
+    transform: scale(0.95);
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .logo-text {
+                font-size: 2rem;
+            }
+
+             .corner-logo {
+                position: fixed;
+                bottom: 20px;  
+                right: 20px;   
+                width: 60px;    
+                opacity: 0.85;
+                z-index: 999;
+}
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .email-verification {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .member-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+    </style>
+</head>
+<body>
+<div class="signup-container">
+<div class="step-indicator">
+<div class="step active" id="step1"></div>
+<div class="step" id="step2"></div>
+</div>
+<div class="header">
+<div class="logo-container">
+<div class="logo-icon">
+<svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<!-- 별 모양들 -->
+<path d="M60 110 L100 140 L170 110 L110 80 Z" fill="white"></path>
+<path d="M75 240 L120 280 L165 240 L120 200 Z" fill="rgba(255,255,255,0.8)"></path>
+<!-- PO-PIN 텍스트 스타일 -->
+<text fill="white" font-family="Arial Black" font-size="80" font-weight="900" x="130" y="190">PO</text>
+<text fill="white" font-family="Arial Black" font-size="80" font-weight="900" x="290" y="190">PIN</text>
+<circle cx="256" cy="160" fill="white" r="25"></circle>
+<!-- 위치 핀 아이콘 -->
+<path d="M256 250 C280 250 300 270 300 294 C300 318 256 380 256 380 S212 318 212 294 C212 270 232 250 256 250 Z" fill="white"></path>
+<circle cx="256" cy="294" fill="#a855f7" r="15"></circle>
+<path d="M248 290 L252 298 L260 298 L254 303 L256 311 L248 306 L240 311 L242 303 L236 298 L244 298 Z" fill="white"></path>
+<!-- 다이아몬드 -->
+<path d="M370 90 L385 105 L370 120 L355 105 Z" fill="white"></path>
+</svg>
+</div>
+
+</div>
+<h1 class="page-title">PO-PIN</h1>
+<h3 class="subtitle">회원가입</h3>
+<br>
+<hr>
+<div class="header">
+<div class="logo-container">
+<div class="logo-icon">
+</div>
+</div>
+</div>
+<!-- 회원가입 폼 -->
+<div class="page-transition active" id="signupPage">
+<form id="signupForm">
+<div class="form-group">
+<label for="username">아이디</label>
+<input id="username" name="username" placeholder="영문, 숫자 조합 4-16자" required="" type="text"/>
+<div class="error-message" id="usernameError">아이디는 4-16자의 영문, 숫자 조합이어야 합니다.</div>
+</div>
+<div class="form-group">
+<label for="password">비밀번호</label>
+<input id="password" name="password" placeholder="영문, 숫자, 특수문자 조합 8자 이상" required="" type="password"/>
+<div class="error-message" id="passwordError">비밀번호는 8자 이상이어야 합니다.</div>
+</div>
+<div class="form-group">
+<label for="confirmPassword">비밀번호 확인</label>
+<input id="confirmPassword" name="confirmPassword" placeholder="비밀번호를 다시 입력해주세요" required="" type="password"/>
+<div class="error-message" id="confirmPasswordError">비밀번호가 일치하지 않습니다.</div>
+</div>
+<div class="form-group">
+<label for="name">이름</label>
+<input id="name" name="name" placeholder="실명을 입력해주세요" required="" type="text"/>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label for="birthdate">생년월일</label>
+<input id="birthdate" name="birthdate" required="" type="date"/>
+</div>
+<div class="form-group">
+<label for="gender">성별</label>
+<select id="gender" name="gender" required="">
+<option value="">선택해주세요</option>
+<option value="male">남성</option>
+<option value="female">여성</option>
+
+</select>
+</div>
+</div>
+<div class="form-group">
+<label for="email">이메일 인증</label>
+<div class="email-verification">
+<input id="email" name="email" placeholder="example@email.com" required="" type="email"/>
+<button class="btn-verify" onclick="sendVerification()" type="button">인증요청</button>
+</div>
+<div class="success-message" id="emailSuccess">인증 메일이 발송되었습니다.</div>
+</div>
+<div class="form-group" id="verificationGroup" style="display: none;">
+<label for="verificationCode">인증번호</label>
+<div class="email-verification">
+<input id="verificationCode" name="verificationCode" placeholder="인증번호 6자리" type="text"/>
+<button class="btn-verify" onclick="verifyCode()" type="button">확인</button>
+</div>
+<div class="success-message" id="verificationSuccess">이메일 인증이 완료되었습니다.</div>
+</div>
+<div class="terms-agreement">
+<div class="checkbox-group">
+<input id="agreeAll" onchange="toggleAllAgreements()" type="checkbox"/>
+<label for="agreeAll">전체 동의</label>
+</div>
+<div class="checkbox-group">
+<input class="agreement-checkbox" id="agreeTerms" required="" type="checkbox"/>
+<label for="agreeTerms">이용약관 동의 (필수)</label>
+</div>
+<div class="checkbox-group">
+<input class="agreement-checkbox" id="agreePrivacy" required="" type="checkbox"/>
+<label for="agreePrivacy">개인정보 처리방침 동의 (필수)</label>
+</div>
+<div class="checkbox-group">
+<input class="agreement-checkbox" id="agreeMarketing" type="checkbox"/>
+<label for="agreeMarketing">마케팅 정보 수신 동의 (선택)</label>
+</div>
+</div>
+</form>
+</div>
+<!-- 최애 멤버 선택 페이지 -->
+<div class="page-transition" id="favoritePage" style="display: none;">
+<div class="favorite-section">
+<h3>⭐ 최애 멤버를 선택해주세요 ⭐</h3>
+<div class="member-grid" id="memberGrid">
+<!-- 멤버 카드들이 동적으로 생성됩니다 -->
+</div>
+</div>
+<button class="btn btn-primary" onclick="completeMemberSelection()" type="button">선택 완료</button>
+<button class="btn btn-secondary" onclick="skipMemberSelection()" type="button">나중에 선택하기</button>
+</div>
+</div>
+<button class="btn btn-primary" type="button" onclick="submitForm()">다음</button>
+</div></body></html>

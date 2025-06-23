@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'login',
     'mypage',
     'signupFT',
+    'accounts',
 ]
 
 MIDDLEWARE = [
