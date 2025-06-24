@@ -27,10 +27,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'landing',
-    'login',
     'mypage',
-    'signupFT',
     'accounts',
+    'idols',
 ]
 
 MIDDLEWARE = [

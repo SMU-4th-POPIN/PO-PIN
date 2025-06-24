@@ -5,6 +5,24 @@
 <html lang="ko"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>회원가입 - PO-PIN</title>
+<script>
+    // sendVerification 함수 예시 (기능에 따라 내용이 달라짐)
+    function sendVerification() {
+        console.log("인증번호 발송 버튼 클릭됨");
+        // 여기에 서버로 인증 요청을 보내는 AJAX 코드 등을 작성
+        // 예: fetch('/api/send-verification/', { method: 'POST', ... });
+        alert("인증번호가 발송되었습니다!"); // 임시 메시지
+    }
+
+    // toggleAllAgreements 함수 예시 (기능에 따라 내용이 달라짐)
+    function toggleAllAgreements(source) {
+        checkboxes = document.querySelectorAll('input[type="checkbox"][name="agreement"]');
+        for(var i=0, n=checkboxes.length; i<n; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+        console.log("전체 동의 체크박스 변경됨: " + source.checked);
+    }
+</script>
 <style>
         * {
             margin: 0;
@@ -403,7 +421,9 @@
 </div>
 <!-- 회원가입 폼 -->
 <div class="page-transition active" id="signupPage">
-<form id="signupForm">
+<form id="signupForm" method="post" action="">
+    {% csrf_token %}
+
 <div class="form-group">
 <label for="username">아이디</label>
 <input id="username" name="username" placeholder="영문, 숫자 조합 4-16자" required="" type="text"/>
@@ -442,6 +462,7 @@
 <label for="email">이메일 인증</label>
 <div class="email-verification">
 <input id="email" name="email" placeholder="example@email.com" required="" type="email"/>
+
 <button class="btn-verify" onclick="sendVerification()" type="button">인증요청</button>
 </div>
 <div class="success-message" id="emailSuccess">인증 메일이 발송되었습니다.</div>
@@ -472,7 +493,6 @@
 <label for="agreeMarketing">마케팅 정보 수신 동의 (선택)</label>
 </div>
 </div>
-</form>
 </div>
 <!-- 최애 멤버 선택 페이지 -->
 <div class="page-transition" id="favoritePage" style="display: none;">
@@ -486,5 +506,6 @@
 <button class="btn btn-secondary" onclick="skipMemberSelection()" type="button">나중에 선택하기</button>
 </div>
 </div>
-<a href="/accounts/FM"><button class="btn btn-primary" type="button" onclick="submitForm()">다음</button></a>
+<button class="btn btn-primary" type="submit">회원가입</button> 
+</form>
 </div></body></html>

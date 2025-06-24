@@ -1,82 +1,9 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+# 새로 생성한 'idols' 앱의 모델을 임포트합니다.
+from idols.models import Group, Member 
 
-# --- CHOICES 정의 시작 ---
-# 모델 클래스 외부에 정의하여 여러 모델에서 재사용 가능하게 합니다.
-
-GROUP_CHOICES = [
-    ('BLACKPINK', 'BLACKPINK'),
-    ('aespa', 'aespa'),
-    ('IVE', 'IVE'),
-    ('GIDLE', '(G)I-DLE'),
-    ('TWICE', 'TWICE'),
-    ('NEWJEANS', 'NewJeans'),
-    ('RED_VELVET', 'Red Velvet'),
-    ('LE_SSERAFIM', 'LE SSERAFIM'),
-    ('ILLIT', 'ILLIT'),
-    ('KISS_OF_LIFE', 'KISS OF LIFE'),
-    ('HEARTS2HEARTS', 'Hearts2Hearts'),
-    ('RIIZE', 'RIIZE'),
-    ('BTS', 'BTS'),
-    ('SEVENTEEN', 'SEVENTEEN'),
-    ('TWS', 'TWS'),
-    ('THE_BOYZ', 'THE BOYZ'),
-    ('EXO', 'EXO'),
-    ('NCT_WISH', 'NCT WISH'),
-    ('NCT_DREAM', 'NCT DREAM'),
-    ('ENHYPEN', 'ENHYPEN'),
-    ('NCT_127', 'NCT 127'),
-    ('STRAY_KIDS', 'Stray Kids'),
-    ('TXT', 'TOMORROW X TOGETHER'),
-    ('ZEROBASEONE', 'ZEROBASEONE'),
-    ('ATEEZ', 'ATEEZ'),
-    ('ASTRO', 'ASTRO'),
-    ('N_FLYING', 'N.Flying'),
-    ('BOYNEXTDOOR', 'BOYNEXTDOOR'),
-    ('MONSTA_X', 'MONSTA X'),
-    ('82MAJOR', '82MAJOR'),
-    ('AND_TEAM', '&TEAM'),
-    ('KICKFLIP', 'KickFlip'),
-    ('PLAVE', 'PLAVE'),
-    ('TREASURE', 'TREASURE'),
-]
-
-MEMBER_CHOICES = [
-    ('지수', '지수'), ('제니', '제니'), ('로제', '로제'), ('리사', '리사'),
-    ('카리나', '카리나'), ('지젤', '지젤'), ('윈터', '윈터'), ('닝닝', '닝닝'),
-    ('안유진', '안유진'), ('가을', '가을'), ('레이', '레이'), ('원영', '원영'), ('리즈', '리즈'), ('이서', '이서'),
-    ('미연', '미연'), ('민니', '민니'), ('소연', '소연'), ('우기', '우기'), ('슈화', '슈화'),
-    ('나연', '나연'), ('정연', '정연'), ('모모', '모모'), ('사나', '사나'), ('지효', '지효'), ('미나', '미나'), ('다현', '다현'), ('채영', '채영'), ('쯔위', '쯔위'),
-    ('민지', '민지'), ('하니', '하니'), ('다니엘', '다니엘'), ('해린', '해린'), ('혜인', '혜인'),
-    ('아이린', '아이린'), ('슬기', '슬기'), ('웬디', '웬디'), ('조이', '조이'), ('예리', '예리'),
-    ('사쿠라', '사쿠라'), ('채원', '채원'), ('윤진', '윤진'), ('카즈하', '카즈하'), ('은채', '은채'),
-    ('윤아', '윤아'), ('민주', '민주'), ('모카', '모카'), ('원희', '원희'), ('이로하', '이로하'),
-    ('쥴리', '쥴리'), ('나띠', '나띠'), ('벨', '벨'), ('하늘', '하늘'),
-    ('지우', '지우'), ('카르멘', '카르멘'), ('유하', '유하'), ('스텔라', '스텔라'), ('주은', '주은'), ('에이나', '에이나'), ('이안', '이안'), ('예온', '예온'),
-    ('성찬', '성찬'), ('원빈', '원빈'), ('쇼타로', '쇼타로'), ('은석', '은석'), ('소희', '소희'), ('앤톤', '앤톤'),
-    ('RM', 'RM'), ('진', '진'), ('슈가', '슈가'), ('제이홉', '제이홉'), ('지민', '지민'), ('뷔', '뷔'), ('정국', '정국'),
-    ('에스쿱스', '에스쿱스'), ('정한', '정한'), ('조슈아', '조슈아'), ('준', '준'), ('호시', '호시'), ('원우', '원우'), ('우지', '우지'), ('디에잇', '디에잇'), ('민규', '민규'), ('도겸', '도겸'), ('승관', '승관'), ('버논', '버논'), ('디노', '디노'),
-    ('신유', '신유'), ('도훈', '도훈'), ('영재', '영재'), ('한진', '한진'), ('지훈', '지훈'), ('경민', '경민'),
-    ('상연', '상연'), ('제이콥', '제이콥'), ('영훈', '영훈'), ('현재', '현재'), ('주연', '주연'), ('케빈', '케빈'), ('뉴', '뉴'), ('큐', '큐'), ('선우', '선우'), ('에릭', '에릭'),
-    ('수호', '수호'), ('시우민', '시우민'), ('디오', '디오'), ('백현', '백현'), ('찬열', '찬열'), ('카이', '카이'), ('세훈', '세훈'),
-    ('시온', '시온'), ('리쿠', '리쿠'), ('유우시', '유우시'), ('재희', '재희'), ('료', '료'), ('사쿠야', '사쿠야'),
-    ('마크', '마크'), ('런쥔', '런쥔'), ('제노', '제노'), ('해찬', '해찬'), ('재민', '재민'), ('천러', '천러'), ('지성', '지성'),
-    ('정원', '정원'), ('희승', '희승'), ('제이', '제이'), ('제이크', '제이크'), ('성훈', '성훈'), ('선우', '선우'), ('니키', '니키'),
-    ('쟈니', '쟈니'), ('태용', '태용'), ('유타', '유타'), ('도영', '도영'), ('재현', '재현'), ('윈윈', '윈윈'), ('정우', '정우'), ('마크', '마크'), ('해찬', '해찬'),
-    ('방찬', '방찬'), ('리노', '리노'), ('창빈', '창빈'), ('현진', '현진'), ('한', '한'), ('필릭스', '필릭스'), ('승민', '승민'), ('아이엔', '아이엔'),
-    ('연준', '연준'), ('수빈', '수빈'), ('범규', '범규'), ('태현', '태현'), ('휴닝카이', '휴닝카이'),
-    ('성한빈', '성한빈'), ('김지웅', '김지웅'), ('장하오', '장하오'), ('석매튜', '석매튜'), ('김태래', '김태래'), ('리키', '리키'), ('김규빈', '김규빈'), ('박건욱', '박건욱'), ('한유진', '한유진'),
-    ('성화', '성화'), ('홍중', '홍중'), ('윤호', '윤호'), ('여상', '여상'), ('산', '산'), ('민기', '민기'), ('우영', '우영'), ('종호', '종호'),
-    ('MJ', 'MJ'), ('진진', '진진'), ('차은우', '차은우'), ('문빈', '문빈'), ('라키', '라키'), ('윤산하', '윤산하'),
-    ('이승협', '이승협'), ('차훈', '차훈'), ('김재현', '김재현'), ('유회승', '유회승'), ('서동성', '서동성'),
-    ('성호', '성호'), ('리우', '리우'), ('명재현', '명재현'), ('태산', '태산'), ('이한', '이한'), ('운학', '운학'),
-    ('셔누', '셔누'), ('민혁', '민혁'), ('기현', '기현'), ('형원', '형원'), ('주헌', '주헌'), ('아이엠', '아이엠'),
-    ('조성일', '조성일'), ('윤예찬', '윤예찬'), ('남성모', '남성모'), ('황성빈', '황성빈'), ('박석준', '박석준'), ('김도균', '김도균'),
-    ('케이', '케이'), ('후마', '후마'), ('니콜라스', '니콜라스'), ('의주', '의주'), ('유마', '유마'), ('조', '조'), ('하루아', '하루아'), ('타키', '타키'), ('마키', '마키'),
-    ('계훈', '계훈'), ('아마루', '아마루'), ('동화', '동화'), ('주왕', '주왕'), ('민제', '민제'), ('케이주', '케이주'), ('동현', '동현'),
-    ('예준', '예준'), ('노아', '노아'), ('밤비', '밤비'), ('은호', '은호'), ('하민', '하민'),
-    ('최현석', '최현석'), ('지훈', '지훈'), ('요시', '요시'), ('준규', '준규'), ('윤재혁', '윤재혁'), ('아사히', '아사히'), ('도영', '도영'), ('하루토', '하루토'), ('박정우', '박정우'), ('소정환', '소정환'),
-]
+# --- 기존 CHOICES 정의 (GENDER_CHOICES, USER_STATE_CHOICES는 그대로 유지) ---
 
 GENDER_CHOICES = [
     ('M', '남성'),
@@ -99,12 +26,27 @@ class User(models.Model):
     birth_date = models.DateField(verbose_name="생년월일")
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name="성별")
     email = models.EmailField(unique=True, verbose_name="이메일")
-    bias_group = models.CharField(
-        max_length=50, choices=GROUP_CHOICES, blank=True, null=True, verbose_name="최애 그룹"
+    
+    # bias_group 필드를 Group 모델을 참조하는 ForeignKey로 변경
+    bias_group = models.ForeignKey(
+        Group, 
+        on_delete=models.SET_NULL, # 그룹이 삭제되어도 사용자는 유지되도록 SET_NULL (null=True, blank=True 필요)
+        blank=True, 
+        null=True, 
+        related_name='fans_group', # 역참조 이름
+        verbose_name="최애 그룹"
     )
-    bias_member = models.CharField(
-        max_length=50, choices=MEMBER_CHOICES, blank=True, null=True, verbose_name="최애 멤버"
+    
+    # bias_member 필드를 Member 모델을 참조하는 ForeignKey로 변경
+    bias_member = models.ForeignKey(
+        Member, 
+        on_delete=models.SET_NULL, # 멤버가 삭제되어도 사용자는 유지되도록 SET_NULL (null=True, blank=True 필요)
+        blank=True, 
+        null=True, 
+        related_name='fans_member', # 역참조 이름
+        verbose_name="최애 멤버"
     )
+    
     phone = models.CharField(
         max_length=20, blank=True, default='', verbose_name="전화번호"
     )
@@ -122,29 +64,29 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="가입일")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="최근 수정일")
 
-    # --- Meta 클래스 (User 모델용) ---
     class Meta:
-        verbose_name = "사용자" # 관리자 페이지에서 모델 이름: '사용자'
-        verbose_name_plural = "사용자 목록" # 관리자 페이지에서 복수형 이름: '사용자 목록'
-        ordering = ['-created_at'] # 기본 정렬: 최신 가입자부터
+        verbose_name = "사용자"
+        verbose_name_plural = "사용자 목록"
+        ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.nickname} ({self.user_id})" # 관리자 페이지에서 객체 표현 방식
+        return f"{self.nickname} ({self.user_id})"
 
-# ---
 
 class UserRelation(models.Model):
+    # User 모델이 변경되었으므로 from django.conf import settings 후 settings.AUTH_USER_MODEL을 사용하는 것이 안전하나,
+    # 여기서는 User 모델이 직접 정의되었으므로 그대로 User를 사용합니다.
     from_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='initiated_relations', # 이 사용자가 시작한 관계들을 역참조
-        verbose_name="관계 시작 사용자" # verbose_name 좀 더 명확하게 변경
+        related_name='initiated_relations',
+        verbose_name="관계 시작 사용자"
     )
     to_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='received_relations', # 이 사용자에게 걸린 관계들을 역참조
-        verbose_name="관계 대상 사용자" # verbose_name 좀 더 명확하게 변경
+        related_name='received_relations',
+        verbose_name="관계 대상 사용자"
     )
     RELATION_CHOICES = [
         ('FOLLOW', '관심 사용자'),
@@ -156,9 +98,7 @@ class UserRelation(models.Model):
         verbose_name="관계 유형"
     )
 
-    # --- Meta 클래스 (UserRelation 모델용): 데이터 무결성을 위해 강력히 권장 ---
     class Meta:
-        # from_user가 to_user에게 동일한 relation_type을 두 번 생성할 수 없게 함 (예: 팔로우 두 번)
         unique_together = ('from_user', 'to_user', 'relation_type')
         verbose_name = "사용자 관계"
         verbose_name_plural = "사용자 관계 목록"
