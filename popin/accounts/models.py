@@ -81,7 +81,6 @@ MEMBER_CHOICES = [
 GENDER_CHOICES = [
     ('M', '남성'),
     ('F', '여성'),
-    ('O', '기타'), # '기타' 옵션 유지
 ]
 
 USER_STATE_CHOICES = [
@@ -132,20 +131,7 @@ class User(models.Model):
     def __str__(self):
         return f"{self.nickname} ({self.user_id})" # 관리자 페이지에서 객체 표현 방식
 
-
-class UserPreference(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="사용자")
-    style = models.CharField(max_length=100, verbose_name="선호 스타일")
-    idol = models.CharField(max_length=100, verbose_name="선호 아이돌")
-
-    # --- Meta 클래스 (UserPreference 모델용) ---
-    class Meta:
-        verbose_name = "사용자 선호 정보"
-        verbose_name_plural = "사용자 선호 정보 목록"
-
-    def __str__(self):
-        return f"{self.user.nickname}님의 선호 정보"
-
+# ---
 
 class UserRelation(models.Model):
     from_user = models.ForeignKey(
@@ -179,4 +165,3 @@ class UserRelation(models.Model):
 
     def __str__(self):
         return f"{self.from_user.user_id}가 {self.to_user.user_id}를 {self.get_relation_type_display()}"
-        # get_relation_type_display()는 choices의 '표시될 이름'을 가져옴
