@@ -1,74 +1,600 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% comment %} <link rel="stylesheet" type="text/css" href="/static/css/mypage.css"> {% endcomment %}
-    <title>프로필변경</title>
-</head>
-    <style>
+    <link rel="stylesheet" type="text/css" href="/static/css/mypage.css">
+    <title>최애 변경하기</title>
+<style>
     * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    body {
-        font-family: 'Arial', sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-    }
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
 
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+
+.nav {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav a:hover {
+    color: #667eea;
+}
+
+@media (max-width: 768px) {
+.main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    gap:1rem;
+    flex-direction: column;
+    padding: 1rem;
+    }       
+}
+
+/* 프로필 */
+.profile-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100%;
+    
+}
+
+.profile-header {
+    display: inline-block;
+    align-items: center;
+    gap: 2rem;
+    justify-content: space-evenly;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+}
+
+.profile-info {
+    margin-left: auto;
+    margin-top: 30px;
+}
+
+.profile-info h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.stats {
+    display: flex;
+    gap: 2rem;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.tab {
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
+}
+
+.tab:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+}
+
+.tab.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.edit-btn {
+    margin-left: 0.5rem;
+    opacity: 0.7;
+}
+
+@media (max-width: 1024px) {
+.content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: auto;
+    margin-left: 20px;
+    }
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.change-btn, .view-all-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    font-weight: 500;
+}
+
+.change-btn:hover, .view-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.item {
+    background: rgba(248, 249, 250, 0.8);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+    cursor:pointer;
+}
+
+.item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.item h3 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.item p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.item .wishlist{
+    display: flex;
+    height: 120px;
+    display: flex;
+}
+
+.wish-list-img{
+    width: 30%;
+    height: 100%;
+}
+
+.wish-list-img img{
+    width: 45%;
+    height: 100%;
+    margin-left: 30px;
+    border-radius:20px;
+}
+
+.polaroid-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.polaroid {
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    position: relative;
+    transform: rotate(-1deg);
+    cursor:pointer;
+    height: 315px;
+}
+
+.polaroid:nth-child(even) {
+    transform: rotate(1deg);
+}
+
+.polaroid:hover {
+    transform: rotate(0deg) translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.polaroid-image {
+    width: 100%;
+    height: 200px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.polaroid-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.polaroid-text {
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.group-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.3rem;
+}
+
+.member-name {
+    font-size: 1rem;
+    color: #667eea;
+    font-weight: 500;
+}
+
+/* 폴라로이드에 빈티지 효과 추가 */
+.album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.album-card {
+    background: rgba(248, 249, 250, 0.8);
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.album-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.album-cover {
+    width: 100%;
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.album-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.album-info h4 {
+    color: #333;
+    margin-bottom: 0.3rem;
+    font-size: 1rem;
+}
+
+.album-info p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-count {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.cards-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.back-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.current-album {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.photocard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.photocard {
+    background: white;
+    border-radius: 8px;
+    padding: 0.8rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.photocard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.photocard-img {
+    width: 100%;
+    height: 120px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+}
+
+.photocard-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photocard h5 {
+    color: #333;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+}
+
+.photocard p {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.card {
+    background: rgba(248, 249, 250, 0.8);
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-img {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.card h4 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.rating {
+    margin-right: 0.5rem;
+}
+
+.review-item {
+    border-left: 4px solid #667eea;
+}
+
+.blocked-user {
+    border-left: 4px solid #e74c3c;
+}
+
+.unblock-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+    transition: background 0.3s ease;
+}
+
+.unblock-btn:hover {
+    background: #c0392b;
+}
+
+.transaction-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.transaction-tab {
+    background: rgba(248, 249, 250, 0.8);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.transaction-tab.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+.review-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.review-tab {
+    background: rgba(248, 249, 250, 0.8);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.review-tab.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+.view-all-container {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
     .header {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
     }
 
-    .logo {
-        font-size: 1.8rem;
-        font-weight: bold;
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
     }
 
-
-    .nav {
-        display: flex;
-        gap: 2rem;
+    .tabs {
+        justify-content: center;
     }
 
-    .nav a {
-        text-decoration: none;
-        color: #333;
-        font-weight: 500;
-        transition: color 0.3s ease;
+    .tab {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
     }
 
-    .nav a:hover {
-        color: #667eea;
+    .stats {
+        gap: 1rem;
     }
 
-    .main {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
+    .polaroid-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
     }
 
-    .box{
-        border:1px solid black;
-        background:white;
-        height:700px;
-        width: 500px;
-        
+    .polaroid {
+        transform: rotate(0deg);
     }
+
+    .polaroid:nth-child(even) {
+        transform: rotate(0deg);
+    }
+}
+
 </style>
+</head>
 <body>
     <header class="header">
         <div class="logo"></div>
@@ -79,8 +605,532 @@
             <a href="#">마이페이지</a>
         </nav>
     </header>
-    <div class="box">
+    <!--최애변경버튼-->
+    <script>
+        function showMybiasModal(){
+            alert("안녕");
+            location.href="/mypage/showMybiasModal/";
+        }
+    </script>
+    <!--프로필-->
+    <main class="main">
+        <form action='/mypage/pchange/' >
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="polaroid">
+                    <div class="polaroid-image">
+                        <a href="/mypage/pchange/">
+                            <img src='/static/images/mypage/도영.jfif/'>
+                        </a>
+                    </div>
+                    <!--최애 아티스트 그룹, 멤버명 선택 구현 -->
+                    <button id="favorite-btn" onclick="showMybiasModal()" style="width:80px; height:50px; border-radius:90px; margin-bottom:30px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.3s ease;">
+                        <div>나의 최애</div>
+                    </button>
+                </div>
+                <div class="profile-info">
+                    <h1>포카러버123</h1>
+                    <h3 style="margin-bottom:20px;">"포카모으기를 좋아하는 포카 덕후"</h3>
+                    <br>
+                    
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-number">156</div>
+                            <div>보유 포카</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">23</div>
+                            <div>교환 완료</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">4.8</div>
+                            <div>평점</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+        <!--//프로필-->
+
         
-    </div>
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active " onclick="showTab('keywords')">키워드</button>
+                <button class="tab" onclick="showTab('recent')">최근본글</button>
+                <button class="tab" onclick="showTab('cards')">마이 포카</button>
+                <button class="tab" onclick="showTab('wishlist')">위시리스트</button>
+                <button class="tab" onclick="showTab('transactions')">교환거래</button>
+                <button class="tab" onclick="showTab('reviews')">후기글</button>
+                <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
+                <button class="tab" onclick="showTab('blocked')">내가 차단한 사용자</button>
+            </div>
+            <div id="keywords" class="tab-content active">
+                <div class="section-header">
+                    <h2>키워드</h2>
+                </div>
+                <div class="item">
+                    <h3>관심 키워드</h3>
+                    <p>#정국포카 #로제포카 #한정판 #시그네쳐 #러키드로우</p>
+                </div>
+                <div class="item">
+                    <h3>알림 키워드</h3>
+                    <p>#BTS #BLACKPINK #NewJeans #포카교환 #급구</p>
+                </div>
+            </div>
+
+            <div id="recent" class="tab-content">
+                <div class="section-header">
+                    <h2>최근본글</h2>
+                </div>
+                <div class="item">
+                    <h3>BTS 정국 포토카드 교환해요</h3>
+                    <p>2024.01.20 12:30 - Map of the Soul: 7</p>
+                </div>
+                <div class="item">
+                    <h3>블랙핑크 로제 포카 판매합니다</h3>
+                    <p>2024.01.20 11:45 - THE ALBUM 한정판</p>
+                </div>
+                <div class="item">
+                    <h3>NewJeans 민지 포카 급구해요!</h3>
+                    <p>2024.01.19 16:20 - OMG 앨범</p>
+                </div>
+            </div>
+
+            <div id="cards" class="tab-content">
+                <div class="cards-header">
+                    <h2>마이 포카교환</h2>
+                    <button class="back-btn" onclick="showAlbumList()" style="display: none;">← 앨범 목록으로</button>
+                </div>
+                
+                <!-- 앨범 목록 뷰 -->
+                <div id="album-list" class="album-grid">
+                    <div class="album-card" onclick="showPhotoCards('bts-mots7')">
+                        <div class="album-cover">
+                            <img src="/static/images/mypage/승관.jfif/" alt="Map of the Soul: 7">
+                        </div>
+                        <div class="album-info">
+                            <h4>Map of the Soul: 7</h4>
+                            <p>BTS</p>
+                            <span class="card-count">5장</span>
+                        </div>
+                    </div>
+                    
+                    <div class="album-card" onclick="showPhotoCards('bp-thealbum')">
+                        <div class="album-cover">
+                            <img src="/static/images/mypage/승관.jfif/" alt="THE ALBUM">
+                        </div>
+                        <div class="album-info">
+                            <h4>THE ALBUM</h4>
+                            <p>BLACKPINK</p>
+                            <span class="card-count">3장</span>
+                        </div>
+                    </div>
+                    
+                    <div class="album-card" onclick="showPhotoCards('bts-ly')">
+                        <div class="album-cover">
+                            <img src="/static/images/mypage/승관.jfif/" alt="Love Yourself">
+                        </div>
+                        <div class="album-info">
+                            <h4>Love Yourself: Her</h4>
+                            <p>BTS</p>
+                            <span class="card-count">4장</span>
+                        </div>
+                    </div>
+                    
+                    <div class="album-card" onclick="showPhotoCards('nj-omg')">
+                        <div class="album-cover">
+                            <img src="/static/images/mypage/승관.jfif/" alt="OMG">
+                        </div>
+                        <div class="album-info">
+                            <h4>OMG</h4>
+                            <p>NewJeans</p>
+                            <span class="card-count">6장</span>
+                        </div>
+                    </div>
+                    
+                    <div class="album-card" onclick="showPhotoCards('nj-getup')">
+                        <div class="album-cover">
+                            <img src="/static/images/mypage/승관.jfif/" alt="Get Up">
+                        </div>
+                        <div class="album-info">
+                            <h4>Get Up</h4>
+                            <p>NewJeans</p>
+                            <span class="card-count">8장</span>
+                        </div>
+                    </div>
+                    
+                    <div class="album-card" onclick="showPhotoCards('bp-bornpink')">
+                        <div class="album-cover">
+                            <img src="/static/images/mypage/승관.jfif/" alt="Born Pink">
+                        </div>
+                        <div class="album-info">
+                            <h4>Born Pink</h4>
+                            <p>BLACKPINK</p>
+                            <span class="card-count">2장</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 포토카드 목록 뷰 (기본적으로 숨김) -->
+                <div id="photocard-list" style="display: none;">
+                    <div id="current-album-title" class="current-album"></div>
+                    <div class="photocard-grid"></div>
+                </div>
+            </div>
+
+            <!--위시리스트-->
+            <div id="wishlist" class="tab-content">
+                <h2 style="margin-bottom: 1.5rem;">위시리스트</h2>
+                <div class="item">
+                    <div class="wishlist">
+                        <div class="wish-list-img">
+                            <img src="/static/images/mypage/유우시.jfif/">
+                        </div>
+                        <div class="wish-list-txt">
+                            <h3>NCT 유우시 포토카드</h3>
+                            <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="wishlist">
+                        <div class="wish-list-img">
+                            <img src="/static/images/mypage/승관.jfif/">
+                        </div>
+                        <div class="wish-list-txt">
+                            <h3>SEVENTEEN 승관 포토카드</h3>
+                            <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="wishlist">
+                        <div class="wish-list-img">
+                            <img src="/static/images/mypage/윈터.jpg/">
+                        </div>
+                        <div class="wish-list-txt">
+                            <h3>AESPA 윈터 포토카드</h3>
+                            <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="transactions" class="tab-content">
+                <h2 style="margin-bottom: 1.5rem;">교환거래</h2>
+                <div class="transaction-tabs">
+                    <button class="transaction-tab active" onclick="showTransactionTab('selling')">판매목록</button>
+                    <button class="transaction-tab" onclick="showTransactionTab('buying')">구매목록</button>
+                </div>
+                
+                <div id="selling-list" class="transaction-content">
+                    <div class="item">
+                        <h3>BTS 진 포토카드</h3>
+                        <p>25,000원 - Map of the Soul: 7 | 상태: 판매중</p>
+                    </div>
+                    <div class="item">
+                        <h3>블랙핑크 지수 포토카드</h3>
+                        <p>20,000원 - THE ALBUM | 상태: 예약중</p>
+                    </div>
+                    <div class="item">
+                        <h3>BTS 슈가 포토카드</h3>
+                        <p>30,000원 - Love Yourself | 상태: 판매완료</p>
+                    </div>
+                    <div class="view-all-container">
+                        <button class="view-all-btn" onclick="goToFullPage('selling')">전체보기</button>
+                    </div>
+                </div>
+
+                <div id="buying-list" class="transaction-content" style="display: none;">
+                    <div class="item">
+                        <h3>BTS 정국 포토카드 구매</h3>
+                        <p>2024.01.18 - 18,000원 | 상태: 거래완료</p>
+                    </div>
+                    <div class="item">
+                        <h3>블랙핑크 로제 포토카드 구매</h3>
+                        <p>2024.01.15 - 22,000원 | 상태: 거래완료</p>
+                    </div>
+                    <div class="item">
+                        <h3>NewJeans 민지 포토카드 구매</h3>
+                        <p>2024.01.12 - 15,000원 | 상태: 배송중</p>
+                    </div>
+                    <div class="view-all-container">
+                        <button class="view-all-btn" onclick="goToFullPage('buying')">전체보기</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reviews" class="tab-content">
+                <h2 style="margin-bottom: 1.5rem;">후기글</h2>
+                <div class="review-tabs">
+                    <button class="review-tab active" onclick="showReviewTab('received')">내가 받은 후기</button>
+                    <button class="review-tab" onclick="showReviewTab('written')">내가 쓴 후기</button>
+                </div>
+                
+                <div id="received-reviews" class="review-content">
+                    <div class="item review-item">
+                        <h3><span class="rating">⭐⭐⭐⭐⭐</span>친절하고 빠른 거래</h3>
+                        <p>포카 상태도 좋고 포장도 꼼꼼히 해주셔서 감사했습니다! - 포카매니아님</p>
+                    </div>
+                    <div class="item review-item">
+                        <h3><span class="rating">⭐⭐⭐⭐⭐</span>신뢰할 수 있는 거래</h3>
+                        <p>설명과 동일한 상태의 포카를 받았어요. 추천합니다! - 카드수집러님</p>
+                    </div>
+                    <div class="item review-item">
+                        <h3><span class="rating">⭐⭐⭐⭐</span>좋은 거래였습니다</h3>
+                        <p>소통이 원활하고 약속 시간도 잘 지켜주셨어요. - 포카러님</p>
+                    </div>
+                    <div class="view-all-container">
+                        <button class="view-all-btn" onclick="goToFullPage('received-reviews')">전체보기</button>
+                    </div>
+                </div>
+
+                <div id="written-reviews" class="review-content" style="display: none;">
+                    <div class="item review-item">
+                        <h3><span class="rating">⭐⭐⭐⭐⭐</span>완벽한 거래였어요</h3>
+                        <p>포카매니아님과의 거래 - 포장 상태 완벽하고 소통도 좋았습니다!</p>
+                    </div>
+                    <div class="item review-item">
+                        <h3><span class="rating">⭐⭐⭐⭐⭐</span>믿고 거래할 수 있는 분</h3>
+                        <p>카드수집러님과의 거래 - 시간 약속 잘 지키시고 친절하세요</p>
+                    </div>
+                    <div class="item review-item">
+                        <h3><span class="rating">⭐⭐⭐⭐</span>만족스러운 거래</h3>
+                        <p>포카러님과의 거래 - 설명 그대로의 상태로 잘 받았습니다</p>
+                    </div>
+                    <div class="view-all-container">
+                        <button class="view-all-btn" onclick="goToFullPage('written-reviews')">전체보기</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="community" class="tab-content">
+                <h2 style="margin-bottom: 1.5rem;">커뮤니티 작성글</h2>
+                <div class="item">
+                    <h3>BTS 신규 포토카드 정보 공유</h3>
+                    <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
+                </div>
+                <div class="item">
+                    <h3>포카 보관 팁 알려드려요!</h3>
+                    <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
+                </div>
+                <div class="item">
+                    <h3>이번주 포카 교환 후기</h3>
+                    <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
+                </div>
+            </div>
+
+            <div id="blocked" class="tab-content">
+                <div class="section-header">
+                    <h2>내가 차단한 사용자</h2>
+                    <button class="change-btn">변경하기</button>
+                </div>
+                <div class="item blocked-user">
+                    <h3>스팸유저123</h3>
+                    <p>차단 사유: 스팸 메시지 반복 발송</p>
+                    <button class="unblock-btn">차단해제</button>
+                </div>
+                <div class="item blocked-user">
+                    <h3>사기꾼456</h3>
+                    <p>차단 사유: 거래 약속 불이행</p>
+                    <button class="unblock-btn">차단해제</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function showTab(tabName) {
+            // 모든 탭 콘텐츠 숨기기
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 모든 탭 버튼 비활성화
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 선택된 탭 콘텐츠 보이기
+            document.getElementById(tabName).classList.add('active');
+
+            // 선택된 탭 버튼 활성화
+            event.target.classList.add('active');
+        }
+
+        function showTransactionTab(type) {
+            // 교환거래 탭 버튼들 비활성화
+            const transactionTabs = document.querySelectorAll('.transaction-tab');
+            transactionTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 교환거래 콘텐츠들 숨기기
+            const transactionContents = document.querySelectorAll('.transaction-content');
+            transactionContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // 선택된 탭 활성화
+            event.target.classList.add('active');
+            
+            // 선택된 콘텐츠 보이기
+            if (type === 'selling') {
+                document.getElementById('selling-list').style.display = 'block';
+            } else {
+                document.getElementById('buying-list').style.display = 'block';
+            }
+        }
+
+        function showReviewTab(type) {
+            // 후기 탭 버튼들 비활성화
+            const reviewTabs = document.querySelectorAll('.review-tab');
+            reviewTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 후기 콘텐츠들 숨기기
+            const reviewContents = document.querySelectorAll('.review-content');
+            reviewContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // 선택된 탭 활성화
+            event.target.classList.add('active');
+            
+            // 선택된 콘텐츠 보이기
+            if (type === 'received') {
+                document.getElementById('received-reviews').style.display = 'block';
+            } else {
+                document.getElementById('written-reviews').style.display = 'block';
+            }
+        }
+
+        // 포토카드 데이터 (실제로는 서버에서 가져올 데이터)
+        const photocardData = {
+            'bts-mots7': {
+                title: 'BTS - Map of the Soul: 7',
+                cards: [
+                    { id: 1, member: 'RM', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 2, member: '진', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 3, member: '슈가', type: '포토카드', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 4, member: '제이홉', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 5, member: '정국', type: '한정판', img: '/static/images/mypage/사쿠야.jfif/' }
+                ]
+            },
+            'bp-thealbum': {
+                title: 'BLACKPINK - THE ALBUM',
+                cards: [
+                    { id: 1, member: '로제', type: '일반', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=ROSE' },
+                    { id: 2, member: '리사', type: '포토카드', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=LISA' },
+                    { id: 3, member: '제니', type: '한정판', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=JENNIE' }
+                ]
+            },
+            'bts-ly': {
+                title: 'BTS - Love Yourself: Her',
+                cards: [
+                    { id: 1, member: '지민', type: '일반', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=JIMIN' },
+                    { id: 2, member: 'V', type: '포토카드', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=V' },
+                    { id: 3, member: '정국', type: '일반', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=JK' },
+                    { id: 4, member: 'RM', type: '한정판', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=RM' }
+                ]
+            },
+            'nj-omg': {
+                title: 'NewJeans - OMG',
+                cards: [
+                    { id: 1, member: '민지', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=MINJI' },
+                    { id: 2, member: '하니', type: '포토카드', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HANNI' },
+                    { id: 3, member: '다니엘', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=DANIELLE' },
+                    { id: 4, member: '해린', type: '한정판', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HAERIN' },
+                    { id: 5, member: '혜인', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HYEIN' },
+                    { id: 6, member: '민지', type: '포토카드', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=MINJI2' }
+                ]
+            },
+            'nj-getup': {
+                title: 'NewJeans - Get Up',
+                cards: [
+                    { id: 1, member: '민지', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=MINJI' },
+                    { id: 2, member: '하니', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HANNI' },
+                    { id: 3, member: '다니엘', type: '포토카드', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=DANIELLE' },
+                    { id: 4, member: '해린', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HAERIN' },
+                    { id: 5, member: '혜인', type: '한정판', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HYEIN' },
+                    { id: 6, member: '민지', type: '포토카드', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=MINJI2' },
+                    { id: 7, member: '하니', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HANNI2' },
+                    { id: 8, member: '다니엘', type: '한정판', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=DANIELLE2' }
+                ]
+            },
+            'bp-bornpink': {
+                title: 'BLACKPINK - Born Pink',
+                cards: [
+                    { id: 1, member: '지수', type: '일반', img: 'https://via.placeholder.com/120x150/f44336/ffffff?text=JISOO' },
+                    { id: 2, member: '로제', type: '한정판', img: 'https://via.placeholder.com/120x150/f44336/ffffff?text=ROSE' }
+                ]
+            }
+        };
+
+        function showPhotoCards(albumId) {
+            const albumData = photocardData[albumId];
+            if (!albumData) return;
+
+            // 앨범 목록 숨기기
+            document.getElementById('album-list').style.display = 'none';
+            
+            // 포토카드 목록 보이기
+            document.getElementById('photocard-list').style.display = 'block';
+            
+            // 뒤로가기 버튼 보이기
+            document.querySelector('.back-btn').style.display = 'inline-block';
+            
+            // 현재 앨범 제목 설정
+            document.getElementById('current-album-title').textContent = albumData.title;
+            
+            // 포토카드 그리드 생성
+            const photocardGrid = document.querySelector('.photocard-grid');
+            photocardGrid.innerHTML = '';
+            
+            albumData.cards.forEach(card => {
+                const photocardElement = document.createElement('div');
+                photocardElement.className = 'photocard';
+                photocardElement.innerHTML = `
+                    <div class="photocard-img">
+                        <img src="${card.img}" alt="${card.member}">
+                    </div>
+                    <h5>${card.member}</h5>
+                    <p>${card.type}</p>
+                `;
+                photocardGrid.appendChild(photocardElement);
+            });
+        }
+
+        function showAlbumList() {
+            // 포토카드 목록 숨기기
+            document.getElementById('photocard-list').style.display = 'none';
+            
+            // 앨범 목록 보이기
+            document.getElementById('album-list').style.display = 'grid';
+            
+            // 뒤로가기 버튼 숨기기
+            document.querySelector('.back-btn').style.display = 'none';
+        }
+
+        // 변경하기 버튼 클릭 이벤트
+        document.querySelectorAll('.change-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('변경 기능이 실행됩니다.');
+            });
+        });
+
+        // 차단해제 버튼 클릭 이벤트
+        document.querySelectorAll('.unblock-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(confirm('정말 차단을 해제하시겠습니까?')) {
+                    this.parentElement.remove();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

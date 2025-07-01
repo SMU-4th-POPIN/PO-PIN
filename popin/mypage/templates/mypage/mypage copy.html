@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -54,11 +55,18 @@ body {
     color: #667eea;
 }
 
+@media (max-width: 768px) {
 .main {
     max-width: 1200px;
     margin: 2rem auto;
     padding: 0 1rem;
     display: flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    gap:1rem;
+    flex-direction: column;
+    padding: 1rem;
+    }       
 }
 
 /* 프로필 */
@@ -69,7 +77,9 @@ body {
     padding: 2rem;
     margin-bottom: 2rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    height: 1000px;
+    width: 100%;
+    height: 100%;
+    
 }
 
 .profile-header {
@@ -151,15 +161,17 @@ body {
     opacity: 0.7;
 }
 
+@media (max-width: 1024px) {
 .content {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 2rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    width: 70%;
+    width: 100%;
     height: auto;
     margin-left: 20px;
+    }
 }
 
 .tab-content {
@@ -204,6 +216,7 @@ body {
     border-radius: 12px;
     margin-bottom: 1rem;
     transition: transform 0.3s ease;
+    cursor:pointer;
 }
 
 .item:hover {
@@ -219,6 +232,24 @@ body {
 .item p {
     color: #666;
     line-height: 1.6;
+}
+
+.item .wishlist{
+    display: flex;
+    height: 120px;
+    display: flex;
+}
+
+.wish-list-img{
+    width: 30%;
+    height: 100%;
+}
+
+.wish-list-img img{
+    width: 45%;
+    height: 100%;
+    margin-left: 30px;
+    border-radius:20px;
 }
 
 .polaroid-grid {
@@ -237,6 +268,7 @@ body {
     position: relative;
     transform: rotate(-1deg);
     cursor:pointer;
+    height: 315px;
 }
 
 .polaroid:nth-child(even) {
@@ -583,16 +615,18 @@ body {
                 <div class="polaroid">
                     <div class="polaroid-image">
                         <a href="/mypage/pchange/">
-                            <img src='/static/images/도영.jfif/'>
+                            <img src='/static/images/mypage/도영.jfif/'>
                         </a>
                     </div>
+                    <!--최애 아티스트 그룹, 멤버명 선택 구현 -->
+                    <button id="favorite-btn" onclick="showFavoriteModal()" style="width:80px; height:50px; border-radius:90px; margin-bottom:30px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.3s ease;">
+                        <div>나의 최애</div>
+                    </button>
                 </div>
                 <div class="profile-info">
                     <h1>포카러버123</h1>
                     <h3 style="margin-bottom:20px;">"포카모으기를 좋아하는 포카 덕후"</h3>
                     <br>
-                    <button value="나의 최애" style="width:250px; height:100px; border-radius:80px; margin-bottom:30px;"></button>
-                    <button></button>
                     
                     <div class="stats">
                         <div class="stat">
@@ -609,8 +643,6 @@ body {
                         </div>
                     </div>
                 </div>
-                <button></button>
-                <button></button>
             </div>
             </form>
         </div>
@@ -621,7 +653,7 @@ body {
             <div class="tabs">
                 <button class="tab active " onclick="showTab('keywords')">키워드</button>
                 <button class="tab" onclick="showTab('recent')">최근본글</button>
-                <button class="tab" onclick="showTab('cards')">내가 가진 포토카드</button>
+                <button class="tab" onclick="showTab('cards')">마이 포카</button>
                 <button class="tab" onclick="showTab('wishlist')">위시리스트</button>
                 <button class="tab" onclick="showTab('transactions')">교환거래</button>
                 <button class="tab" onclick="showTab('reviews')">후기글</button>
@@ -631,7 +663,6 @@ body {
             <div id="keywords" class="tab-content active">
                 <div class="section-header">
                     <h2>키워드</h2>
-                    <button class="change-btn">변경하기</button>
                 </div>
                 <div class="item">
                     <h3>관심 키워드</h3>
@@ -646,7 +677,6 @@ body {
             <div id="recent" class="tab-content">
                 <div class="section-header">
                     <h2>최근본글</h2>
-                    <button class="change-btn">변경하기</button>
                 </div>
                 <div class="item">
                     <h3>BTS 정국 포토카드 교환해요</h3>
@@ -664,7 +694,7 @@ body {
 
             <div id="cards" class="tab-content">
                 <div class="cards-header">
-                    <h2>내가 가진 포토카드</h2>
+                    <h2>마이 포카교환</h2>
                     <button class="back-btn" onclick="showAlbumList()" style="display: none;">← 앨범 목록으로</button>
                 </div>
                 
@@ -672,7 +702,7 @@ body {
                 <div id="album-list" class="album-grid">
                     <div class="album-card" onclick="showPhotoCards('bts-mots7')">
                         <div class="album-cover">
-                            <img src="https://via.placeholder.com/200x200/667eea/ffffff?text=Map+of+the+Soul:+7" alt="Map of the Soul: 7">
+                            <img src="/static/images/mypage/승관.jfif/" alt="Map of the Soul: 7">
                         </div>
                         <div class="album-info">
                             <h4>Map of the Soul: 7</h4>
@@ -683,7 +713,7 @@ body {
                     
                     <div class="album-card" onclick="showPhotoCards('bp-thealbum')">
                         <div class="album-cover">
-                            <img src="https://via.placeholder.com/200x200/e91e63/ffffff?text=THE+ALBUM" alt="THE ALBUM">
+                            <img src="/static/images/mypage/승관.jfif/" alt="THE ALBUM">
                         </div>
                         <div class="album-info">
                             <h4>THE ALBUM</h4>
@@ -694,7 +724,7 @@ body {
                     
                     <div class="album-card" onclick="showPhotoCards('bts-ly')">
                         <div class="album-cover">
-                            <img src="https://via.placeholder.com/200x200/9c27b0/ffffff?text=Love+Yourself" alt="Love Yourself">
+                            <img src="/static/images/mypage/승관.jfif/" alt="Love Yourself">
                         </div>
                         <div class="album-info">
                             <h4>Love Yourself: Her</h4>
@@ -705,7 +735,7 @@ body {
                     
                     <div class="album-card" onclick="showPhotoCards('nj-omg')">
                         <div class="album-cover">
-                            <img src="https://via.placeholder.com/200x200/4caf50/ffffff?text=OMG" alt="OMG">
+                            <img src="/static/images/mypage/승관.jfif/" alt="OMG">
                         </div>
                         <div class="album-info">
                             <h4>OMG</h4>
@@ -716,7 +746,7 @@ body {
                     
                     <div class="album-card" onclick="showPhotoCards('nj-getup')">
                         <div class="album-cover">
-                            <img src="https://via.placeholder.com/200x200/ff9800/ffffff?text=Get+Up" alt="Get Up">
+                            <img src="/static/images/mypage/승관.jfif/" alt="Get Up">
                         </div>
                         <div class="album-info">
                             <h4>Get Up</h4>
@@ -727,7 +757,7 @@ body {
                     
                     <div class="album-card" onclick="showPhotoCards('bp-bornpink')">
                         <div class="album-cover">
-                            <img src="https://via.placeholder.com/200x200/f44336/ffffff?text=Born+Pink" alt="Born Pink">
+                            <img src="/static/images/mypage/승관.jfif/" alt="Born Pink">
                         </div>
                         <div class="album-info">
                             <h4>Born Pink</h4>
@@ -744,19 +774,41 @@ body {
                 </div>
             </div>
 
+            <!--위시리스트-->
             <div id="wishlist" class="tab-content">
                 <h2 style="margin-bottom: 1.5rem;">위시리스트</h2>
                 <div class="item">
-                    <h3>BTS V 포토카드</h3>
-                    <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                    <div class="wishlist">
+                        <div class="wish-list-img">
+                            <img src="/static/images/mypage/유우시.jfif/">
+                        </div>
+                        <div class="wish-list-txt">
+                            <h3>NCT 유우시 포토카드</h3>
+                            <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="item">
-                    <h3>블랙핑크 제니 포토카드</h3>
-                    <p>Born Pink 앨범 - 급구합니다</p>
+                    <div class="wishlist">
+                        <div class="wish-list-img">
+                            <img src="/static/images/mypage/승관.jfif/">
+                        </div>
+                        <div class="wish-list-txt">
+                            <h3>SEVENTEEN 승관 포토카드</h3>
+                            <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="item">
-                    <h3>NewJeans 하니 포토카드</h3>
-                    <p>Get Up 앨범 - 원하는 카드입니다</p>
+                    <div class="wishlist">
+                        <div class="wish-list-img">
+                            <img src="/static/images/mypage/윈터.jpg/">
+                        </div>
+                        <div class="wish-list-txt">
+                            <h3>AESPA 윈터 포토카드</h3>
+                            <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -957,11 +1009,11 @@ body {
             'bts-mots7': {
                 title: 'BTS - Map of the Soul: 7',
                 cards: [
-                    { id: 1, member: 'RM', type: '일반', img: 'https://via.placeholder.com/120x150/667eea/ffffff?text=RM' },
-                    { id: 2, member: '진', type: '일반', img: 'https://via.placeholder.com/120x150/667eea/ffffff?text=JIN' },
-                    { id: 3, member: '슈가', type: '포토카드', img: 'https://via.placeholder.com/120x150/667eea/ffffff?text=SUGA' },
-                    { id: 4, member: '제이홉', type: '일반', img: 'https://via.placeholder.com/120x150/667eea/ffffff?text=JHOPE' },
-                    { id: 5, member: '정국', type: '한정판', img: 'https://via.placeholder.com/120x150/667eea/ffffff?text=JK' }
+                    { id: 1, member: 'RM', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 2, member: '진', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 3, member: '슈가', type: '포토카드', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 4, member: '제이홉', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 5, member: '정국', type: '한정판', img: '/static/images/mypage/사쿠야.jfif/' }
                 ]
             },
             'bp-thealbum': {
