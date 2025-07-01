@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>포토카드 업로드</title>
+    <title>{%block title%}포토카드 업로드{%endblock%}</title>
 </head>
 <style>
 .Upload-Container {
@@ -403,7 +403,6 @@ textarea {
       border-radius: 25px;
       font-size: 16px;
       width: 100%;
-      max-width: 300px;
       transition: all 0.3s ease;
     }
 
@@ -513,8 +512,10 @@ textarea {
     }
 
     .groups-container {
-      display: grid;
-      gap: 20px;
+        display: grid;
+        gap: 20px;
+        max-height: 400px;
+        overflow-y: auto;
     }
 
     .group-card {
@@ -628,6 +629,29 @@ textarea {
       box-shadow: none;
     }
 
+    .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+    }
+
+    .tag {
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    }
+
+    .tag .remove-btn {
+    margin-left: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    }
+
     @media (max-width: 768px) {
       body {
         padding: 1rem;
@@ -728,51 +752,41 @@ textarea {
                 <!-- 아티스트 검색 모달창-->
                 <div id="searchModal" class="modal" >
                     <div class="modal-content">
-                        <form id="memberForm" method="POST" action="{% url 'signup:member_select' %}">
-                        <span id="searchModalOpenClose" class="close">&times;</span>
-                            {% csrf_token %}
-                            <div class="search-container">
-                                <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="searchInput">
-                                <div class="filter-buttons">
-                                <button class="filter-btn active" data-filter="all">전체</button>
-                                <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
-                                <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
-                                
-                                </div>
+                    <span id="searchModalOpenClose" class="close">&times;</span>
+                        <div class="search-container">
+                            <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="searchInput">
+                            <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">전체</button>
+                            <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
+                            <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
                             </div>
+                        </div>
 
-                            <div class="selected-count">선택된 멤버: <span id="selectedCount">0</span>/2명</div>
-
-                            <div class="selected-members" id="selectedMembers" style="display: none;">
-                                <h3>🌟 내 최애 멤버들</h3>
-                                <div class="selected-list" id="selectedList"></div>
-                            </div>
-
-                            <div class="search-noticeBox" id="searchNotice">
-                                <span class="icon">🔍</span>
-                                <div class="main-text">검색어를 입력하여 아이돌 그룹을 찾아보세요!</div>
-                                <div class="sub-text">그룹명 또는 멤버명으로 검색 가능합니다</div>
-                            </div>
-                            
-                            <div class="groups-container" id="groupsContainer"></div>
-                            <div id="hiddenInputsContainer"></div>
-                            <button id="completeBtn" class="btn btn-primary" type="button" disabled>완료</button>
-                        </form>
+                        <div class="search-noticeBox" id="searchNotice">
+                            <span class="icon">🔍</span>
+                            <div class="main-text">검색어를 입력하여 아이돌 그룹을 찾아보세요!</div>
+                            <div class="sub-text">그룹명 또는 멤버명으로 검색 가능합니다</div>
+                        </div>
+                        
+                        <div class="groups-container" id="groupsContainer"></div>
+                        <div id="hiddenInputsContainer"></div>
+                        <button id="completeBtn" class="btn btn-primary" onclick="completeMemberSelection()" type="button" >완료</button>
                     </div>
                 </div>
 
                 <!-- 앨범 정보 -->
                 <div class="form-content">
-                    <label>앨범</label>
+                    <label> 앨범 <span class="required">*</span></label>
                     <div class="album-input">
                         <input type="text" name="album" id="albumInput" placeholder="앨범명을 입력해주세요">
                         <input type="hidden" name="album_type" id="albumType">
                     </div>
                     <div class="album-type-selector">
-                        <button type="button" class="album-type-btn" data-type="album_name">앨범</button>
-                        <button type="button" class="album-type-btn" data-type="unreleased">MD포카</button>
-                        <button type="button" class="album-type-btn" data-type="lucky_draw">특전</button>
-                        <button type="button" class="album-type-btn" data-type="album_name">콜라보</button>
+                        <button type="button" id="category" class="album-type-btn" data-type="album_name">앨범</button>
+                        <button type="button" id="category" class="album-type-btn" data-type="lucky_draw">특전</button>
+                        <button type="button" id="category" class="album-type-btn" data-type="unreleased">MD</button>
+                        <button type="button" id="category" class="album-type-btn" data-type="broadcasting">공방</button>
+                        <button type="button" id="category" class="album-type-btn" data-type="album_etc">기타</button>
                     </div>
                 </div>
             <!--//기본정보섹션-->
@@ -782,7 +796,7 @@ textarea {
                 <h3 class="section-title">💰 거래 유형</h3>
                 
                 <div class="form-content">
-                    <label>거래 유형 선택 <span class="required">*</span></label>
+                    <label for="tradeType">거래 유형 선택 <span class="required">*</span></label>
                     <div class="trade-type-selector">
                         <div class="trade-option" data-type="sale">
                             <h4>💰 판매글</h4>
@@ -798,12 +812,21 @@ textarea {
                     <div class="price-input" id="priceInput">
                         <label for="price">가격 (원) <span class="required">*</span></label>
                         <input type="number" id="price" name="price" placeholder="판매 가격을 입력해주세요" min="0">
-                        <input type="checkbox" value="fee">&nbsp;배송비포함
+                        <div class="Sale-Info" style="margin: 5px 0 0 15px;">
+                            <input type="checkbox" class="Sale-Info" data-type="Dfee" style=" margin-right:4px;"><p style="display:contents;color: #757575;">배송비포함</p></button>
+                        </div>
                     </div>
 
                     <div class="blocked-notice" id="blockedNotice">
                         <strong>⚠️ 알림:</strong> 교환글은 가격 설정이 불가능합니다.
                     </div>
+                    <br>
+                    <label for="photo"> 포토카드 상태 <span class="required">*</span></label>
+                    <select style="color: #757575;" id="photo_state">
+                        <option id="poca_state" value="best">상태: 상</op>
+                        <option id="poca_state" value="mid">상태: 중</op>
+                        <option id="poca_state" value="bad">상태: 하</op>
+                    </select>
                 </div>
             </div>
             <!--//거래유형섹션-->
@@ -818,9 +841,16 @@ textarea {
                 </div>
 
                 <div class="form-content">
-                    <label for="tag">태그</label>
-                    <input type="text" id="tag" name="tag" placeholder="#희귀 #한정판 #교환급구 등의 태그를 입력해주세요">
+                    <label for="tag" style="display:flex;"> 태그 <span class="required">*</span>
+                    </label>
+                    <div class="tag-input-container">
+                        <input type="text" id="tagInput" name="tag" placeholder="#희귀 #한정판 #교환급구 등의 태그를 입력해주세요">
+                        <div id="tagList" class="tag-list"></div>
+                        <small class="tag-limit-msg">최대 5개까지 등록할 수 있어요.</small>
+                    </div>
                 </div>
+                <!-- 선택된 태그를 서버에 전송할 hidden input -->
+                <input type="hidden" name="tags" id="hiddenTags">
             </div>
             <!--//상세설명섹션-->
 
@@ -831,10 +861,10 @@ textarea {
                 <div class="form-content">
                     <label>위치 선택 방법</label>
                     <div class="location-toggle">
-                        <button type="button" class="location-btn active" data-location="db">DB 장소</button>
-                        <!--DB 장소-->
-                        <div id="dbLocationContainer">
-                            <select name="db_location" id="dbLocation">
+                        <!--오프라인 장소-->
+                        <button type="button" class="location-btn active" data-location="db">오프라인 장소</button>
+                        <div id="dbLocationContainer" style="display:block;">
+                            <select name="db_location" id="dbLocation" required>
                                 <option value="">장소를 선택해주세요</option>
                                 {% for key, label in place_choices %}
                                 <option value="{{ key }}">{{ label }}</option>
@@ -843,9 +873,9 @@ textarea {
                         </div>
                     </div>
                     <div class="location-toggle">
+                        <!--내위치-->
                         <div class="current-map">
                             <button type="button" class="location-btn" data-location="current">내 위치</button>
-                            <!--내위치-->
                             <div id="mapContainer">
                                 <div class="location-info" id="locationInfo">
                                     지도를 클릭하여 거래 장소를 선택해주세요
@@ -934,7 +964,6 @@ textarea {
                 </button>
             </div>
         </form>
-    </div>
     </div>
     <!--//Upload-Form-->
 </div>  
@@ -1025,6 +1054,58 @@ textarea {
         });
     });
 
+    // 태그 구현
+    const tagInput = document.getElementById("tagInput");
+    const tagList = document.getElementById("tagList");
+    const hiddenTags = document.getElementById("hiddenTags");
+
+    let tags = [];
+
+    function updateTagDisplay() {
+    tagList.innerHTML = ""; // 기존 초기화
+
+    tags.forEach((tag, index) => {
+        const tagEl = document.createElement("div");
+        tagEl.className = "tag";
+        tagEl.innerHTML = `#${tag} <span class="remove-btn" data-index="${index}">×</span>`;
+        tagList.appendChild(tagEl);
+    });
+
+    // hidden input에 쉼표로 구분된 태그 문자열 저장
+    hiddenTags.value = tags.join(",");
+    }
+
+    function addTag(input) {
+    const newTag = input.trim().replace(/^#/, ""); // # 제거하고 공백 제거
+    if (newTag === "" || tags.includes(newTag)) return;
+
+    if (tags.length >= 5) {
+        alert("최대 5개까지 등록할 수 있어요.");
+        return;
+    }
+
+    tags.push(newTag);
+    updateTagDisplay();
+    tagInput.value = "";
+    }
+
+    // 입력 이벤트: Enter 또는 Space 입력 시 등록
+    tagInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        addTag(tagInput.value);
+    }
+    });
+
+    // 태그 삭제 이벤트
+    tagList.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-btn")) {
+        const index = parseInt(e.target.dataset.index);
+        tags.splice(index, 1);
+        updateTagDisplay();
+    }
+    });
+
     // 위치선택
     const locationBtns = document.querySelectorAll('.location-btn');
     const locationTypeInput = document.getElementById('locationType');
@@ -1048,41 +1129,25 @@ textarea {
         mapContainer.style.display = 'none';
     });
 
-    // 폼제출 검증
-    document.getElementById('uploadForm').addEventListener('submit',function(e){
-        const locationType = document.getElementById('locationType').value;
 
-        if(!locationType){
-            e.preventDefault();
-            alert("위치 선택 방법을 선택해주세요!");
-            return false;
-        }
-        if(locationType === 'current' && (!selectedLat || !selectedLng)) {
-            e.preventDefault();
-            alert('지도에서 거래장소를 선택해주세요!');
-            return false;
-        }
-
-        const tradeType = document.getElementById('tradeType').value;
-        if (!tradeType){
-            e.preventDefault();
-            alert('거래 유형을 선택해주세요!');
-            return false;
-        }
-
-        if (tradeType === 'sale' && !document.getElementById('price').value){
-            e.preventDefault();
-            alert('판매가격을 입력해주세요!');
-            return false;
-        }
-    });
+    
     // 아티스트 검색 모달창 오픈
     document.addEventListener('DOMContentLoaded',() => {
-        const modal = document.getElementById('searchModal')
-        const searchModalOpen = document.getElementById('searchModalOpen')
-        const searchModalClose = document.getElementById('searchModalOpenClose')
-        const searchInput = document.getElementById('searchInput')
-        const searchResults = document.getElementById('searchResults')
+        const modal = document.getElementById('searchModal');
+        const searchModalOpen = document.getElementById('searchModalOpen');
+        const searchModalClose = document.getElementById('searchModalOpenClose');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const groupsContainer = document.getElementById('groupsContainer');
+        const searchNotice = document.querySelector('.search-noticeBox');
+        const completeBtn = document.getElementById('completeBtn');
+        const hiddenInputsContainer = document.getElementById('hiddenInputsContainer');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const filterBtnsActive = document.querySelectorAll('filter-btn.active');
+        
+        let selectedMembers = new Set();
+        let currentFilter = 'all';
+
         
         const groups = {
           boyGroups: {
@@ -1124,19 +1189,36 @@ textarea {
           }
         };
         
-        // 모달 버튼 
-        const filterBtns = document.querySelectorAll('.filter-btn');
-
+        // filter-btn 버튼 
         filterBtns.forEach(btn => {
-            btn.addEventListener('click',()=>{
+            btn.addEventListener('click',(e)=>{
+                //e.preventDefault(); 사용 → <button>이 <form> 안에 있을 때 submit 방지
+                e.preventDefault();
                 filterBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+                // currentFilter 라는 전역 변수에 클릭한 버튼의 data-filter 값을 저장
+                currentFilter = btn.dataset.filter;
+
+                // 현재 검색어로 다시검색
+                if (searchInput.value.trim()){
+                    performSearch(searchInput.value.trim());
+                }
             });
         });
 
+        // 필터 버튼 초기화
+        filterBtns.forEach(btn => btn.classList.remove('active'));
+        const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+        if (allBtn) {
+            allBtn.classList.add('active');
+            currentFilter = 'all';
+        }
+
+        
         // 모달 오픈
         searchModalOpen.addEventListener('click', () => {
             modal.style.display="block";
+            searchInput.focus();
         });
 
         // 모달 닫기
@@ -1151,15 +1233,197 @@ textarea {
             }
         });
 
-        // 검색기능
-        searchInput.addEventListener('click',()=>{
-            const keyword = searchInput.value.toLowerCase();
-            const filtered = posts.filter(p => p.title.toLoserCase().includes(keyword));
 
-            // 결과 렌더링
-            searchInput.innerHtml = filtered.length
-            ? filtered.map(p => `<div><a href="/posts/${p.id}">${p.title}</a></div>`).join('')
-                : '<p>검색 결과가 없습니다.</p>';
+        // 검색 결과 렌더링 함수
+        function renderGroups() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            if (!searchTerm) {
+                groupsContainer.innerHTML = '';
+                searchNotice.style.display = 'block';
+                return;
+            }
+
+            searchNotice.style.display = 'none';
+            groupsContainer.innerHTML = '';
+
+            const renderGroupType = (groupsObj, type) => {
+                Object.entries(groupsObj).forEach(([groupName, members]) => {
+                    // 필터 적용
+                    if (currentFilter !== 'all' && currentFilter !== type) return;
+
+                    const groupMatches = groupName.toLowerCase().includes(searchTerm);
+                    const memberMatches = members.some(member => member.toLowerCase().includes(searchTerm));
+
+                    if (groupMatches || memberMatches) {
+                        const groupCard = document.createElement('div');
+                        groupCard.className = 'group-card';
+
+                        // 검색어에 매치되는 멤버만 필터링
+                        const filteredMembers = members.filter(member => 
+                            member.toLowerCase().includes(searchTerm) || groupMatches
+                        );
+
+                        groupCard.innerHTML = `
+                            <div class="group-header">
+                                <div class="group-name">${groupName}</div>
+                                <div class="group-type ${type === 'boy' ? 'boy-group' : 'girl-group'}">
+                                    ${type === 'boy' ? '보이그룹' : '걸그룹'}
+                                </div>
+                            </div>
+                            <div class="members-grid">
+                                ${filteredMembers.map(member => {
+                                    const isSelected = selectedMembers.has(`${groupName}-${member}`);
+                                    const isDisabled = !isSelected && selectedMembers.size >= 1;
+                                    return `
+                                        <button type="button" class="member-toggle ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                                                data-group="${groupName}" data-member="${member}">
+                                            ${member}
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
+
+                        groupsContainer.appendChild(groupCard);
+                    }
+                });
+            };
+
+            renderGroupType(groups.boyGroups, 'boy');
+            renderGroupType(groups.girlGroups, 'girl');
+        }
+
+        // 선택된 멤버 표시 업데이트
+        function updateSelectedDisplay() {
+            const completeBtn = document.getElementById('completeBtn');
+            
+            if (selectedMembers.size === 0) {
+                completeBtn.disabled = true;
+            } else {
+                completeBtn.disabled = false;
+            }
+        }
+
+        // 멤버 선택 완료 함수
+        function completeMemberSelection() {
+            if (selectedMembers.size === 0) {
+                return;
+            }
+
+            // hidden input 생성
+            hiddenInputsContainer.innerHTML = '';
+            
+            selectedMembers.forEach(item => {
+                const [group, member] = item.split('-');
+                
+                const groupInput = document.createElement('input');
+                groupInput.type = 'hidden';
+                groupInput.name = 'group_name';
+                groupInput.value = group;
+                
+                const memberInput = document.createElement('input');
+                memberInput.type = 'hidden';
+                memberInput.name = 'member_name';
+                memberInput.value = member;
+                
+                hiddenInputsContainer.appendChild(groupInput);
+                hiddenInputsContainer.appendChild(memberInput);
+            });
+
+            // 선택된 내용을 메인 페이지에 표시
+            updateMainPageDisplay();
+            
+            // 모달 닫기
+            modal.style.display = 'none';
+        }
+
+        // 메인 페이지에 선택된 내용 표시
+        function updateMainPageDisplay() {
+            const searchNotice = document.querySelector('#searchNotice');
+            
+            if (selectedMembers.size > 0) {
+                const selectedList = Array.from(selectedMembers).map(item => {
+                    const [group, member] = item.split('-');
+                    return `${group} - ${member}`;
+                }).join(', ');
+                
+                searchNotice.innerHTML = `
+                    <span style="color: #667eea; font-weight: 600;">${selectedList}</span>
+                `;
+            }
+        }
+
+        // 검색 입력 이벤트
+        searchInput.addEventListener('input', renderGroups);
+
+        // 멤버 선택/해제 이벤트
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('member-toggle') && !e.target.classList.contains('disabled')) {
+                const group = e.target.dataset.group;
+                const member = e.target.dataset.member;
+                const key = `${group}-${member}`;
+
+                if (selectedMembers.has(key)) {
+                    selectedMembers.delete(key);
+                    e.target.classList.remove('selected');
+                } else {
+                    if (selectedMembers.size < 2) {
+                        selectedMembers.add(key);
+                        e.target.classList.add('selected');
+                    } else {
+                        alert('최대 2명까지만 선택할 수 있습니다.');
+                        return;
+                    }
+                }
+
+                updateSelectedDisplay();
+                renderGroups(); // 선택 상태 반영을 위해 다시 렌더링
+            }
+        });
+
+        // 완료 버튼 클릭 이벤트
+        completeBtn.addEventListener('click', completeMemberSelection);
+
+        // 초기 상태 설정
+        renderGroups();
+        updateSelectedDisplay();
+
+
+        // 폼제출 검증
+        document.getElementById('uploadForm').addEventListener('submit',function(e){
+            const locationType = document.getElementById('dbLocation').value;
+
+            if(!locationType){
+                e.preventDefault();
+                alert("위치 선택 방법을 선택해주세요!");
+                return false;
+            }
+            if(locationType === 'current' && (!selectedLat || !selectedLng)) {
+                e.preventDefault();
+                alert('지도에서 거래장소를 선택해주세요!');
+                return false;
+            }
+
+            const tradeType = document.getElementById('tradeType').value;
+            if (!tradeType){
+                e.preventDefault();
+                alert('거래 유형을 선택해주세요!');
+                return false;
+            }
+
+            if (tradeType === 'sale' && !document.getElementById('price').value){
+                e.preventDefault();
+                alert('판매가격을 입력해주세요!');
+                return false;
+            }
+
+            const photoState = document.getElementById('photo_state');
+            if(!photoState){
+                e.preventDefault();
+                alert('포토카드 상태를 선택해주세요!');
+                return false;
+            }
         });
     });
 
