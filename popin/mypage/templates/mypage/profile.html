@@ -8,7 +8,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="/static/css/mypage.css">
-        <title>마이페이지</title>
+        <title>{%block title%}마이페이지{%endblock%}</title>
     </head>
     
     <body>
@@ -357,8 +357,8 @@
                 <h2 style="margin-bottom: 1.5rem;">커뮤니티 작성글</h2>
                 <div class="community-tabs">
                     <button class="community-tab active" onclick="showCommunityTab('WithU')">동행</button>
-                    <button class="community-tab " onclick="showCommunityTab('share')">나눔</button>
-                    <button class="community-tab " onclick="showCommunityTab('InsteadBuying')">대리구매</button>
+                    <button class="community-tab " onclick="showCommunityTab('Sharing')">나눔</button>
+                    <button class="community-tab " onclick="showCommunityTab('Insteadbuy')">대리구매</button>
                 </div>
                 <!--동행글-->
                 <div class="section-content">
@@ -379,7 +379,7 @@
                 </div>
                 <!--나눔글-->
                 <div class="section-content">
-                    <div id="share" class="community-content">
+                    <div id="Sharing" class="community-content">
                         <div class="item">
                             <h3>포토카드 나눔</h3>
                             <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
@@ -396,7 +396,7 @@
                 </div>
                 <!--대리구매-->
                 <div class="section-content">
-                    <div id="InsteadBuying" class="community-content">
+                    <div id="Insteadbuy" class="community-content">
                         <div class="item">
                             <h3>앨범 대리구매</h3>
                             <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
@@ -491,6 +491,12 @@
                 modalCloseButton.addEventListener('click',() => {
                     modal.classList.add('hidden');
                 });
+                // 바깥 클릭 시 닫기
+                window.addEventListener('click', e => {
+                    if (e.target === modal) {
+                     modal.classList.add('hidden');
+                    }
+                });
             });
         </script>
 
@@ -567,8 +573,8 @@
         function showCommunityTab(type){
             const communityTabs = document.querySelectorAll('.community-tab');
             const WithU = document.getElementById('WithU');
-            const share = document.getElementById('share');
-            const InsteadBuying = document.getElementById('InsteadBuying');
+            const Sharing = document.getElementById('Sharing');
+            const Insteadbuy = document.getElementById('Insteadbuy');
 
             communityTabs.forEach(tab=>{
                 tab.classList.remove('active');
@@ -577,20 +583,20 @@
 
             if (type === "WithU"){
                 WithU.style.display="block";
-                share.style.display="none";
-                InsteadBuying.style.display="none";
-            } else if(type === "share"){
-                share.style.display="block";
+                Sharing.style.display="none";
+                Insteadbuy.style.display="none";
+            } else if(type === "Sharing"){
+                Sharing.style.display="block";
                 WithU.style.display = "none";
-                InsteadBuying.style.display = "none";
-            } else if(type === "InsteadBuying"){
-                InsteadBuying.style.display="block";
+                Insteadbuy.style.display = "none";
+            } else if(type === "Insteadbuy"){
+                Insteadbuy.style.display="block";
                 WithU.style.display = "none";
-                share.style.display="none";
+                Sharing.style.display="none";
             }
         }
-        share.style.display='none';
-        InsteadBuying.style.display='none';
+        Sharing.style.display='none';
+        Insteadbuy.style.display='none';
         
 
         // 포토카드 데이터 (실제로는 서버에서 가져올 데이터)
