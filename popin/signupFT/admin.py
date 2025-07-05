@@ -1,14 +1,8 @@
 from django.contrib import admin
-from .models import User, UserRelation
+from .models import User,UserRelation # 정의한 모델들을 임포트합니다.
 
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'username', 'nickname', 'email', 'state', 'created_at')
-    list_filter = ('state', 'gender', 'created_at')
-    search_fields = ('user_id', 'username', 'nickname', 'email')
-    ordering = ('-created_at',)
+# User 모델을 관리자 페이지에 등록
+admin.site.register(User)
 
-@admin.register(UserRelation)
-class UserRelationAdmin(admin.ModelAdmin):
-    list_display = ('from_user', 'to_user', 'relation_type')
-    search_fields = ('from_user__nickname', 'to_user__nickname')
+# UserRelation 모델을 관리자 페이지에 등록
+admin.site.register(UserRelation)

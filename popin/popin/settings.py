@@ -162,4 +162,3 @@ EMAIL_HOST_USER = ' popinproject123@gmail.com'
 EMAIL_HOST_PASSWORD = 'puyz isul hqyi igdf'  # 앱 비밀번호 발급받아야됨..
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-AUTH_USER_MODEL = 'signupFT.User'

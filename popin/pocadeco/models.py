@@ -1,9 +1,9 @@
 from django.db import models
-from django.conf import settings
+from signupFT.models import User 
 
 # 꾸민 포카 한 건
 class DecoratedPhotocard(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="decorated_photocards")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="decorated_photocards")
     title = models.CharField("포카 이름", max_length=100)
     base_image = models.ImageField("원본 포카", upload_to="decorated/base/")
     result_image = models.ImageField("꾸민 이미지 결과", upload_to="decorated/result/", blank=True, null=True)

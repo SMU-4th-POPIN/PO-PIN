@@ -1,7 +1,6 @@
 from django.db import models
-from django.conf import settings
 from django.utils import timezone
-
+from signupFT.models import User 
 
 class SharingTag(models.Model):
     name = models.CharField("태그명", max_length=30, unique=True)
@@ -34,12 +33,8 @@ class SharingPost(models.Model):
 
     tags = models.ManyToManyField(SharingTag, blank=True, related_name="sharing_posts", verbose_name="태그")
 
-    author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="sharing_posts",
-        verbose_name="작성자"
-    )
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sharing_posts", verbose_name="작성자")
+
 
     created_at = models.DateTimeField("작성일", auto_now_add=True)
     views = models.PositiveIntegerField("조회수", default=0)

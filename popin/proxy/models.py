@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-
+from signupFT.models import User
 
 # --- 카테고리, 상태 Choice ---
 class ProxyCategory(models.TextChoices):
@@ -35,14 +35,15 @@ class ProxyPost(models.Model):
     location = models.CharField("장소", max_length=100)
 
     max_people = models.PositiveIntegerField("최대 모집 인원")
-    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="joined_proxies", verbose_name="참여자 목록")
+    participants = models.ManyToManyField(User, blank=True, related_name="joined_proxies", verbose_name="참여자 목록")
+    
 
     reward = models.CharField("수고비", max_length=100)  # 예: '개당 수고비 0.1'
     description = models.TextField("본문")
 
     tags = models.ManyToManyField(ProxyTag, blank=True, related_name="proxy_posts", verbose_name="태그")
-
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="proxy_posts", verbose_name="작성자")
+    author = models.ForeignKey(User, on_delete=models.CASCADE,related_name="proxy_posts", verbose_name="작성자")
+   
     created_at = models.DateTimeField("작성일", auto_now_add=True)
 
     views = models.PositiveIntegerField("조회수", default=0)
@@ -64,7 +65,7 @@ class ProxyPost(models.Model):
 # --- 댓글 모델 ---
 class ProxyComment(models.Model):
     post = models.ForeignKey(ProxyPost, on_delete=models.CASCADE, related_name='comments', verbose_name="게시글")
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="작성자")
+    uthor = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="작성자")
     content = models.TextField("댓글 내용")
     created_at = models.DateTimeField("작성일", auto_now_add=True)
 

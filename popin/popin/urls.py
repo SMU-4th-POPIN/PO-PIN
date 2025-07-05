@@ -16,7 +16,7 @@ urlpatterns = [
     path('home/', include('home.urls')),
     path('community/', include('community.urls')),
     path('pocadeco/', include('pocadeco.urls')),
-    path("api/idols/", include("idols.urls")),
+    #path("api/idols/", include("idols.urls")),
 ]
 
 
