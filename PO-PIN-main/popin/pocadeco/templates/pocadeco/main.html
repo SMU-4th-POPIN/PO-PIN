@@ -1,0 +1,962 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>포카꾸미기 - PO-PIN</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"
+    />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/pocadeco/main.css' %}" />
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">포토카드 꾸미기</h1>
+                    <button class="decolist" onclick="location.href='/pocadeco/decolist/'">💬 포꾸 게시판</button>
+            </div>
+
+            <div class="editor-layout">
+                <div class="editor-main">
+                    <div class="canvas-container">
+                        <div class="canvas-area" id="canvasArea">
+                            <div class="canvas-placeholder" id="placeholder">
+                                <i>📷</i>
+                                <div>포토카드를 업로드하세요</div>
+                                <small>클릭하거나 드래그해서 파일을 선택하세요</small>
+                            </div>
+                        </div>
+                        <input type="file" id="fileInput" accept="image/*" />
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" onclick="resetEditor()">초기화</button>
+                        <button class="btn btn-primary" onclick="saveDecoration()">저장하기</button>
+                        <button class="btn btn-success" onclick="downloadImage()">다운로드</button>
+                    </div>
+
+                    <div class="gallery-section"> {# 기존 style="margin-top: 40px;" 대신 새로운 클래스 추가 #}
+                        <div class="gallery-header">
+                            <h2>내 포꾸 갤러리</h2>
+                            <button class="add-photo-btn" onclick="addToGallery()">
+                                <span>📷</span> 사진 추가
+                            </button>
+                        </div>
+                        <input type="file" id="galleryInput" accept="image/*" />
+                        <div class="gallery-grid" id="myGallery">
+                            {%for mydeco in mydecolist%}
+                            <div class="gallery-item" data-id="{{ mydeco.id }}">
+                                <img src="/media/{{mydeco.result_image}}" alt="New Jeans Hanni" />
+                                <div class="gallery-info">
+                                    <div class="gallery-title">{{mydeco.title}}</div>
+                                    <div class="gallery-date">{{mydeco.date}}</div>
+                                </div>
+                                <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
+                            </div>
+                            {%endfor%}
+                        </div>
+                    </div>
+                </div>
+
+              <div class="editor-sidebar panel"> 
+                <div id="searchNotice" style="display: none;"></div>
+
+<form id="memberForm" method="POST">
+  {% csrf_token %}
+  <div id="hiddenInputsContainer"></div>
+</form>
+    <div class="tool-section">
+        <h3>멤버 선택</h3>
+        <div id="selectedMembers">
+        <div id="selectedList"></div>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
+            <div class="filter-buttons">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">전체</button>
+                    <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
+                    <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
+             </div>
+            </div>
+        </div>
+        
+        <div class="groups-container" id="groupsContainer"></div>
+        <div id="hiddenInputsContainer"></div>
+    </div>
+    <div class="tool-section">
+        <h3>프레임</h3>
+        <div class="frame-grid">
+            <div class="frame-option" data-frame="vintage" onclick="selectFrame('vintage')">
+                <div class="frame-preview vintage"></div>
+            </div>
+            <div class="frame-option" data-frame="polaroid" onclick="selectFrame('polaroid')">
+                <div class="frame-preview polaroid"></div>
+            </div>
+            <div class="frame-option" data-frame="flower" onclick="selectFrame('flower')">
+                <div class="flower-decoration">🌸</div>
+            </div>
+            <div class="frame-option" data-frame="rainbow" onclick="selectFrame('rainbow')">
+                <div class="rainbow-decoration">🌈</div>
+            </div>
+            <div class="frame-option" data-frame="heart" onclick="selectFrame('heart')">
+                <div class="heart-decoration">💖</div>
+            </div>
+            <div class="frame-option" data-frame="gold" onclick="selectFrame('gold')">
+                <div class="frame-preview gold"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tool-section">
+        <h3>텍스트 입력</h3>
+        <div class="text-input-group">
+            <select id="fontSelect">
+                <option value="Nanum Gothic, sans-serif">나눔고딕</option>
+                <option value="Noto Sans KR, sans-serif">본고딕</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="Verdana, sans-serif">Verdana</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="Times New Roman, serif">Times New Roman</option>
+            </select>
+            <label for="fontSelect" style="display: none;">글꼴 선택</label>
+        </div>
+        <div class="text-input-group">
+            <input type="text" id="textInput" placeholder="텍스트를 입력하세요" />
+        </div>
+        <div class="add-text-button-container">
+            <button class="btn btn-primary" id="addTextBtn">텍스트 추가</button>
+        </div>
+    </div>
+
+    <div class="tool-section">
+        <h3>스티커</h3>
+        <div class="sticker-grid">
+            <div class="sticker-btn" data-sticker="💖">💖</div>
+            <div class="sticker-btn" data-sticker="⭐">⭐</div>
+            <div class="sticker-btn" data-sticker="✨">✨</div>
+            <div class="sticker-btn" data-sticker="💭">💭</div>
+            <div class="sticker-btn" data-sticker="💤">💤</div>
+            <div class="sticker-btn" data-sticker="💢">💢</div>
+            <div class="sticker-btn" data-sticker="💫">💫</div>
+            <div class="sticker-btn" data-sticker="🐹">🐹</div>
+        </div>
+    </div>
+</div>
+<script>
+    let selectedMember = null;
+let currentFilter = 'all';
+let activeDraggable = null;
+let isSelectionLocked = false; // 선택 고정 상태 추가
+
+// DOM 로드 완료 시 이벤트 리스너 등록
+document.addEventListener('DOMContentLoaded', function() {
+    // 파일 업로드 이벤트
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput) {
+        fileInput.addEventListener('change', handleFileSelect);
+    }
+
+    // 갤러리 추가 이벤트
+    const galleryInput = document.getElementById('galleryInput');
+    if (galleryInput) {
+        galleryInput.addEventListener('change', handleGalleryAdd);
+    }
+
+    // 텍스트 추가 버튼 이벤트
+    const addTextBtn = document.getElementById('addTextBtn');
+    if (addTextBtn) {
+        addTextBtn.addEventListener('click', addText);
+    }
+
+    // 스티커 버튼 이벤트
+    document.querySelectorAll('.sticker-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            addSticker(btn.dataset.sticker);
+        });
+    });
+
+    // 프레임 옵션 이벤트
+    document.querySelectorAll('.frame-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const frame = this.dataset.frame;
+            if (frame) {
+                applyFrame(frame);
+            }
+        });
+    });
+
+    // 플레이스홀더 클릭 이벤트
+    const placeholder = document.getElementById('placeholder');
+    if (placeholder) {
+        placeholder.addEventListener('click', uploadPhoto);
+    }
+
+    // 캔버스 드래그 방지
+    const canvas = document.getElementById('canvasArea');
+    if (canvas) {
+        canvas.addEventListener('dragstart', e => e.preventDefault());
+    }
+
+    // 멤버 검색 이벤트
+    const idolSearch = document.getElementById("idolSearch");
+    if (idolSearch) {
+        idolSearch.addEventListener("input", handleSearch);
+    }
+
+    // 필터 버튼 이벤트
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', handleFilterClick);
+    });
+
+    // 멤버 선택 및 제거 이벤트 (이벤트 위임)
+    document.addEventListener('click', handleMemberActions);
+
+    // 초기 상태 설정
+    updateSelectedDisplay();
+    updateSelectionUI();
+});
+
+// 파일 업로드 함수
+function uploadPhoto() {
+    const canvas = document.getElementById('canvasArea');
+    const existingPhoto = canvas.querySelector('.photo-preview');
+    if (existingPhoto) {
+        return;
+    }
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput) {
+        fileInput.click();
+    }
+}
+
+// 파일 선택 처리
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const canvas = document.getElementById('canvasArea');
+            if (canvas) {
+                canvas.innerHTML = '';
+                canvas.style.border = '3px dashed #ddd';
+                
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'photo-preview';
+                img.id = 'uploadedPhoto';
+                canvas.appendChild(img);
+                
+                // 프레임 선택 초기화
+                document.querySelectorAll('.frame-option').forEach(option => {
+                    option.classList.remove('active');
+                });
+
+                // 텍스트 입력 초기화
+                const textInput = document.getElementById('textInput');
+                if (textInput) {
+                    textInput.value = '';
+                }
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// 에디터 초기화
+function resetEditor() {
+    const canvas = document.getElementById('canvasArea');
+    if (canvas) {
+        canvas.innerHTML = `
+            <div class="canvas-placeholder" id="placeholder">
+                <i>📷</i>
+                <div>포토카드를 업로드하세요</div>
+                <small>클릭하거나 드래그해서 파일을 선택하세요</small>
+            </div>
+        `;
+        canvas.style.border = '3px dashed #ddd';
+    }
+
+    // 프레임 선택 초기화
+    document.querySelectorAll('.frame-option').forEach(option => {
+        option.classList.remove('active');
+    });
+
+    // 텍스트 입력 초기화
+    const textInput = document.getElementById('textInput');
+    if (textInput) {
+        textInput.value = '';
+    }
+
+    // 플레이스홀더 이벤트 재등록
+    const placeholder = document.getElementById('placeholder');
+    if (placeholder) {
+        placeholder.addEventListener('click', uploadPhoto);
+    }
+}
+
+// 꾸미기 저장
+function saveDecoration() {
+    const canvasEl = document.getElementById('canvasArea');
+    if (!canvasEl) return;
+
+    const title = prompt("포꾸 이름을 입력해주세요:");
+    if (!title) return;
+
+    // html2canvas가 로드되어 있는지 확인
+    if (typeof html2canvas === 'undefined') {
+        alert('html2canvas 라이브러리가 로드되지 않았습니다.');
+        return;
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    html2canvas(canvasEl, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        scale: 2,
+    }).then(canvas => {
+        const dataUrl = canvas.toDataURL("image/png");
+        const gallery = document.getElementById('myGallery');
+
+        // 서버에 데이터 전송
+        fetch('/pocadeco/save_decopoca/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({
+                title: title,
+                image: dataUrl,
+                group: "아일릿", // 임시 그룹 멤버 하드코딩 (수정해주세요!!)
+                member: "모카",
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const gallery = document.getElementById('myGallery');
+                if (gallery) {
+                    const now = new Date().toISOString().split('T')[0];
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.setAttribute('data-id', data.id);  // 여기서 서버 응답 id 사용
+
+                    item.innerHTML = `
+                        <img src="${data.result_image}" alt="${data.title}" />
+                        <div class="gallery-info">
+                            <div class="gallery-title" ondblclick="makeTitleEditable(this.parentElement)">${data.title}</div>
+                            <div class="gallery-date">${now}</div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
+                    `;
+                    gallery.prepend(item);
+                }
+
+                console.log('서버에 저장되었습니다.');
+            } else {
+                alert('서버 저장 실패: ' + data.reason);
+            }
+        })
+        .catch(error => {
+            console.error('서버 저장 중 오류:', error);
+            alert('서버 저장 중 오류가 발생했습니다.');
+        });
+
+    }).catch(error => {
+        console.error('저장 중 오류가 발생했습니다:', error);
+        alert('저장 중 오류가 발생했습니다.');
+    });
+}
+
+// 이미지 다운로드
+function downloadImage() {
+    const canvasEl = document.getElementById('canvasArea');
+    if (!canvasEl) return;
+
+    // html2canvas가 로드되어 있는지 확인
+    if (typeof html2canvas === 'undefined') {
+        alert('html2canvas 라이브러리가 로드되지 않았습니다.');
+        return;
+    }
+
+    html2canvas(canvasEl, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        scale: 2,
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'photocard-' + new Date().getTime() + '.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    }).catch(error => {
+        console.error('다운로드 중 오류가 발생했습니다:', error);
+        alert('다운로드 중 오류가 발생했습니다.');
+    });
+}
+
+// 갤러리에 사진 추가
+function addToGallery() {
+    const galleryInput = document.getElementById('galleryInput');
+    if (galleryInput) {
+        galleryInput.click();
+    }
+}
+
+// 갤러리 추가 처리
+function handleGalleryAdd(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const gallery = document.getElementById('myGallery');
+        if (gallery) {
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+            const now = new Date().toISOString().split('T')[0];
+
+            item.innerHTML = `
+                <img src="${e.target.result}" alt="추가된 이미지" />
+                <div class="gallery-info">
+                    <div class="gallery-title" ondblclick="makeTitleEditable(this.parentElement)">추가된 이미지</div>
+                    <div class="gallery-date">${now}</div>
+                </div>
+                <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
+            `;
+            gallery.prepend(item);
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+// 갤러리 아이템 삭제
+function deleteGalleryItem(btn) {
+    const itemEl = btn.closest('.gallery-item');  // 가장 가까운 gallery-item div
+    const decoid = itemEl.getAttribute('data-id');
+
+    if (!decoid) {
+        alert('삭제할 ID를 찾을 수 없습니다.');
+        return;
+    }
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    if (confirm("이 포토카드를 갤러리에서 삭제하시겠습니까?")) {
+        // 서버에 데이터 전송
+        fetch('/pocadeco/delete_decopoca/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({ id: decoid })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log(data.message);
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('서버 통신 중 오류:', error);
+            alert('서버 통신 중 오류가 발생했습니다.');
+        });
+
+        btn.parentElement.remove();
+    }
+}
+
+// 제목 편집 가능하게 만들기
+function makeTitleEditable(element) {
+    const title = element.querySelector('.gallery-title');
+    if (title) {
+        title.setAttribute('contenteditable', true);
+        title.focus();
+        title.onblur = () => {
+            title.removeAttribute('contenteditable');
+        };
+        title.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                title.blur();
+            }
+        };
+    }
+}
+
+// 프레임 적용
+function applyFrame(styleName) {
+    const canvas = document.getElementById('canvasArea');
+    const img = canvas.querySelector('.photo-preview');
+    
+    if (!img) {
+        alert('사진을 먼저 업로드해주세요!');
+        return;
+    }
+
+    // 기존 프레임 제거
+    const existingFrame = canvas.querySelector('.frame-effect');
+    if (existingFrame) {
+        existingFrame.remove();
+    }
+
+    // 새 프레임 추가
+    const frame = document.createElement('div');
+    frame.className = `frame-effect ${styleName}`;
+    canvas.appendChild(frame);
+
+    // 프레임 선택 상태 업데이트
+    document.querySelectorAll('.frame-option').forEach(option => {
+        option.classList.remove('active');
+    });
+    
+    const selectedFrame = document.querySelector(`[data-frame="${styleName}"]`);
+    if (selectedFrame) {
+        selectedFrame.classList.add('active');
+    }
+}
+
+// 프레임 선택 (별도 함수로 분리)
+function selectFrame(styleName) {
+    applyFrame(styleName);
+}
+
+// 드래그 및 리사이즈 기능
+function makeDraggableAndResizable(element) {
+    const canvas = document.getElementById('canvasArea');
+    const resizeHandle = element.querySelector('.sticker-resize-handle');
+
+    let isDragging = false;
+    let isResizing = false;
+    let offsetX = 0, offsetY = 0;
+    let initialWidth, initialHeight, initialX, initialY, initialFontSize;
+
+    element.onmousedown = function(e) {
+        e.stopPropagation();
+        activeDraggable = element;
+
+        if (e.target === resizeHandle) {
+            isResizing = true;
+            initialX = e.clientX;
+            initialY = e.clientY;
+            initialWidth = element.offsetWidth;
+            initialHeight = element.offsetHeight;
+            initialFontSize = parseFloat(window.getComputedStyle(element).fontSize);
+            element.style.cursor = 'nwse-resize';
+            document.body.style.cursor = 'nwse-resize';
+        } else {
+            isDragging = true;
+            const rect = element.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            element.style.cursor = 'grabbing';
+            document.body.style.cursor = 'grabbing';
+        }
+        element.style.zIndex = 1000;
+    };
+
+    element.onmouseover = function() {
+        if (!isDragging && !isResizing) {
+            element.style.cursor = 'grab';
+        }
+    };
+
+    element.onmouseout = function() {
+        if (!isDragging && !isResizing) {
+            element.style.cursor = '';
+        }
+    };
+
+    element.ondblclick = function(e) {
+        e.stopPropagation();
+        if (confirm("삭제하시겠습니까?")) {
+            element.remove();
+        }
+    };
+
+    // 전역 마우스 이벤트
+    document.onmousemove = function(e) {
+        if (!activeDraggable) return;
+
+        const canvasRect = canvas.getBoundingClientRect();
+        
+        if (isDragging) {
+            let newLeft = e.clientX - canvasRect.left - offsetX;
+            let newTop = e.clientY - canvasRect.top - offsetY;
+
+            newLeft = Math.max(0, Math.min(newLeft, canvasRect.width - element.offsetWidth));
+            newTop = Math.max(0, Math.min(newTop, canvasRect.height - element.offsetHeight));
+
+            element.style.left = newLeft + 'px';
+            element.style.top = newTop + 'px';
+        } else if (isResizing) {
+            const deltaX = e.clientX - initialX;
+            const deltaY = e.clientY - initialY;
+
+            let newFontSize;
+            if (initialWidth > 0 && initialHeight > 0) {
+                const ratioX = (initialWidth + deltaX) / initialWidth;
+                const ratioY = (initialHeight + deltaY) / initialHeight;
+                newFontSize = initialFontSize * Math.max(ratioX, ratioY);
+            } else {
+                newFontSize = initialFontSize + Math.max(deltaX, deltaY);
+            }
+
+            newFontSize = Math.max(12, newFontSize);
+            const maxAllowedFontSize = Math.min(canvasRect.width, canvasRect.height) * 0.3;
+            newFontSize = Math.min(newFontSize, maxAllowedFontSize);
+
+            element.style.fontSize = newFontSize + 'px';
+        }
+    };
+
+    document.onmouseup = function() {
+        isDragging = false;
+        isResizing = false;
+        if (activeDraggable) {
+            activeDraggable.style.zIndex = 50;
+            activeDraggable.style.cursor = 'grab';
+        }
+        document.body.style.cursor = 'default';
+        activeDraggable = null;
+    };
+}
+
+// 스티커 추가
+function addSticker(emoji) {
+    const canvas = document.getElementById('canvasArea');
+    const img = canvas.querySelector('.photo-preview');
+    
+    if (!img) {
+        alert('사진을 먼저 업로드해주세요!');
+        return;
+    }
+
+    const sticker = document.createElement('div');
+    sticker.className = 'sticker-overlay';
+    sticker.textContent = emoji;
+
+    const canvasRect = canvas.getBoundingClientRect();
+    sticker.style.left = `${(canvasRect.width / 2) - 15}px`;
+    sticker.style.top = `${(canvasRect.height / 2) - 15}px`;
+    sticker.style.position = 'absolute';
+
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'sticker-resize-handle';
+    sticker.appendChild(resizeHandle);
+
+    canvas.appendChild(sticker);
+    makeDraggableAndResizable(sticker);
+
+    document.body.style.cursor = 'default';
+}
+
+// 텍스트 추가
+function addText() {
+    const textInput = document.getElementById('textInput');
+    const textContent = textInput.value.trim();
+
+    if (!textContent) {
+        alert('입력할 텍스트를 입력해주세요.');
+        return;
+    }
+
+    const canvas = document.getElementById('canvasArea');
+    const img = canvas.querySelector('.photo-preview');
+    
+    if (!img) {
+        alert('사진을 먼저 업로드해주세요!');
+        return;
+    }
+
+    const textElement = document.createElement('div');
+    textElement.className = 'text-overlay';
+    textElement.textContent = textContent;
+
+    const fontSelect = document.getElementById('fontSelect');
+    const selectedFont = fontSelect ? fontSelect.value : 'Arial, sans-serif';
+    textElement.style.fontFamily = selectedFont;
+
+    const canvasRect = canvas.getBoundingClientRect();
+    textElement.style.left = `${(canvasRect.width / 2) - 50}px`;
+    textElement.style.top = `${(canvasRect.height / 2) - 15}px`;
+    textElement.style.position = 'absolute';
+    textElement.style.color = 'black';
+
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'sticker-resize-handle';
+    textElement.appendChild(resizeHandle);
+
+    canvas.appendChild(textElement);
+    makeDraggableAndResizable(textElement);
+
+    textInput.value = '';
+    document.body.style.cursor = 'default';
+}
+
+// 멤버 검색 처리
+function handleSearch() {
+    const query = this.value.trim();
+    const container = document.getElementById("groupsContainer");
+    const searchNotice = document.getElementById("searchNotice");
+
+    if (!query) {
+        if (container) container.innerHTML = '';
+        if (searchNotice) searchNotice.style.display = 'block';
+        return;
+    }
+
+    if (searchNotice) searchNotice.style.display = 'none';
+
+    // 목 데이터 (실제로는 서버 API 호출)
+    const mockData = {
+        members: [
+            { name: "정국", group__name: "BTS", group__gender: "M" },
+            { name: "지민", group__name: "BTS", group__gender: "M" },
+            { name: "뷔", group__name: "BTS", group__gender: "M" },
+            { name: "카리나", group__name: "aespa", group__gender: "F" },
+            { name: "윈터", group__name: "aespa", group__gender: "F" },
+            { name: "지젤", group__name: "aespa", group__gender: "F" },
+            { name: "닝닝", group__name: "aespa", group__gender: "F" },
+            { name: "민지", group__name: "NewJeans", group__gender: "F" },
+            { name: "하니", group__name: "NewJeans", group__gender: "F" },
+            { name: "다니엘", group__name: "NewJeans", group__gender: "F" },
+            { name: "해린", group__name: "NewJeans", group__gender: "F" },
+            { name: "혜인", group__name: "NewJeans", group__gender: "F" },
+            { name: "마크", group__name: "NCT DREAM", group__gender: "M" },
+            { name: "런쥔", group__name: "NCT DREAM", group__gender: "M" },
+            { name: "제노", group__name: "NCT DREAM", group__gender: "M" },
+            { name: "해찬", group__name: "NCT DREAM", group__gender: "M" },
+            { name: "재민", group__name: "NCT DREAM", group__gender: "M" },
+            { name: "천러", group__name: "NCT DREAM", group__gender: "M" },
+            { name: "지성", group__name: "NCT DREAM", group__gender: "M" }
+        ]
+    };
+
+    // 검색 필터링
+    const filteredMembers = mockData.members.filter(member => {
+        const nameMatch = member.name.toLowerCase().includes(query.toLowerCase()) || 
+                        member.group__name.toLowerCase().includes(query.toLowerCase());
+        
+        if (currentFilter === 'all') return nameMatch;
+        if (currentFilter === 'boy') return nameMatch && member.group__gender === 'M';
+        if (currentFilter === 'girl') return nameMatch && member.group__gender === 'F';
+        return nameMatch;
+    });
+
+    displaySearchResults(filteredMembers, container);
+}
+
+// 검색 결과 표시
+function displaySearchResults(members, container) {
+    if (!container) return;
+    
+    container.innerHTML = "";
+
+    const groups = {};
+    members.forEach(member => {
+        const groupName = member.group__name;
+        if (!groups[groupName]) {
+            groups[groupName] = {
+                gender: member.group__gender,
+                members: []
+            };
+        }
+        groups[groupName].members.push(member);
+    });
+
+    Object.entries(groups).forEach(([groupName, info]) => {
+        addGroupCard(groupName, info.gender, info.members, container);
+    });
+}
+
+// 그룹 카드 추가
+function addGroupCard(name, gender, members, container) {
+    const groupCard = document.createElement("div");
+    groupCard.className = "group-card";
+    const typeClass = gender === "M" ? "boy-group" : "girl-group";
+
+    groupCard.innerHTML = `
+        <div class="group-header">
+            <div class="group-name">${name}</div>
+            <div class="group-type ${typeClass}">
+                ${gender === "M" ? "보이그룹" : "걸그룹"}
+            </div>
+        </div>
+        <div class="members-grid">
+            ${members.map(member => {
+                const memberKey = `${name}-${member.name}`;
+                const isSelected = selectedMember === memberKey;
+                return `
+                    <button type="button" class="member-toggle ${isSelected ? 'selected' : ''}"
+                            data-group="${name}" data-member="${member.name}">
+                        ${member.name}
+                    </button>
+                `;
+            }).join('')}
+        </div>
+    `;
+    container.appendChild(groupCard);
+}
+
+// 필터 버튼 클릭 처리
+function handleFilterClick(e) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentFilter = e.target.dataset.filter;
+    
+    // 검색 재실행
+    const searchInput = document.getElementById("idolSearch");
+    if (searchInput && searchInput.value.trim()) {
+        searchInput.dispatchEvent(new Event("input"));
+    }
+}
+
+// 멤버 액션 처리 (선택/해제, 제거)
+function handleMemberActions(e) {
+    // 멤버 선택/해제
+    if (e.target.classList.contains('member-toggle')) {
+        const group = e.target.dataset.group;
+        const member = e.target.dataset.member;
+        const key = `${group}-${member}`;
+
+        // 기존 선택 해제
+        document.querySelectorAll('.member-toggle').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+
+        // 새로운 선택
+        if (selectedMember === key) {
+            // 같은 멤버를 다시 클릭하면 선택 해제
+            selectedMember = null;
+            isSelectionLocked = false;
+        } else {
+            // 다른 멤버 선택
+            selectedMember = key;
+            isSelectionLocked = true; // 멤버 선택 시 고정
+            e.target.classList.add('selected');
+        }
+
+        updateSelectedDisplay();
+        updateSelectionUI();
+    }
+
+    // 선택된 멤버 제거
+    if (e.target.classList.contains('remove-btn')) {
+        selectedMember = null;
+        isSelectionLocked = false;
+        updateSelectedDisplay();
+        updateSelectionUI();
+        updateMemberButtons();
+    }
+}
+
+// 선택 UI 업데이트 (검색창과 필터 숨기기/보이기)
+function updateSelectionUI() {
+    const searchSection = document.getElementById('idolSearch');
+    const filterSection = document.querySelector('.filter-buttons');
+    const groupsContainer = document.getElementById('groupsContainer');
+    const searchNotice = document.getElementById('searchNotice');
+
+    if (isSelectionLocked && selectedMember) {
+        // 선택이 고정된 경우 - 검색창과 필터 숨기기
+        if (searchSection) {
+            searchSection.style.display = 'none';
+        }
+        if (filterSection) {
+            filterSection.style.display = 'none';
+        }
+        if (groupsContainer) {
+            groupsContainer.style.display = 'none';
+        }
+        if (searchNotice) {
+            searchNotice.style.display = 'none';
+        }
+    } else {
+        // 선택이 해제된 경우 - 검색창과 필터 보이기
+        if (searchSection) {
+            searchSection.style.display = 'block';
+        }
+        if (filterSection) {
+            filterSection.style.display = 'flex';
+        }
+        if (groupsContainer) {
+            groupsContainer.style.display = 'block';
+        }
+        if (searchNotice) {
+            searchNotice.style.display = 'block';
+        }
+    }
+}
+
+// 선택된 멤버 표시 업데이트
+function updateSelectedDisplay() {
+    const count = document.getElementById('selectedCount');
+    const container = document.getElementById('selectedMembers');
+    const list = document.getElementById('selectedList');
+
+    if (count) count.textContent = selectedMember ? '1' : '0';
+    
+    if (container) {
+        if (!selectedMember) {
+            container.style.display = 'none';
+        } else {
+            container.style.display = 'block';
+            if (list) {
+                const [group, member] = selectedMember.split('-');
+               list.innerHTML = `
+                    <div class="selected-item">
+                        <span class="badge group-badge">${group}</span>
+                        <span class="badge member-badge">${member}</span>
+                        <button class="remove-btn">×</button>
+                    </div>
+                `;
+            }
+        }
+    }
+}
+
+// 멤버 버튼 상태 업데이트
+function updateMemberButtons() {
+    document.querySelectorAll('.member-toggle').forEach(btn => {
+        const group = btn.dataset.group;
+        const member = btn.dataset.member;
+        const key = `${group}-${member}`;
+        const isSelected = selectedMember === key;
+
+        btn.classList.toggle('selected', isSelected);
+    });
+}
+
+// 멤버 선택 초기화 (필요시 사용)
+function resetMemberSelection() {
+    selectedMember = null;
+    isSelectionLocked = false;
+    updateSelectedDisplay();
+    updateSelectionUI();
+    updateMemberButtons();
+    
+    // 검색창 초기화
+    const searchInput = document.getElementById("idolSearch");
+    if (searchInput) {
+        searchInput.value = '';
+    }
+}
+</script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+{%endblock%}
+</body>
+</html>

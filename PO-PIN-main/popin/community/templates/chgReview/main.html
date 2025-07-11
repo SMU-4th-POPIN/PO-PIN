@@ -1,0 +1,150 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/static/css/community/chgReview.css">
+  <script src="/static/js/community/chgReview.js" defer></script>
+  <title>교환/판매 후기</title>
+  <style>
+
+  </style>
+</head>
+<body>
+<form method="GET" action="{% url 'community:chgReviewmain' %}">
+  <div class="list">
+    <div class="menu">
+      <h3>거래 통계</h3>
+      <div class = "box">
+        <div class = "box1">
+          <p>📊 이번 주 거래량</p>
+          {{ weekly_count}}건
+        </div>
+        <div class = "box2">
+          <p>⭐ 평균 평점</p>
+          {{average_score}}/5.0
+        </div>
+      </div>
+      </table>
+    </div>
+    <div class="dashboard">
+      <div class="top">
+        <h3>교환/판매 후기</h3>
+      </div>
+      <div class="line"></div>
+      <div class="search-filter-container">
+        <div class="search-toggle">
+          <button class="toggle-btn active" data-type="general">일반 검색</button>
+          <button class="toggle-btn" data-type="tag">태그 검색</button>
+        </div>
+
+        <input type="text" name="q" id="generalSearch" class="search-input" placeholder="제목, 작성자·거래자 ID로 검색" value="{{ query }}">
+         <input type="text" name="tag" id="tagSearch" class="search-input" placeholder="태그 검색" value="{{ tag_query }}" style="display:none">
+
+        <select id="ratingFilter" class="filter-select">
+          <option value="">전체 평점</option>
+          <option value="5">⭐ 5</option>
+          <option value="4">⭐ 4</option>
+          <option value="3">⭐ 3</option>
+          <option value="2">⭐ 2</option>
+          <option value="1">⭐ 1</option>
+        </select>
+        
+
+        <select id="sortFilter" class="filter-select">
+          <option value="">정렬</option>
+          <option value="latest">최신순</option>
+          <option value="rating">평점순</option>
+          <option value="views">조회순</option>
+        </select>
+      </div>
+        <ul class="board-list">
+          {% for review in page_obj %}
+          <li class="board-item" data-images="{% for image in review.images.all %}{{ image.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
+            <div class="boardf">
+              <span class="artist">{{ review.artist }}</span>
+              <span class="onoff {% if review.method == '온라인' %}on{% else %}off{% endif %}">{{ review.method }}</span>
+              <span class="Tway {% if review.transaction_type == '교환' %}chg{% else %}buy{% endif %}">{{ review.transaction_type }}</span>
+            </div>
+            <div class="board-item-header">
+              <div class="title-star-wrapper">
+                <h3 class="board-title">{{ review.title }}</h3>
+                <div class="vertical-line"></div>
+                <span class="star">⭐ {{ review.overall_score }}</span>
+              </div>
+              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
+            </div>
+            {% for tag in review.tags.all %}
+              <span class="post-tag">#{{ tag.name }}</span>
+            {% endfor %}
+            
+            <!-- 수정: 전체 내용을 숨겨진 상태로 추가하고, 미리보기는 그대로 유지 -->
+            <div class="board-preview">
+              {{ review.content|truncatechars:100 }}
+            </div>
+            <!-- 전체 내용을 숨겨진 상태로 저장 -->
+            <div class="board-content" style="display:none;">
+              {{ review.content }}
+            </div>
+            
+            <div class="post-footer">
+              <div class="board-meta">
+                <span class="writer_id">🙋‍♂️ {{ review.writer.nickname }}</span>
+                <span style="font-weight: 500;">⇄</span>
+                <span class="partner_id">{{ review.partner.name }}</span>
+                <span>👁️ {{ review.views }}</span>
+              </div>
+              <span class="post-date">{{ created_at }}</span>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+              
+          <p id="noResultsMessage" style="display:none; text-align:center; padding:20px; margin-top : 20px;">
+                      </p>
+                      
+                <!-- 페이지네이션을 게시글 바로 아래로 이동 -->
+                <div class="pagination">
+                  <div class="page-buttons"></div>
+                </div>
+                  </div>
+
+                
+                <div id="postModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999;">
+                  <div class="modal-content" style="background:white; padding:30px; border-radius:15px; max-width:600px; width:90%; position:relative; max-height:80vh; overflow-y:auto;">
+                    <button class="close-btn" onclick="closePostModal()">&times;</button>
+                    <div id="modalPostMeta" class="post-meta-wrapper">
+                      <span id="modalPostArtist" class="artist"></span>
+                      <span id="modalPostOnoff" class="onoff"></span>
+                      <span id="modalPostTway" class="Tway"></span>
+                    </div>
+                    <h2 id="modalPostTitle">제목</h2>
+                    <div class = "modall">
+                      <div id="modalPostTags" class="post-tags"></div>
+                      <p id="modalPostDate">작성일</p>
+                    </div>
+                    <p id="modalPostWriter">작성자</p>
+                    <p id="modalPostPartner">거래자</p>
+                    <p id="modalPostStar">별점</p>
+                    <!-- 수정: 전체 내용을 표시하기 위해 스타일 수정 -->
+                    <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">설명 내용</div>
+                    <div id="modalPostImages" style="display:flex; flex-wrap:wrap; gap:10px; margin:20px 0;"></div>
+                  </div>
+                </div>
+                <div id="imageModal" class="modal" style="display:none;">
+                        <button id="prevBtn">‹</button>
+                        <img id="modalImage" />
+                        <button id="nextBtn">›</button>
+                      </div>
+                </div>
+    </div>
+  </div>
+  <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
+{% endblock content %}
+</body>
+</html>

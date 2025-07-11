@@ -1,0 +1,202 @@
+{% extends "header_login.html" %}
+{% load static %}
+{% block content %}
+<title>{% block title %}최신 게시글{% endblock %}</title>
+<style>
+    .main-content {width:1200px; margin:20px auto; background-color: rgba(255, 255, 255, 0.98); padding:30px; border-radius: 20px;}
+
+    .title{display:flex; justify-content:space-between; padding:10px 0; margin-bottom: 10px;}
+
+    .search form{
+        display:flex; justify-content: space-between; gap:5px;
+    }
+    
+    .search button, #category, #searchinput{
+        border:1px solid #ddd; background-color: rgba(255, 255, 255, 0.98);
+        padding:10px; border-radius: 10px; cursor:pointer;
+    }
+
+    .post-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .post-item:last-child {
+        border-bottom: none;
+    }
+
+    .post-item:hover {
+        background: #f8f9ff;
+        margin: 0 -15px;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .post-content {
+        flex: 1;
+    }
+
+    .post-content a{text-decoration:none;}
+
+    .post-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .post-meta {
+        color: #666;
+        font-size: 14px;
+        display:flex;
+        justify-content: space-between;
+    }
+
+    .post-category {
+        background: #e8f0fe;
+        color: #667eea;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .page-num {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top:20px;
+    }
+
+    .page-num li{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        text-decoration: none;
+        color: #666;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .page-num li.active, .page-num li.active:hover{
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+    }
+
+    .page-num li:hover{background: #f0f0f0;}
+
+    .page-num a{text-decoration:none; color:#333;}
+
+    /* 반응형 디자인 */
+    @media (max-width: 768px) {
+        .nav {
+            position: relative;
+            width:100%;
+        }
+        
+        .nav-menu{
+            display: none;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+
+        .main-content{width:100%;}
+    }
+
+    @media (max-width: 480px) {
+        .header {
+            padding: 1rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 320px) {
+        .mobile-menu {
+            width: 280px;
+        }
+    }
+</style>
+<body>
+    <div class="content">
+        <div class="main-content">
+            <div class="post-list">
+                <div class="title">
+                    <h2>최신 게시글</h2>
+                    <div class="search">
+                        <form action="{% url 'home:recent' %}" method="get">
+                            <select name="category" id="category">
+                                <option value="전체" {% if request.GET.category == '전체'%}selected{%endif%}>전체</option>
+                                <option value="교환" {% if request.GET.category == '교환'%}selected{%endif%}>교환</option>
+                                <option value="판매" {% if request.GET.category == '판매'%}selected{%endif%}>판매</option>
+                                <option value="포카 꾸미기" {% if request.GET.category == '포카 꾸미기'%}selected{%endif%}>포카 꾸미기</option>
+                            </select>
+                            <div class="searchtitle">
+                                <input type="text" size="16" name="searchinput" id="searchinput" value="{{ request.GET.searchinput }}">
+                            </div>
+                            <button type="submit"><i class="far fa-search"></i></button>
+                        </form>
+                    </div>
+                </div>
+                {% for post in page_num %}
+                    <div class="post-item">
+                        <div class="post-content" data-category="{{ post.category }}">
+                            <a href="
+                            {% if post.category == '판매' or post.category == '교환'%}
+                                /photocard/detail/{{ post.id }}/
+                            {% elif post.category == '포카 꾸미기' %}
+                                /pocadeco/view/{{ post.id }}/
+                            {% endif %}">
+                                <div class="post-title">{{ post.title }}</div>
+                                <div class="post-meta">{{ post.user }} • {{ post.created_at }} • 조회 {{ post.hit }}
+                                    <div class="post-category">{{ post.category }}</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>검색된 게시글이 없습니다.</p>
+                {% endfor %}
+            </div>
+
+            <ul class="page-num">
+                {% if page_num.has_previous %}
+                    <a href="?page=1&category={{category}}&search={{searchinput}}"><li>«</li></a>
+                    <a href="?page={{page_num.previous_page_number}}&category={{category}}&search={{searchinput}}"><li>‹</i></li></a>
+                {% else %}
+                    <li>«</li>
+                    <li>‹</i></li>
+                {% endif %}
+
+                {% for num in page_num.paginator.page_range%}
+                    {% if page_num.number == num %}
+                        <li class="active">{{num}}</li>
+                    {% else %}
+                        <a href="?page={{num}}&category={{category}}&search={{searchinput}}"><li>{{num}}</li></a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_num.has_next %}
+                    <a href="?page={{page_num.next_page_number}}&category={{category}}&search={{searchinput}}"><li>›</i></li></a>
+                    <a href="?page={{page_num.paginator.num_pages}}&category={{category}}&search={{searchinput}}"><li>»</i></li></a>
+                {% else %}
+                    <li>›</li>
+                    <li>»</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+{% endblock content %}

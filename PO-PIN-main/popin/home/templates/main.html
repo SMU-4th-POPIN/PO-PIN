@@ -1,0 +1,474 @@
+{% extends "header_login.html" %}
+{% load static %}
+{% block content %}
+<title>{% block title %}PO-PIN - 포토카드 커뮤니티{% endblock %}</title>
+<style>
+    /* 메인컨텐츠 */
+    .container {
+        width:100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .main-content {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .content-area {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 1200px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .sidebar-right {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+        width: 300px;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* 공지사항 */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .page-notice {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        font-size: 1rem;
+        font-weight: bold;
+        width:100%; height:50px;
+        padding:20px;
+        color: #333;
+        background: white;
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .page-notice a{text-decoration: none;}
+
+    /* 애니메이션 효과 */
+    @keyframes slideUp {
+        0% {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideDown {
+        0% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+    }
+
+    .notice-content{
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        height: 50px;
+    }
+
+    .notice-content a{color:#333;}
+
+    .noticetitle {
+        animation: slideUp 0.5s forwards;
+        width:905px;
+        white-space: nowrap;         /* 한 줄로 제한 */
+        overflow: hidden;            /* 넘치는 부분 숨기기 */
+        text-overflow: ellipsis;     /* 넘치는 부분에 말줄임표(...) 표시 */
+    }
+
+    .noticetitle-out {
+        animation: slideDown 0.5s forwards;
+    }
+
+    .noticetag{
+        color: red;
+        font-size: 1.2rem;
+        padding: 4px 8px;
+        margin-right:10px;
+        font-weight: 700;
+    }
+
+    .noticeall{
+        color:#666;
+        font-size:0.9rem;
+        font-weight:500;
+    }
+
+    /* 인기 포토카드 */
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+
+    .photo-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .photo-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .photo-card a{text-decoration:none;}
+
+    .photo-image {
+        width: 100%;
+        height: 284px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        color: #666;
+    }
+
+    .photo-image img{width:256px; height:284px; object-fit: cover;}
+
+    .photo-info {
+        padding: 20px;
+    }
+
+    .photo-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .photo-tags {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .photo-tag {
+        background: #f0f0f0;
+        color: #666;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+    }
+
+    .photo-stats {
+        display: flex;
+        justify-content: space-between;
+        color: #666;
+        font-size: 14px;
+    }
+
+    /* 최신 게시글 */
+    .latest-posts {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-top: 40px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .more-btn {
+        color: #667eea;
+        font-size: 14px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .post-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+        cursor:pointer;
+    }
+
+    .post-item:last-child {
+        border-bottom: none;
+    }
+
+    .post-item a{
+        text-decoration:none; 
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .post-item:hover {
+        background: #f8f9ff;
+        margin: 0 -15px;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .post-content {
+        flex: 1;
+    }
+
+    .post-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .post-meta {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .post-category {
+        background: #e8f0fe;
+        color: #667eea;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    /* 게시글 수 */
+    .quick-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-number {
+        font-size: 32px;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 14px;
+    }
+
+    /* 반응형 */
+
+    @media (max-width: 768px) {
+        .nav {
+            position: relative;
+            width:100%;
+        }
+
+        .nav-menu{
+            display: none;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+
+        .photo-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        .content-area {
+            max-width: 100%;
+            padding:10px;
+        }
+
+        .page-notice {padding:5px;}
+        .noticetag {margin:0;}
+        .noticetitle {width:220px;}
+        .noticeall {width:69px;}
+    }
+    
+    @media (max-width: 480px) {
+        .header {
+            padding: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<body>
+    <div class="container">
+        <!-- 메인 콘텐츠 -->
+        <div class="main-content">
+            <!-- 콘텐츠 영역 -->
+            <div class="content-area">
+                <!-- 홈페이지 -->
+                <div class="page" id="home">
+                    <div class="page-header">
+                        <div class="page-notice">
+                            <div class="notice-content">
+                                <div class="noticetag">NOTICE</div>
+                                <a href="#notice" class="noticetitle">올바른 포카교환 생활</a>
+                            </div>
+                            <a href="/customer/notice/" class="noticeall">전체보기</a>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    // 공지사항 제목 애니메이션
+                    const noticeContent = document.querySelector('.notice-content');
+                    const noticeTitle = document.querySelector('.noticetitle');
+                    const titles = {{ titles|safe }};
+                    let currentIndex = 0;
+
+                    // 제목 변경 함수
+                    function changeTitle() {
+                        const currentTitle = noticeTitle;
+
+                        // 기존 제목을 애니메이션으로 내리기
+                        currentTitle.classList.add('noticetitle-out');
+
+                        // 애니메이션 종료 후 제목 변경
+                        setTimeout(() => {
+                            // 제목을 새로운 텍스트로 업데이트
+                            noticeTitle.textContent = titles[currentIndex];
+                            currentIndex = (currentIndex + 1) % titles.length;
+
+                            // 새 제목을 애니메이션으로 올리기
+                            currentTitle.classList.remove('noticetitle-out');
+                            currentTitle.classList.add('noticetitle');
+
+                        }, 500);  // 애니메이션이 끝날 때까지 기다림 (500ms)
+                    }
+
+                    // 5초마다 제목을 변경
+                    setInterval(changeTitle, 5000);
+
+                    // 페이지가 로드될 때 첫 번째 제목을 초기화
+                    window.onload = () => {
+                        changeTitle();  // 첫 번째 제목 표시
+                    };
+                </script>
+                    
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">{{total_photocard}}</div>
+                        <div class="stat-label">전체 게시글</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{total_user}}</div>
+                        <div class="stat-label">활성 사용자</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{completed_photocard}}</div>
+                        <div class="stat-label">교환 완료</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{total_decopoca}}</div>
+                        <div class="stat-label">포카 꾸미기</div>
+                    </div>
+                </div>
+
+                <h2 style="margin-bottom: 20px;">최근 인기 포토카드</h2>
+                <div class="photo-grid">
+                    {% for photocard in photocards %}
+                    <div class="photo-card">
+                        <a href="/photocard/detail/{{photocard.pno}}/">
+                            <div class="photo-image"><img src="/media/{{photocard.image}}"></div>
+                            <div class="photo-info">
+                                <div class="photo-title">{{photocard.member.group.name}} {{photocard.member.name}}</div>
+                                <div class="photo-tags">
+                                    <span class="photo-tag">{{photocard.trade_type}}</span>
+                                    <span class="photo-tag">{{photocard.category}}</span>
+                                </div>
+                                <div class="photo-stats">
+                                    <span>❤️ {{photocard.wish_count}}</span>
+                                    <span>📍 {{photocard.place}}</span>
+                                    <!-- <span>💬 8</span> -->
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- 최신 게시글 -->
+                <div class="latest-posts">
+                    <div class="section-header">
+                        <h2 class="section-title">최신 게시글</h2>
+                        <a href="/home/recent/" class="more-btn">더보기</a>
+                    </div>
+                    {% for r in recent %}
+                        <div class="post-item">
+                            <a href="
+                            {% if r.category == '판매' or r.category == '교환'%}
+                                /photocard/detail/{{ r.id }}/
+                            {% elif r.category == '포카 꾸미기' %}
+                                /pocadeco/view/{{ r.id }}/
+                            {% endif %}">
+                                <div class="post-content">
+                                    <div class="post-title">{{r.title}}</div>
+                                    <div class="post-meta">{{r.user}} • {{r.created_at}} • 조회 {{r.hit}}</div>
+                                </div>
+                                <div class="post-category">{{r.category}}</div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+{% endblock content %}

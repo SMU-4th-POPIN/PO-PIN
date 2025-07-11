@@ -1,0 +1,921 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="csrf-token" content="{{ csrf_token}}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="/static/css/mypage.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <title>{%block title%}마이페이지{%endblock%}</title>
+    </head>
+
+    <script>
+        //모달창 스크립트
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalOpenButton = document.getElementById('favorite-btn');
+            const modalSaveButton = document.getElementById('favorite-btnSave');
+            const modalCloseButton = document.getElementById('favorite-btnClose');
+            const modal = document.getElementById('modalContainer');
+
+            // 모달창 오픈
+            modalOpenButton.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+            });
+
+            // 모달창 저장
+            modalSaveButton.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+
+            // 모달창 취소
+            modalCloseButton.addEventListener('click',() => {
+                modal.classList.add('hidden');
+            });
+            // 바깥 클릭 시 닫기
+            window.addEventListener('click', e => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+        //모달창스크립트
+
+        // 전체 카테고리
+        function showTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            const tabs = document.querySelectorAll('.tab');
+            // 모든 탭 콘텐츠 숨기기
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 모든 탭 버튼 비활성화
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 선택된 탭 콘텐츠 보이기
+            document.getElementById(tabName).classList.add('active');
+
+            // 선택된 탭 버튼 활성화
+            event.target.classList.add('active');
+        }
+
+        // 교환거래 카테고리
+        function showTransactionTab(type) {
+            const transactionTabs = document.querySelectorAll('.transaction-tab');
+            const transactionContents = document.querySelectorAll('.transaction-content');
+            const sellingList = document.getElementById('selling-list');
+            const buyingList = document.getElementById('buying-list');
+            const tradingList = document.getElementById('trading-list');
+            // 교환거래 탭 버튼들 비활성화
+            transactionTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 교환거래 콘텐츠들 숨기기
+            transactionContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // 선택된 탭 활성화
+            event.target.classList.add('active');
+            
+            // 선택된 콘텐츠 보이기
+            if (type === 'selling') {
+                sellingList.style.display = 'block';
+            } else if(type==='buying'){
+                buyingList.style.display = 'block';
+            } else if(type==='trading'){
+                tradingList.style.display='block';
+            }
+        }
+
+        // 후기 카테고리
+        function showReviewTab(type) {
+            const reviewTabs = document.querySelectorAll('.review-tab');
+            const reviewContents = document.querySelectorAll('.review-content');
+            // 후기 탭 버튼들 비활성화
+            reviewTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 후기 콘텐츠들 숨기기
+            reviewContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // 선택된 탭 활성화
+            event.target.classList.add('active');
+            
+            // 선택된 콘텐츠 보이기
+            if (type === 'received') {
+                document.getElementById('received-reviews').style.display = 'block';
+            } else {
+                document.getElementById('written-reviews').style.display = 'block';
+            }
+        }
+
+        // 커뮤니티 카테고리 
+        function showCommunityTab(type){
+            const communityTabs = document.querySelectorAll('.community-tab');
+            const communityContents = document.querySelectorAll('.community-content');
+            const WithU = document.getElementById('WithU');
+            const Sharing = document.getElementById('Sharing');
+            const Insteadbuy = document.getElementById('Insteadbuy');
+
+            communityTabs.forEach(tab=>{
+                tab.classList.remove('active');
+            });
+
+            communityContents.forEach(content=>{
+                content.style.display="none";
+            })
+
+            event.target.classList.add('active');
+
+            if (type === "WithU"){
+                WithU.style.display="block";
+            } else if(type === "Sharing"){
+                Sharing.style.display="block";
+            } else if(type === "Insteadbuy"){
+                Insteadbuy.style.display="block";
+            }
+        }
+
+        // 블랙리스트 카테고리
+        function showBlockedTab(type){
+            const blockedTabs = document.querySelectorAll('.blocked-tab');
+            const blockedContents = document.querySelectorAll('.blocked-content')
+            const blockeduser = document.getElementById('blocked-user');
+            const blockedpost = document.getElementById('blocked-post');
+
+            // 블랙리스트 탭 버튼들 비활성화
+            blockedTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 블랙리스트 콘텐츠들 숨기기
+            blockedContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            event.target.classList.add('active');
+
+            // 선택된 콘텐츠 보이기
+            if (type === 'blocked-user') {
+                blockeduser.style.display = 'block';
+            } else {
+                blockedpost.style.display = 'block';
+            }
+        }
+        
+
+        // 포토카드 데이터 (실제로는 서버에서 가져올 데이터)
+        const photocardData = {
+            'bts-mots7': {
+                title: 'BTS - Map of the Soul: 7',
+                cards: [
+                    { id: 1, member: 'RM', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 2, member: '진', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 3, member: '슈가', type: '포토카드', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 4, member: '제이홉', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 5, member: '정국', type: '한정판', img: '/static/images/mypage/도영.jfif/' },
+                    { id: 6, member: '정국', type: '한정판', img: '/static/images/mypage/도영.jfif/' },
+                    { id: 7, member: '정국', type: '한정판', img: '/static/images/mypage/윈터.jpg/' },
+                    { id: 8, member: '정국', type: '한정판', img: '/static/images/mypage/윈터.jpg/' },
+                    { id: 9, member: '정국', type: '한정판', img: '/static/images/mypage/승관.jfif/' },
+                    { id: 10, member: '정국', type: '한정판', img: '/static/images/mypage/승관.jfif/' },
+                ]
+            },
+            'bp-thealbum': {
+                title: 'BLACKPINK - THE ALBUM',
+                cards: [
+                    { id: 1, member: '로제', type: '일반', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=ROSE' },
+                    { id: 2, member: '리사', type: '포토카드', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=LISA' },
+                    { id: 3, member: '제니', type: '한정판', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=JENNIE' }
+                ]
+            },
+            'bts-ly': {
+                title: 'BTS - Love Yourself: Her',
+                cards: [
+                    { id: 1, member: '지민', type: '일반', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=JIMIN' },
+                    { id: 2, member: 'V', type: '포토카드', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=V' },
+                    { id: 3, member: '정국', type: '일반', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=JK' },
+                    { id: 4, member: 'RM', type: '한정판', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=RM' }
+                ]
+            },
+            'nj-omg': {
+                title: 'NewJeans - OMG',
+                cards: [
+                    { id: 1, member: '민지', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=MINJI' },
+                    { id: 2, member: '하니', type: '포토카드', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HANNI' },
+                    { id: 3, member: '다니엘', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=DANIELLE' },
+                    { id: 4, member: '해린', type: '한정판', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HAERIN' },
+                    { id: 5, member: '혜인', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HYEIN' },
+                    { id: 6, member: '민지', type: '포토카드', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=MINJI2' }
+                ]
+            },
+            'nj-getup': {
+                title: 'NewJeans - Get Up',
+                cards: [
+                    { id: 1, member: '민지', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=MINJI' },
+                    { id: 2, member: '하니', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HANNI' },
+                    { id: 3, member: '다니엘', type: '포토카드', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=DANIELLE' },
+                    { id: 4, member: '해린', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HAERIN' },
+                    { id: 5, member: '혜인', type: '한정판', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HYEIN' },
+                    { id: 6, member: '민지', type: '포토카드', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=MINJI2' },
+                    { id: 7, member: '하니', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HANNI2' },
+                    { id: 8, member: '다니엘', type: '한정판', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=DANIELLE2' }
+                ]
+            },
+            'bp-bornpink': {
+                title: 'BLACKPINK - Born Pink',
+                cards: [
+                    { id: 1, member: '지수', type: '일반', img: 'https://via.placeholder.com/120x150/f44336/ffffff?text=JISOO' },
+                    { id: 2, member: '로제', type: '한정판', img: 'https://via.placeholder.com/120x150/f44336/ffffff?text=ROSE' }
+                ]
+            }
+        };
+
+        // 앨범 -> 
+        function showPhotoCards(albumId) {
+            const albumData = photocardData[albumId];
+            if (!albumData) return;
+
+            // 앨범 목록 숨기기
+            document.getElementById('album-list').style.display = 'none';
+            
+            // 포토카드 목록 보이기
+            document.getElementById('photocard-list').style.display = 'block';
+            
+            // 뒤로가기 버튼 보이기
+            document.querySelector('.back-btn').style.display = 'inline-block';
+            
+            // 현재 앨범 제목 설정
+            document.getElementById('current-album-title').textContent = albumData.title;
+            
+            // 포토카드 그리드 생성
+            const photocardGrid = document.querySelector('.photocard-grid');
+            photocardGrid.innerHTML = '';
+            
+            albumData.cards.forEach(card => {
+                const photocardElement = document.createElement('div');
+                photocardElement.className = 'photocard';
+                photocardElement.innerHTML = `
+                    <div class="photocard-img">
+                        <img src="${card.img}" alt="${card.member}">
+                    </div>
+                    <h5>${card.member}</h5>
+                    <p>${card.type}</p>
+                    `;
+                photocardGrid.appendChild(photocardElement);
+            });
+        }
+
+        function showAlbumList() {
+            // 포토카드 목록 숨기기
+            document.getElementById('photocard-list').style.display = 'none';
+            
+            // 앨범 목록 보이기
+            document.getElementById('album-list').style.display = 'grid';
+            
+            // 뒤로가기 버튼 숨기기
+            document.querySelector('.back-btn').style.display = 'none';
+        }
+
+        // 변경하기 버튼 클릭 이벤트
+        document.querySelectorAll('.change-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('변경 기능이 실행됩니다.');
+            });
+        });
+
+        // 차단해제 버튼 클릭 이벤트
+        document.querySelectorAll('.unblock-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(confirm('정말 차단을 해제하시겠습니까?')) {
+                    this.parentElement.remove();
+                }
+            });
+        });
+    </script>
+
+    <body>
+    <!--프로필-->
+    <main class="main">
+        <form>
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="polaroid">
+                        <div class="polaroid-image">
+                            <!--클릭시 프로필변경페이지 이동-->
+                            <a href="/mypage/update_profile/">
+                                <img src='/media/{{profile_image}}/' alt="{{profile_image}}">
+                            </a>
+                        </div>
+                        
+                        <!-- 프로필 수정 모달창 오픈 -->
+                        <button id="favorite-btn" type="button">
+                            <img src="/static/images/mypage/svt_logo.jfif/" alt="group_logo">
+                        </button>
+                    </div>
+                    <div class="profile-info">
+                        <h1 style="text-align:center;">{{nickname}}</h1>
+                        <h3 style="margin-bottom:20px;">"{{introduction}}"</h3>
+                        <br>
+                        
+                        <div class="stats">
+                            <div class="stat">
+                                <div class="stat-number">{{selling_photocards}}</div>
+                                <div>보유 포카</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">{{completed}}</div>
+                                <div>교환 완료</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">{{manners_score}}</div>
+                                <div>평점</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--//프로필-->
+
+
+        <div class="content">
+            <div class="tabs-wrapper">
+                <div class="tabs">
+                    <button class="tab active " onclick="showTab('keywords')">키워드</button>
+                    <button class="tab" onclick="showTab('recent')">최근본글</button>
+                    <button class="tab" onclick="showTab('mypoca')">마이 포카</button>
+                    <button class="tab" onclick="showTab('wishlist')" >위시리스트</button>
+                    <button class="tab" onclick="showTab('transactions')">포토카드</button>
+                    <button class="tab" onclick="showTab('reviews')">후기글</button>
+                    <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
+                    <button class="tab" onclick="showTab('blocked')">블랙리스트</button>
+                </div>
+            </div>
+            <!--키워드 리스트-->
+            <div id="keywords" class="tab-content active">
+                <div class="section-content">
+                    <div class="item">
+                        <h3>관심 그룹 키워드</h3>
+                        <p>
+                            {%for group in groups%}
+                                #{{group.name}}
+                            {%endfor%}
+                        </p>
+                    </div>
+                    <div class="item">
+                        <h3>관심 멤버 키워드</h3>
+                        <p>
+                            {%for member in members%}
+                                #{{member.name}}
+                            {%endfor%}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!--최신본글-->
+            <div id="recent" class="tab-content">
+                <div class="section-content"></div>
+            </div>
+
+            <!--마이포카-->
+            <div id="mypoca" class="tab-content">
+                <div class="cards-header">
+                    <button class="back-btn" onclick="showAlbumList()" style="display: none;">← 앨범 목록으로</button>
+                </div>
+                
+                <!-- 앨범 목록 뷰 -->
+                <div class="section-content">
+                    <div id="album-list" class="album-grid"></div>
+                </div>
+
+                
+                <!-- 포토카드 목록 뷰 (기본적으로 숨김) -->
+                <div id="photocard-list" style="display: none;">
+                    <div id="current-album-title" class="current-album"></div>
+                    <div class="section-content">
+                        <div class="photocard-grid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!--위시리스트-->
+            <div id="wishlist" class="tab-content">
+                <div class="section-content"></div>
+            </div>
+
+            <div id="transactions" class="tab-content">
+                <div class="section-header">
+                    <div class="transaction-tabs">
+                        <button class="transaction-tab active" onclick="showTransactionTab('selling')">판매목록</button>
+                        <button class="transaction-tab" onclick="showTransactionTab('buying')">구매목록</button>
+                        <button class="transaction-tab" onclick="showTransactionTab('trading')">교환목록</button>
+                    </div>
+                </div>
+                
+                <div class="section-content">
+                    <!--판매목록-->
+                    <div id="selling-list" class="transaction-content"></div>
+                    <!--구매목록-->
+                    <div id="buying-list" class="transaction-content" style="display: none;"></div>
+                    <!--교환목록-->
+                    <div id="trading-list" class="transaction-content" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div id="reviews" class="tab-content">
+                <div class="section-header">
+                    <div class="review-tabs">
+                        <button class="review-tab active" onclick="showReviewTab('received')">내가 받은 후기</button>
+                        <button class="review-tab" onclick="showReviewTab('written')">내가 쓴 후기</button>
+                    </div>
+                </div>
+                
+                <!--내가 받은 거래 후기-->
+                <div class="section-content">
+                    <div id="received-reviews" class="review-content">
+                        <div class="item review-item">
+                            <h3>친절하고 빠른 거래<span class="rating">⭐⭐⭐⭐⭐</span></h3>
+                            <p>포카 상태도 좋고 포장도 꼼꼼히 해주셔서 감사했습니다! - 포카매니아님</p>
+                        </div>
+                        <div class="item review-item">
+                            <h3>신뢰할 수 있는 거래<span class="rating">⭐⭐⭐⭐⭐</span></h3>
+                            <p>설명과 동일한 상태의 포카를 받았어요. 추천합니다! - 카드수집러님</p>
+                        </div>
+                        <div class="item review-item">
+                            <h3>좋은 거래였습니다<span class="rating">⭐⭐⭐⭐</span></h3>
+                            <p>소통이 원활하고 약속 시간도 잘 지켜주셨어요. - 포카러님</p>
+                        </div>
+                        <div class="view-all-container">
+                        </div>
+                    </div>
+                </div>
+
+                <!--내가 쓴 후기-->
+                <div class="section-content">
+                    <div id="written-reviews" class="review-content" style="display: none;">
+                        <div class="item review-item">
+                            <h3>완벽한 거래였어요<span class="rating">⭐⭐⭐⭐⭐</span></h3>
+                            <p>포카매니아님과의 거래 - 포장 상태 완벽하고 소통도 좋았습니다!</p>
+                        </div>
+                        <div class="item review-item">
+                            <h3>믿고 거래할 수 있는 분<span class="rating">⭐⭐⭐⭐⭐</span></h3>
+                            <p>카드수집러님과의 거래 - 시간 약속 잘 지키시고 친절하세요</p>
+                        </div>
+                        <div class="item review-item">
+                            <h3>만족스러운 거래<span class="rating">⭐⭐⭐⭐</span></h3>
+                            <p>포카러님과의 거래 - 설명 그대로의 상태로 잘 받았습니다</p>
+                        </div>
+                        <div class="item review-item">
+                            <h3>만족스러운 거래<span class="rating">⭐⭐⭐⭐</span></h3>
+                            <p>포카러님과의 거래 - 설명 그대로의 상태로 잘 받았습니다</p>
+                        </div>
+                        <div class="item review-item">
+                            <h3>만족스러운 거래<span class="rating">⭐⭐⭐⭐</span></h3>
+                            <p>포카러님과의 거래 - 설명 그대로의 상태로 잘 받았습니다</p>
+                        </div>
+                        <div class="view-all-container">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="community" class="tab-content">
+                <div class="section-header">
+                    <div class="community-tabs">
+                        <button class="community-tab active" onclick="showCommunityTab('WithU')">동행</button>
+                        <button class="community-tab " onclick="showCommunityTab('Sharing')">나눔</button>
+                        <button class="community-tab " onclick="showCommunityTab('Insteadbuy')">대리구매</button>
+                    </div>
+                </div>
+
+                <!--동행글-->
+                <div class="section-content">
+                    <div id="WithU" class="community-content">
+                        <div class="item">
+                            <h3>BTS 동행</h3>
+                            <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
+                        </div>
+                        <div class="item">
+                            <h3>BTS 동행</h3>
+                            <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
+                        </div>
+                        <div class="item">
+                            <h3>BTS 동행</h3>
+                            <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
+                        </div>
+                    </div> 
+                </div>
+                <!--나눔글-->
+                <div class="section-content">
+                    <div id="Sharing" class="community-content" style="display: none;">
+                        <div class="item">
+                            <h3>포토카드 나눔</h3>
+                            <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
+                        </div>
+                        <div class="item">
+                            <h3>포토카드 나눔</h3>
+                            <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
+                        </div>
+                        <div class="item">
+                            <h3>포토카드 나눔</h3>
+                            <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
+                        </div>
+                    </div> 
+                </div>
+                <!--대리구매-->
+                <div class="section-content">
+                    <div id="Insteadbuy" class="community-content" style="display: none;">
+                        <div class="item">
+                            <h3>앨범 대리구매</h3>
+                            <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
+                        </div>
+                        <div class="item">
+                            <h3>앨범 대리구매</h3>
+                            <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
+                        </div>
+                        <div class="item">
+                            <h3>앨범 대리구매</h3>
+                            <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+            <!--블랙리스트-->
+            <div id="blocked" class="tab-content">
+                <div class="section-header">
+                    <div class="blocked-tabs">
+                        <button class="blocked-tab active" onclick="showBlockedTab('blocked-user')">내가 차단한 사용자</button>
+                        <button class="blocked-tab" onclick="showBlockedTab('blocked-post')">내가 신고한 글</button>
+                    </div>
+                </div>
+
+                <div class="section-content">
+                    <div id="blocked-user" class="blocked-content">
+                        <div class="item">
+                            <h3>스팸유저123</h3>
+                            <button class="unblock-btn">차단해제</button>
+                            <p>차단 사유: 스팸 메시지 반복 발송</p>
+                        </div>
+                        <div class="item">
+                            <h3>사기꾼456</h3>
+                            <button class="unblock-btn">차단해제</button>
+                            <p>차단 사유: 거래 약속 불이행</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-content">
+                    <div id="blocked-post" class="blocked-content" style="display: none;">
+                        <div class="item">
+                            <h3>매우매우 안좋은 글</h3>
+                            <button class="unblock-btn">차단해제</button>
+                            <p>차단 사유: 매우매우 안좋은 글</p>
+                        </div>
+                        <div class="item">
+                            <h3>사기꾼의 글</h3>
+                            <button class="unblock-btn">차단해제</button>
+                            <p>차단 사유: 사기꾼의 글</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--//블랙리스트-->
+        </div>
+    </main>
+    
+        <!--프로필 수정 모달창 구현-->
+        <form action="/mypage/update_profile/" method="post" name="profileFrm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div id="modalContainer" class="hidden">
+                <div id="modalContent">
+                    <div class="profileTop">
+                        <button id="favorite-btnClose" type="button">
+                            <img src="/static/images/mypage/cancelicon.png" style="width: 40px; height: 40px;">
+                        </button>
+                        <h1>프로필 수정</h1>
+                    </div>
+                    <div class="profileContent">
+                        <label for="profile_image">프로필 이미지</label>
+                        <div class="profile_img_container">
+                            <div class="profile_img_wrapper">
+                                <div class="previous_container" id="previous_container" style="cursor:pointer;">
+                                    <img id="previousImage" src="/static/images/mypage/도영.jfif/" class="profile_image" alt="프로필 이미지">
+                                </div>
+                                <input type="file" id="profile-img-input" name="profile_image" class="fileType" accept="image/*" style="display:none;">
+                            </div>
+                                <div class="preview-container" id="previewContainer" style="display:none;">
+                                    <img id="previewImage" class="preview-image" alt="미리보기">
+                                </div>
+                        </div>
+                        <div class="myinfo">
+                            <div class="myinfo-profile">
+                                <label for="nickname">닉네임</label>
+                                <input type="text" id="nickname" name="nickname">
+                            </div>
+                            <div class="myinfo-profile">
+                                <label for="mybias">최애변경</label>
+                                <input type="text" id="mybias" name="mybias">
+                            </div>
+                            <div class="myinfo-profile">
+                                <label for="myself">자기소개</label>
+                                <input type="text" id="myself" name="myself">
+                            </div>
+                            <div class="myinfo-profile">
+                                <button id="favorite-btnSave" type="button">변경사항 저장</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+    <script>
+        // 파일업로드 관련
+        const imageuploadContainer = document.getElementById('previous_container');
+        const imageInput = document.getElementById('profile-img-input');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const previousImage = document.getElementById('previousImage');
+
+        imageuploadContainer.addEventListener('click',()=>imageInput.click());
+
+        imageuploadContainer.addEventListener('dragover',(e)=>{
+            e.preventDefault();
+            imageuploadContainer.classList.add('dragover');
+        });
+
+        imageuploadContainer.addEventListener('dragleave',(e)=>{
+            e.preventDefault();
+            imageuploadContainer.classList.remove('dragover');
+        });
+
+        imageuploadContainer.addEventListener('drop',(e)=>{
+            e.preventDefault();
+            imageuploadContainer.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if(files.length > 0 ){
+                handleFile(files[0]);
+            }
+        });
+
+        imageInput.addEventListener('change',(e)=>{
+            if(e.target.files.length>0){
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // 이미지 미리보기 함수
+        function handleFile(file) {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                    previewContainer.style.display = "block";
+                    previousImage.style.display = "none"; // 기존 이미지 숨김
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("이미지 파일만 업로드할 수 있습니다.");
+            }
+        }
+
+        // #Recent AJAX
+        $.ajax({
+            url: "/mypage/latest/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            success: function (data) {
+                console.log('최근 게시글 연결 성공')
+
+                const recentList = $("#recent .section-content");
+
+                const cardsHtml = data.photocards.map(card => 
+                `<div class="item">
+                    <div>
+                        <h3>${card.title}</h3>
+                        <p>${card.created_at} - ${card.album}</p>
+                    </div>  
+                </div>`).join("");
+
+                recentList.html(cardsHtml || "<div>최근 본 글이 없습니다.</div>");
+            },
+            error: function () {
+                console.error("최근 본 글 불러오기 실패");
+                recentList.html("<div>최근 본 글을 불러오는 데 실패했습니다.</div>");
+            }
+        });
+
+        // #mypoca AJAX
+        $.ajax({
+            url: "/mypage/mypoca/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function (data) {
+                console.log("받은 데이터:", data.group_album_dict);
+
+                const albumList = $("#mypoca #album-list");
+                albumList.empty(); // 기존 목록 비우기
+
+                const groupAlbumDict = data.group_album_dict;
+
+                for (let groupName in groupAlbumDict) {
+                    const albumMap = groupAlbumDict[groupName];
+
+                    for (let albumName in albumMap) {
+                        const photocards = albumMap[albumName];
+                        const firstCard = photocards[0]; // 대표 이미지
+                        const imageUrl = firstCard.image_url || '{/static/images/default.jpg}';
+                        const cardCount = photocards.length;
+
+                        const albumCard = `
+                            <div class="album-card" onclick="showPhotoCards('${groupName}-${albumName}')">
+                                <div class="album-cover">
+                                    <img src="${imageUrl}" alt="${albumName}">
+                                </div>
+                                <div class="album-info">
+                                    <h4>${albumName}</h4>
+                                    <p>${groupName}</p>
+                                    <span class="card-count">${cardCount}장</span>
+                                </div>
+                            </div>
+                        `;
+                        albumList.append(albumCard);  
+
+                        albumList.append(albumList || "<div>보유한 포토카드가 없습니다.</div>");
+                    }
+                }            
+            },
+            error: function (xhr, status, error) {
+                console.error("마이포카 불러오기 실패");
+                albumList.html("<div>보유한 포토카드를 불러오는 데 실패했습니다.</div>");
+            }
+        });
+
+        // #wishlist AJAX
+        $.ajax({
+            url: "/mypage/wishlist/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: 'json',
+            success: function(data){
+                console.log('위시리스트 연결 성공',data.wishlist);
+                // 기존 목록 비우기
+                const wishList = $("#wishlist .section-content");
+                wishList.empty();
+
+                const wishdata = data.wishlist.map(wish => 
+                    `<a href="/photocard/view/">
+                        <div class="item">
+                            <div class="wishlist">
+                                <div class="wish-list-img">
+                                    <img src=${wish.image_url}>
+                                </div>
+                                <div class="wish-list-txt">
+                                    <span class="badge complete">${wish.trade_state}</span>
+                                    <h3>${wish.title}
+                                    </h3>
+                                    <p>${wish.album}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>`).join("");
+                wishList.append(wishdata || "<div>위시리스트 목록이 없습니다.</div>")
+            },
+            error: function (xhr, status, error) {
+                console.error("위시리스트 불러오기 실패");
+                wishList.html("<div>위시리스트를 불러오는 데 실패했습니다.</div>");
+            }
+        });
+
+        // 판매 목록 AJAX
+        $.ajax({
+            url: "/mypage/trade/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('판매목록 불러오기 성공');
+
+                const saleList = $("#transactions #selling-list");
+                saleList.empty();
+
+                const saleData = data.sell_poca.map(sell => 
+                    `<div class="item">
+                        <h3>${sell.title}</h3>
+                        <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
+                    </div>`).join("");
+
+                saleList.append(saleData||"<div>판매목록이 없습니다.</div>");
+            }, error: function(xhr, status, error){
+                console.error("판매목록 불러오기 실패");
+                saleList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
+            }
+        });
+        // 구매 목록 AJAX
+        $.ajax({
+            url: "/mypage/trade/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('구매목록 불러오기 성공');
+
+                const buyList = $("#transactions #buying-list");
+                buyList.empty();
+
+                const buyData = data.buy_poca.map(buy => 
+                    `<div class="item">
+                        <h3>${buy.title}</h3>
+                        <p>${buy.album} | 상태: 거래${buy.trade_state}</p>
+                    </div>`).join("");
+                    buyList.append(buyData||"<div>판매목록이 없습니다.</div>");
+
+            }, error: function(xhr, status, error){
+                console.error("판매목록 불러오기 실패");
+                buyList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
+            }
+        });
+        // 교환 목록 AJAX => 실제 교환목록 리스트로 수정 필요
+        $.ajax({
+            url: "/mypage/trade/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                alert('교환목록 불러오기 수정이 필요합니다');
+
+                const saleList = $("#transactions #trading-list");
+                saleList.empty();
+
+                const saleData = data.sell_poca.map(sell => 
+                    `<div class="item">
+                        <h3>${sell.title}</h3>
+                        <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
+                    </div>`);
+
+                saleList.append(saleData||"<div>판매목록이 없습니다.</div>");
+            }, error: function(xhr, status, error){
+                console.error("판매목록 불러오기 실패");
+                saleList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
+            }
+        });
+        
+        // 내가 쓴 후기글
+
+        // 내가 받은 후기글
+
+        // 커뮤니티 - 동행글
+
+        // 커뮤니티 - 나눔글
+
+        // 커뮤니티 - 대리구매
+
+        // 블랙리스트 - 차단한 사용자 목록 AJAX
+        $.ajax({
+            url: "/mypage/block_list/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('차단 사용자 불러오기 성공');
+
+                const blocked_user = $("#blocked #blocked-user");
+                blocked_user.empty();
+
+                const blockData = data.blocked_users.map(user => 
+                    `<div class="item">
+                        <h3>${user.user_id}${user.name}</h3>
+                        <button class="unblock-btn">차단해제</button>
+                        <p>차단 사유: 스팸 메시지 반복 발송</p>
+                    </div>`);
+
+                blockData.append(blockData||"<div>차단 사용자 없습니다.</div>");
+            }, error: function(xhr, status, error){
+                console.error("차단 사용자 불러오기 실패");
+                //blockData.html("<div>차단 사용자 불러오는 데 실패했습니다.</div>");
+            }
+        });
+    
+    </script>
+
+{%endblock%}
+<!--//상단헤더-->
+</body>
+</html>

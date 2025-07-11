@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
+    <link rel="stylesheet" type="text/css" href="/static/css/login/findID.css">
+    <title>로그인 - 아이디 찾기</title>
+</head>
+<body>
+  <div>
+    <div class="login-form">
+      <div class="top"><h2>PO-PIN</h2></div>
+      <div class="subtitle">아이디를 잊어버리셨나요?</div>
+      <hr>
+      <h3>아이디 찾기</h3>
+      <div class="subtitle">가입 시 입력했던 정보를 통해 아이디를 찾을 수 있습니다.</div>
+
+      <form method="POST">
+        {% csrf_token %}
+        <label>이름</label>
+        <input type="text" name="name" id="name" placeholder="이름 입력" required>
+
+        <label>이메일 주소</label>
+        <div class="email">
+          <input type="text" id="email-front" placeholder="example" required>
+          <a>@</a>
+          <input type="text" id="email-back" placeholder="domain.com" required>
+        </div>
+        <input type="hidden" name="email" id="email">
+        <select class="emailAuto" onchange="handleDomainSelect(this)">
+          <option value="">선택하세요.</option>
+          <option value="gmail.com">gmail.com</option>
+          <option value="naver.com">naver.com</option>
+          <option value="hanmail.net">hanmail.net</option>
+          <option value="직접입력">직접입력</option>
+        </select>
+
+        <div class="code">
+          <input type="text" name="code" placeholder="인증번호 6자리" required>
+          <button type="button" class="button" onclick="sendVerificationCode()">인증번호 전송</button>
+        </div>
+
+        <input type="submit" class="findID" value="아이디 찾기">
+        <button type="button" class="back" onclick="location.href='{% url 'login:loginp' %}'">로그인 페이지로 이동</button>
+      </form>
+
+      {% if found_id %}
+      <div id="result">회원님의 아이디는 <strong>{{ found_id }}</strong> 입니다.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    function handleDomainSelect(selectObj) {
+      const selected = selectObj.value;
+      if (selected !== '직접입력') {
+        document.getElementById('email-back').value = selected;
+      } else {
+        document.getElementById('email-back').value = '';
+      }
+    }
+
+    function sendVerificationCode() {
+      const emailFront = document.getElementById('email-front').value;
+      const emailBack = document.getElementById('email-back').value;
+      const name = document.getElementById('name').value;
+      const fullEmail = `${emailFront}@${emailBack}`;
+      document.getElementById('email').value = fullEmail;
+
+      fetch("{% url 'login:send_code' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: `email=${fullEmail}&name=${name}`
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("인증번호가 이메일로 전송되었습니다.");
+        } else {
+          alert(data.message || "인증번호 전송 실패");
+        }
+      })
+      .catch(error => console.error("오류 발생:", error));
+    }
+  </script>
+</body>
+</html>

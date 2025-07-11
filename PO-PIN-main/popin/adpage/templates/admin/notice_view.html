@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
+  <title>관리자 | 게시글 상세보기</title>
+  <style>
+    *{margin : 0; padding : 0;  box-sizing : border-box;}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .banner{
+            margin-top : -100px;
+            width : 1000px;
+            height : 70px;
+            background :rgba(255, 255, 255, 0.95);
+            border-radius : 20px;
+            display : flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .banner h2{ 
+            font-size : 30px; 
+            color : #7E6EB0;
+            align-items : center; 
+            margin-left: 15px;
+        }
+        .banner-center {
+            display: flex;
+            align-items: center;
+        }
+        .banner-right {
+            display: flex;
+            align-items: center;
+        }
+        .table{display : flex;
+            margin-top : 15px;}
+        .menu {
+            display: flex;
+            align-items: center;
+        }
+        .menu ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 10px;
+        }
+        .menu li{
+            display : flex;
+            text-align : center;
+            align-items : center;
+            justify-content: center;
+            padding: 0 15px;
+            font-weight : 500;
+            width : 115px;
+            height : 40px;
+            border-radius : 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color : #764ba2;
+            border : 2px solid  #764ba2;
+        }
+        .menu .board{
+            background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color : rgba(255, 255, 255, 0.95);
+            border : none;
+        }
+        .home {
+            all: unset;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #7E6EB0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .home:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .home i {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+    .Bboard {
+      width: 100%;
+      min-height: 700px;
+      border-radius: 25px;
+      margin-top : 15px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .dash-top {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .dash-top h2 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    
+    .dash-top hr{ 
+      color : rgba(219, 213, 213, 0.63); 
+      border: none;
+      height: 1px;
+      background: rgba(219, 213, 213, 0.63);
+      margin: 0 auto;
+      width: 100%;
+      max-width: 860px;
+    }
+
+    .line {
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+      margin: 15px auto 0 auto;
+    }
+
+    /* 테이블 스타일 개선 */
+    .table-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 20px 0;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    table.writebox {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+    }
+
+    table.writebox tr {
+      border-bottom: 1px solid #f0f0f0;
+      transition: background-color 0.3s ease;
+      align-items : center;
+      text-align : center;
+    }
+
+    table.writebox tr:hover {
+      background-color: #f8f9ff;
+    }
+
+    table.writebox tr:last-child {
+      border-bottom: none;
+    }
+
+    table.writebox th {
+      width: 150px;
+      text-align: center;
+      align-items : center;
+      line-height : 2.5;
+      vertical-align: top;
+      padding: 20px 25px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #7E6EB0;
+      background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+      border-right: 1px solid #e8e8e8;
+      position: relative;
+    }
+
+    table.writebox th::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 40%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+
+    table.writebox td {
+      text-align : left;
+      padding: 20px 25px;
+      font-size: 15px;
+      color: #555;
+      background: white;
+      line-height: 1.6;
+    }
+
+    /* 체크박스 스타일 개선 */
+    .custom-checkbox {
+      position: relative;
+      display: inline-block;
+    }
+
+    .custom-checkbox input[type="checkbox"] {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #7E6EB0;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: #667eea;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    a{text-decoration : none;}
+
+    .menu li a {
+      text-decoration: none;
+      color: #764ba2;
+    }
+
+    .menu li.board a {
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+
+    /* 내용 영역 스타일 개선 */
+    .content-text {
+      padding: 2px;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+
+    /* 버튼 스타일 개선 */
+    .btn {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn button {
+      display: flex; 
+      align-items: center;
+      justify-content: center; 
+      padding: 12px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn button:nth-child(1) {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn button:nth-child(2) {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    .btn button:nth-child(3) {
+      background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+    }
+
+    .btn button:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn button:active {
+      transform: translateY(0);
+    }
+
+    /* 반응형 디자인 */
+    @media (max-width: 768px) {
+      .banner {
+        width: 95%;
+        padding: 0 15px;
+      }
+      
+      .Bboard {
+        padding: 20px 25px;
+      }
+      
+      table.writebox th {
+        width: 120px;
+        padding: 15px;
+        font-size: 14px;
+      }
+      
+      
+      .btn {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .btn button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="banner">
+      <a href = "{% url 'home:main' %}"><h2>PO-PIN</h2></a>
+      <div class="menu">
+        <ul>
+          <li><a href="{% url 'adpage:main' %}">메인</a></li>
+          <li><a href="{% url 'adpage:notice' %}">공지사항</a></li>
+          <li><a href="{% url 'adpage:post' %}">게시글 관리</a></li>
+          <li><a href="{% url 'adpage:user' %}">사용자 관리</a></li>
+        </ul>
+      </div>
+      <div class="banner-right">
+        <a href="{% url 'home:main' %}" class="home">
+          <i class="fi fi-rr-home"></i>홈으로
+        </a>
+      </div>
+    </div>
+
+    <div class="Bboard">
+      <div class="dash-top">
+        <h2>공지사항</h2>
+        <hr>
+      </div>
+
+      <div class="table-container">
+        <table class="writebox">
+          <tbody>
+            <tr>
+              <th scope="row"><label for="board">공지 유형</label></th>
+              <td>{{notice.notice_type}}</td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="title">제목</label></th>
+              <td>{{notice.title}}</td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="fix">상단고정</label></th>
+              <td>
+                <div class="custom-checkbox">
+                  <input type="checkbox" id="fix" {%if notice.is_pinned == True%}checked{%endif%}/>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="content">상세 내용</label></th>
+              <td>
+                <div class="content-text">
+                  {{notice.content}}
+                </div>
+              </td>
+            </tr>
+            {% comment %} <tr>
+              <th scope="row"><label for="file">첨부파일</label></th>
+              <td>
+                <div class="file-info">
+                  <ul>
+                    {% for file in notice.files.all %}
+                      <li><a href="{{ file.url }}" target="_blank">{{ file.name }}</a></li>
+                    {% empty %}
+                      <li>첨부파일이 없습니다.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </td>
+            </tr> {% endcomment %}
+          </tbody>
+        </table>
+      </div>
+      
+      {% comment %} <form method = "post" action = "{% url 'adpage:noticeD' notice.id %}" id = "deleteFrm"> {% endcomment %}
+        <div class="btn">
+          <button type="button" onclick="location.href='{% url 'adpage:noticeR' notice.id %}'" value="update">수정</button>
+          <button type="button" onclick = "deleteBtn()" value="delete">삭제</button>
+          <button type="button" onclick="location.href='{% url 'adpage:notice' %}'" value="back">이전</button></a>
+        </div>
+      {% comment %} </form> {% endcomment %}
+    </div>
+  </div>
+</body>
+<script>
+  function deleteBtn(){
+    if (confirm("게시물을 삭제하시겠습니까?")){
+      window.location.href = "{% url 'adpage:noticeD' notice.id %}";
+      alert("삭제되었습니다.");
+    }
+    else{
+      alert("취소되었습니다.");
+    }
+  }
+</script>
+</html>

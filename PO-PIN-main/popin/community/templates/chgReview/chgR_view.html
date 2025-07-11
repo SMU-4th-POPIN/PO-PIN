@@ -1,0 +1,102 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/static/css/community/chgR_view.css">
+  <script src="/static/js/community/chgR_view.js" defer></script>
+  <title>교환후기 상세</title>
+</head>
+<body>
+  <div class="container">
+    <div class="main-content">
+      <div class="post-header">
+        <h1 class="post-title">{{ post.title }}</h1>
+        <div class="post-meta">
+          {% for tag in post.tags.all %}
+            <span class="post-tag">#{{ tag.name }}</span>
+          {% endfor %}
+          <div class="rating-display">
+            {% for i in "12345"|slice:":post.overall_score" %}
+                ⭐
+              {% endfor %}
+            <span class="rating-text">{{ post.overall_score }}</span>
+          </div>
+          <div class="trader-info">
+            <span style = "font-weight : 550;">작성자 : {{ post.writer.nickname }}</span>
+            <span style = "font-weight : 25px;">│</span>
+            <span style = "font-weight : 550;">거래자 : {{ post.partner.nickname }}</span>
+          </div>
+          <span>📅 {{ post.created_at|date:"Y-m-d" }}</span>
+          <span>👁️{{ post.views }}</span>
+        </div>
+      </div>
+
+      <div class="post-content">
+        <div class="exchange-details">
+          <h4>📋 교환 정보</h4>
+          <div class="exchange-summary">
+            <div class="trader-card">
+              <div class="trader-name">{{ post.writer.nickname }}</div>
+              <div class="trader-role">후기 작성자</div>
+            </div>
+            <div class="exchange-arrow">⇄</div>
+            <div class="trader-card">
+              <div class="trader-name">{{ post.partner.nickname }}</div>
+              <div class="trader-role">교환 상대방</div>
+            </div>
+          </div>
+          
+        </div>
+
+        <div class="review-content">
+          <h4>📝 교환 후기</h4>
+          <p>{{ post.content|linebreaks }}</p>
+
+        </div>
+        <div class="review-images">
+          <h4>📎 첨부 파일</h4>
+          <div class="image-gallery">
+              {% for image in post.images.all %}
+              <div class="image-item" onclick="openModal(this)">
+                <img src="{{ image.image.url }}" alt="후기 이미지 {{ forloop.counter }}">
+              </div>
+              {% empty %}
+              <p>첨부된 이미지가 없습니다.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <a href="#" class="btn back" onclick="history.back()">이전으로</a>
+        <a href="{% url 'community:updateC' %}" class="btn update">수정하기</a>
+        <a href="#" class="btn delete">삭제하기</a>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="topBtn" id="topBtn">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M18 15l-6-6-6 6"/>
+    </svg>
+  </button>
+
+  <!-- Image Modal -->
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <button class="modal-nav modal-prev" onclick="changeImage(-1)">❮</button>
+      <img class="modal-image" id="modalImage" alt="확대 이미지">
+      <button class="modal-nav modal-next" onclick="changeImage(1)">❯</button>
+      <div class="modal-caption" id="modalCaption"></div>
+    </div>
+  </div>
+  {% endblock content %}
+</body>
+</html>

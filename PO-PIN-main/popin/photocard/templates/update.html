@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/photocard/update/{{photocard.pno}}/" method="POST" enctype='multipart/form-data'>
+        {% csrf_token %}
+
+        <label>제목</label>
+        <input type="text" name="title" value={{photocard.title}}><br><br>
+
+        <label>이미지 경로</label>
+        <input type="file" name='image' class="fileType" />
+        <img src="/media/{{photocard.image}}" alt="" style="width: 100px;">
+
+        <label>카테고리</label>
+        <select name="category" >
+            {% for key, label in category_choices %}
+            <option value="{{ key }}" {%if photocard.category == key%} selected {%endif%}>{{ label }} </option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>앨범</label>
+        <input type="text" name="album" value={{photocard.album}}><br><br>
+
+        <label>멤버 ID</label>
+        <select name="member" id="">
+            {% for mem in member %}
+            <option value="{{ mem.pk }}" {% if photocard.member.pk == mem.pk %}selected{% endif %}>
+                {{ mem.group.name }} - {{ mem.name }}
+            </option>
+            {% endfor %}
+        </select>
+        {{member.pk}}
+        <option value="{{ mem.pk }}" {% if photocard.member.pk == mem.pk %}selected{% endif %}>
+            {{ mem.group.name }} - {{ mem.name }}
+        </option>
+
+        <label>포토카드 상태</label>
+        <select name="poca_state">
+            {% for key, label in poca_state_choices %}
+            <option value="{{ key }}" {%if photocard.poca_state == key%} selected {%endif%}>{{ label }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>태그</label>
+        <input type="text" name="tag" value={{photocard.tag}} ><br><br>
+
+        <label>교환/구매</label>
+        <select name="trade_type">
+            {% for key, label in trade_type_choices %}
+            <option value="{{ key }}" {%if photocard.trade_type == key%} selected {%endif%}>{{ label }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>거래 진행 상태</label>
+        <select name="sell_state">
+            {% for key, label in trade_state_choices %}
+            <option value="{{ key }}" {%if photocard.sell_state == key%} selected {%endif%}>{{ label }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>거래 장소</label>
+        <select name="place">
+            {% for key, label in place_choices %}
+            <option value="{{ key }}" {%if photocard.place == key%} selected {%endif%}>{{ label }}</option>
+            {% endfor %}
+        </select><br><br>
+<!--해당 부분 input 입력이 아닌 지도 api에서 반환해 주세요-->
+        <label>위도</label>
+        <input type="text" name="latitude" value={{photocard.latitude}}><br><br>
+
+        <label>경도</label>
+        <input type="text" name="longitude" value={{photocard.longitude}}><br><br>
+<!--해당 부분 input 입력이 아닌 지도 api에서 반환해 주세요-->
+        <label>거래 가능 날짜</label>
+        <input type="date" name="available_at" value="{{ photocard.available_at|date:'Y-m-d' }}"><br><br>
+
+        <input type="submit" value="수정">
+    </form>
+
+</body>
+</html>
