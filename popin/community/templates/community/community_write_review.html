@@ -381,7 +381,6 @@
   </style>
 </head>
 <body>
-
   <form method="POST"  action="{% url 'community:write_review' %}" enctype="multipart/form-data">
     {% csrf_token %}
   <div class="Bboard">
@@ -664,8 +663,6 @@
         item.remove();
       }
     });
-
-   
 
     const dataTransfer = new DataTransfer();
     selectedFiles.forEach(file => dataTransfer.items.add(file));

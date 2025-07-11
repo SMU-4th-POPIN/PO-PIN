@@ -84,7 +84,7 @@
       color: #555;
     }
     td {
-      padding: 5px 0;
+      padding: 10px;
     }
     input[type="text"], textarea, input[type="file"], input[type="location"] {
       width: 90%;
@@ -103,7 +103,7 @@
       flex-wrap: wrap;
     }
     .type-toggle button {
-      padding: 8px 14px;
+      padding:  10px;
       border: 1px solid #aaa;
       border-radius: 20px;
       background: #fff;
@@ -247,9 +247,8 @@
   </style>
 </head>
 <body>
-
-
-
+  <form method="POST"  action="{% url 'community:write_companion' %}" enctype="multipart/form-data">
+   {% csrf_token %}
   <div class="Bboard">
     <div class="dash-top">
       <h2>동행 모집 글 작성</h2>
@@ -303,10 +302,32 @@
 
         </tr>
 
-      <tr>
-          <th><label for="content">본문</label></th>
-          <td><textarea id="content" name="content" placeholder="상세 내용을 적어주세요."></textarea></td>
-      </tr> 
+        <tr>
+          <th scope="row"><label for="region">지역</label></th>
+          <td>
+            <select id="region" name="region" class="wlong" style="width: 90%; padding: 10px; font-size: 14px; border-radius: 8px; border: 1px solid #ccc; outline: none; transition: border 0.3s ease; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: white url('data:image/svg+xml;charset=US-ASCII,%3csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'%237E6EB0\'%3e%3cpolygon points=\'0,0 14,0 7,7\'/%3e%3c/svg%3e') no-repeat right 10px center; background-size: 12px 7px; cursor: pointer;">
+              <option value="">지역 선택</option>
+              <option value="서울">서울</option>
+              <option value="경기">경기</option>
+              <option value="부산">부산</option>
+              <option value="대구">대구</option>
+              <option value="인천">인천</option>
+              <option value="광주">광주</option>
+              <option value="대전">대전</option>
+              <option value="울산">울산</option>
+              <option value="강원">강원</option>
+              <option value="충북">충북</option>
+              <option value="충남">충남</option>
+              <option value="전북">전북</option>
+              <option value="전남">전남</option>
+              <option value="경북">경북</option>
+              <option value="경남">경남</option>
+              <option value="제주">제주</option>
+              <option value="기타">기타</option>
+            </select>
+          </td>
+        </tr>
+ 
         <tr>
           <th><label for="tags">태그</label></th>
           <td><input type="text" id="tags" name="tags" placeholder="#태그1, #태그2" /></td>
@@ -334,8 +355,7 @@
   </div>
 </form>
 
-  <script>
-    document.getElementById('categoryInput').value = selectedType;
+ <script>
     const toggleButtons = document.querySelectorAll('.type-toggle button');
     let selectedType = '';
 

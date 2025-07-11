@@ -303,7 +303,8 @@
   </style>
 </head>
 <body>
-
+ <form method="POST"  action="{% url 'community:write_proxy' %}" enctype="multipart/form-data">
+   {% csrf_token %}
   <div class="Bboard">
     <div class="notice">
       <div class="dash-top">
