@@ -32,7 +32,7 @@
 
     .pocanavi button{border:none; background:transparent; padding:0;}
 
-    .icons {width:100px; display:flex; justify-content: space-between;}
+    .icons {width:120px; display:flex; justify-content: space-between;}
 
     .icons a{color:#333;}
 
@@ -363,15 +363,14 @@
     {% else %}
         {% include "header_logout.html" %}
     {% endif %}
-    <!--
-        <button class="fb"><a href="/photocard/write/"><i class="fas fa-pencil"></i></a></button>
-    -->
+
     <div class="content">
         <div class="content_background">
             <div class="pocanavi">
                 <button onclick="window.history.back();"><i class="fal fa-chevron-left"></i></button>
                 <div class="icons">
                     <a href="/photocard/modify/{{info.pno}}/"><i class="fas fa-pencil"></i></a>
+                    <a href="/photocard/delete/{{info.pno}}/"><i class="fal fa-trash-alt"></i></a>
                     <i class="{% if is_wish %}fas fa-heart red{% else %}fal fa-heart{% endif %}" id="heart"></i>
                     <i class="fal fa-share-square share-icon"></i>
                 </div>

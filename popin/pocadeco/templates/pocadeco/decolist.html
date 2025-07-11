@@ -359,6 +359,15 @@
             font-weight: bold;
         }
 
+        .tags {
+            padding: 4px 8px;
+            background: #F0F0F0;
+            color: #666;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         .photo-stats {
             display: flex;
             justify-content: space-between;
@@ -457,7 +466,7 @@
     <div class="container">
         <div class="main-content">
             <div class="sidebar">
-                <form method="get" action="/pocadeco/decoMain/">
+                <form method="get" action="/pocadeco/decolist/">
                     <div class="search-section">
                         <h3 class="filter-title" id="select_artist">검색어 입력</h3>
                         <input type="text" id="searchInput" class="search-input" name="search-input" placeholder="검색어를 입력해주세요">
@@ -497,40 +506,43 @@
                     <div class="photo-grid" id="photoGrid">
                         {%for deco in decoList %}
                             <div class="photo-card" data-id="{{deco.user}}">
-                                <div class="photo-image">
-                                    {%if deco.result_image %}
-                                        <img src="/media/{{deco.result_image}}/" alt={{deco.title}}> 
-                                    {%else%}
-                                            <img src="🎨 포토카드" alt="🎨 포토카드"> 
-                                    {%endif%}
-                                </div>
-                                <div class="photo-info">
-                                    <div class="photo-title">{{deco.title}}</div>
-                                    <div class="photo-meta">
-                                        <span>{{deco.user}}</span>
-                                        <span>{{deco.created_at|date:"Y-m-d"}}</span>
+                                <a href="/pocadeco/decoview/{{deco.id}}/">
+                                    <div class="photo-image">
+                                        {%if deco.result_image %}
+                                            <img src="/media/{{deco.result_image}}/" alt={{deco.title}}> 
+                                        {%else%}
+                                                <img src="🎨 포토카드" alt="🎨 포토카드"> 
+                                        {%endif%}
                                     </div>
-                                    <!--미구현-->
-                                    <div class="photo-tags">
-                                        <span class="tag">{{deco.group}}</span>
-                                        <span class="tag">{{deco.member}}</span>
-                                        {%for tag in deco.tags%}
-                                            <span class="tag">{{tag}}</span>
-                                        {%endfor%}
-
-                                    </div>
-                                    <div class="photo-stats">
-                                        <div class="stat-item">
-                                            <span>👀</span>
-                                            <span>{{deco.hit}}</span>
+                                    <div class="photo-info">
+                                        <div class="photo-title">{{deco.title}}</div>
+                                        <div class="photo-meta">
+                                            <span>{{deco.user}}</span>
+                                            <span>{{deco.created_at|date:"Y-m-d"}}</span>
                                         </div>
-                                        <div class="stat-item">
-                                            <span>❤️</span>
-                                            <span>{{deco.likes}}</span>
+                                        <!--미구현-->
+                                        <div class="photo-tags">
+                                            <span class="tag">{{deco.group}}</span>
+                                            <span class="tag">{{deco.member}}</span>
                                         </div>
+                                        <div class="photo-tags">
+                                            {%for tag in deco.tags%}
+                                                <span class="tags">{{tag}}</span>
+                                            {%endfor%}
+                                        </div>
+                                        <div class="photo-stats">
+                                            <div class="stat-item">
+                                                <span>👀</span>
+                                                <span>{{deco.hit}}</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span>❤️</span>
+                                                <span>{{deco.likes}}</span>
+                                            </div>
+                                        </div>
+                                        <!--미구현-->
                                     </div>
-                                    <!--미구현-->
-                                </div>
+                                </a>
                             </div>
                         {% empty %}
                             <p>검색된 게시글이 없습니다.</p>
@@ -567,7 +579,7 @@
                 </ul>
             </div>
         </div>
-        <button class="btn1 upload-btn"><img src="/static/images/write_icon.png/"></button>
+        <a href="/pocadeco/main/"><button class="btn1 upload-btn"><img src="/static/images/write_icon.png/"></button></a>
     </div>
 
     <script>

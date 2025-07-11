@@ -483,6 +483,7 @@
       cursor: pointer;
       color: white;
       font-size: 12px;
+      text-align:center;
     }
 
     .search-noticeBox {
@@ -736,6 +737,7 @@
                     <div class="preview-container" id="previewContainer" >
                         <img src="/media/{{photocard.image}}" id="previewImage" class="preview-image" alt="미리보기">
                     </div>
+                    <input type="hidden" name="imageUrl" id="imageUrl" value={{photocard.image}}>
                 </div>
 
                 <!-- 아티스트 검색 모달창 오픈 -->
@@ -744,16 +746,18 @@
                         <label for="member">그룹 - 멤버 <span class="required">*</span></label>
                         <div class="member-grid">
                             <!--검색된 결과 렌더링-->
-                            {% comment %} {% if photocard.member%}
+                            {% if photocard.member %}
                                 <div class="selected-item">
                                     <input type="hidden">{{photocard.member}}
                                 </div>
-                            {% else %} {% endcomment %}
+                                <input type="hidden" name="group" value={{groupMember.group.name}}>
+                                <input type="hidden" name="member" value={{groupMember.name}}>
+                            {% else %}
                                 <div class="search-notice" id="searchNoticeBox">
                                     <img src="/static/images/search.svg">
                                     <span class="artist-search" id="member">아티스트 검색</span>
                                 </div>
-                            {% comment %} {% endif %} {% endcomment %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -864,13 +868,13 @@
                 <div class="form-content">
                     <label for="tagInput" style="display:flex;"> 태그</label>
                     <div class="tag-input-container">
-                        <input type="text" id="tagInput" {% if photocard.tag %} {% for tag in tags %}value={{photocard.tag}} {% endfor %} {% endif %} placeholder="#희귀 #한정판 #교환급구 등의 태그를 입력해주세요">
+                        <input type="text" id="tagInput" placeholder="#희귀 #한정판 #교환급구 등의 태그를 입력해주세요">
                         <div id="tagList" class="tag-list"></div>
                         <small class="tag-limit-msg">최대 5개까지 등록할 수 있어요.</small>
                     </div>
                 </div>
                 <!-- 선택된 태그를 서버에 전송할 hidden input -->
-                <input type="hidden" name="tag" id="hiddenTags" >
+                <input type="hidden" name="tag" id="hiddenTags" value="{{ photocard.tag }}">
             </div>
             <!--//상세설명섹션-->
 
@@ -1078,52 +1082,57 @@
     const tagList = document.getElementById("tagList");
     const hiddenTags = document.getElementById("hiddenTags");
 
-    let tags = [];
+    const tags = {{ tags|safe }};
 
+    // 초기화: 화면에 기존 태그를 표시
     function updateTagDisplay() {
-    tagList.innerHTML = ""; // 기존 초기화
+        tagList.innerHTML = ""; // 기존 태그 목록 초기화
 
-    tags.forEach((tag, index) => {
-        const tagEl = document.createElement("div");
-        tagEl.className = "tag";
-        tagEl.innerHTML = `#${tag} <span class="remove-btn" data-index="${index}">×</span>`;
-        tagList.appendChild(tagEl);
-    });
+        tags.forEach((tag, index) => {
+            const tagEl = document.createElement("div");
+            tagEl.className = "tag";
+            tagEl.innerHTML = `#${tag} <span class="remove-btn" data-index="${index}">×</span>`;
+            tagList.appendChild(tagEl);
+        });
 
-    // hidden input에 쉼표로 구분된 태그 문자열 저장
-    hiddenTags.value = tags.join(",");
+        // hidden input에 쉼표로 구분된 태그 문자열 저장
+        hiddenTags.value = tags.join(",");
     }
 
+    // 태그 추가 함수
     function addTag(input) {
-    const newTag = input.trim().replace(/^#/, ""); // # 제거하고 공백 제거
-    if (newTag === "" || tags.includes(newTag)) return;
+        const newTag = input.trim().replace(/^#/, ""); // # 제거하고 공백 제거
+        if (newTag === "" || tags.includes(newTag)) return;
 
-    if (tags.length >= 5) {
-        alert("최대 5개까지 등록할 수 있어요.");
-        return;
+        if (tags.length >= 5) {
+            alert("최대 5개까지 등록할 수 있어요.");
+            return;
+        }
+
+        tags.push(newTag);  // 태그 배열에 새 태그 추가
+        updateTagDisplay();  // 화면 갱신
+        tagInput.value = "";  // 입력 필드 비우기
     }
 
-    tags.push(newTag);
-    updateTagDisplay();
-    tagInput.value = "";
-    }
-
-    // 입력 이벤트: Enter 또는 Space 입력 시 등록
+    // 입력 이벤트: Enter 키 입력 시 태그 등록
     tagInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        addTag(tagInput.value);
+        if (e.key === "Enter") {
+            e.preventDefault();  // 기본 엔터 동작 방지
+            addTag(tagInput.value);  // 태그 추가
         }
     });
 
-    // 태그 삭제 이벤트
+    // 태그 삭제 이벤트 (× 버튼 클릭 시)
     tagList.addEventListener("click", (e) => {
-    if (e.target.classList.contains("remove-btn")) {
-        const index = parseInt(e.target.dataset.index);
-        tags.splice(index, 1);
-        updateTagDisplay();
+        if (e.target.classList.contains("remove-btn")) {
+            const index = parseInt(e.target.dataset.index);
+            tags.splice(index, 1);  // 해당 태그 삭제
+            updateTagDisplay();  // 화면 갱신
         }
     });
+
+    // 초기 화면 렌더링 (기존 태그 표시)
+    updateTagDisplay();
 
 
     // 위치선택
@@ -1333,6 +1342,7 @@
     document.getElementById('uploadForm').addEventListener('submit', (e) => {
         const titleInput = document.getElementById('title');
         const imageInput = document.getElementById('imageInput');
+        const imageUrlField = document.getElementById('imageUrl');
         const albumInput = document.getElementById('albumInput');
         const albumTypeInput = document.getElementById('albumType');
         const tradeTypeInput = document.getElementById('tradeType');
@@ -1344,7 +1354,7 @@
         const longitudeInput = document.getElementById('longitude');
 
         const title = titleInput.value.trim();
-        const image = imageInput.value;
+        const image = imageInput.files[0]; // 선택된 파일
         const albumType = albumTypeInput.value;
         const tradeType = tradeTypeInput.value;
         const pocaState = pocaStateInput.value;
@@ -1355,7 +1365,16 @@
         const longitude = longitudeInput.value;
 
         if (!title) return focusAndAlert(e, titleInput, "제목을 입력해주세요!");
-        if (!image) return focusAndAlert(e, imageInput, "이미지를 선택해주세요!");
+
+        // 이미지가 첨부되지 않았다면, 기존 이미지 URL을 'hidden' 필드에 설정
+        if (!imageInput.files.length) {
+            imageUrlField.value = imageUrlField.value || "{{ photocard.image }}";
+        }
+        if (!image && !imageUrlField.value) {
+            e.preventDefault();
+            alert("이미지를 선택해주세요!");
+        }
+
         if (!album) return focusAndAlert(e, albumInput, "앨범명을 입력해주세요!");
         if (!albumType) return focusAndAlert(e, albumTypeInput, "앨범타입을 선택해주세요!");
         if (!tradeType) return focusAndAlert(e, tradeTypeInput, "거래유형을 선택해주세요!");

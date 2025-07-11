@@ -15,16 +15,15 @@ import json, base64
 from django.core.paginator import Paginator
 
 # 데코포토 전체 리스트
-# 데코포토 전체 리스트
 def decolist(request):
     # 전체 데코포토 리스트 불러오기
     decoratedpoca = DecoratedPhotocard.objects.select_related('member__group').order_by('-created_at').annotate(wish_count=Count('wished_by_users'))
-    searchInput = request.GET.get("search-input")
+    searchInput = request.GET.get("search-input", "")
     
     # 필터용 쿼리 파라미터 받아오기
     searchgroup = request.GET.getlist('searchgroup')
     selected_members = request.GET.getlist('selectedMembers')
-    sort = request.GET.get('sort')
+    sort = request.GET.get('sort', '')
     
     # 조건부 필터링 (값이 있을 경우에만 필터링)
     if searchgroup:
@@ -84,6 +83,34 @@ def decolist(request):
     
     context = {'decoList': deco_list, 'page_num':page_num, 'sort':sort, 'searchInput':searchInput}
     return render(request,'pocadeco/decolist.html', context)
+
+def decoview(request, id):
+    decophotocard = DecoratedPhotocard.objects.get(id=id)
+
+    if decophotocard.tag:
+        tags = decophotocard.tag.split(',')
+        context = {
+            'nickname' : decophotocard.user.nickname,
+            'title': decophotocard.title,
+            'result_image': decophotocard.result_image,
+            'tags' : tags,
+            'group' : decophotocard.member.group.name,
+            'member' :decophotocard.member.name,
+            'hit' : decophotocard.hit,
+            'like' : decophotocard.wished_by_users.count(),
+        }
+    else:
+        context = {
+            'nickname' : decophotocard.user.nickname,
+            'title': decophotocard.title,
+            'result_image': decophotocard.result_image,
+            'group' : decophotocard.member.group.name,
+            'member' :decophotocard.member.name,
+            'hit' : decophotocard.hit,
+            'like' : decophotocard.wished_by_users.count(),
+        }
+        
+    return render(request, 'pocadeco/decoview.html', context)
 
 # 데코포카 생성 페이지
 def main(request):
