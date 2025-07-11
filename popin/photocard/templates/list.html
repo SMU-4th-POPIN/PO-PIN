@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+    <title>포토카드교환</title>
+</head>
+<style>
+.card-image img{
+    width:100%;
+}
+</style>
+<body>
+    <a href="/photocard/write">작성</a>
+   <section class="popular-cards">
+        <h2 class="section-title">🔥 인기 포토카드</h2>
+        <div class="cards-grid">
+            {% for i in list %}
+            <div class="card-item">
+                <a href="/photocard/view/{{i.pno}}/">
+                    <div class="card-image">
+                        <img src="/media/{{i.image}}" alt="{{i.pno}}">
+                    </div>
+                    <div class="card-info">
+                        <h4>{{i.member.group.name}} {{i.member.name}}</h4>
+                        <div class="card-meta">
+                            <span class="card-album">{{i.album}}</span>
+                            <span class="card-likes">❤️ {{ i.wish_count }}</span>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">{{i.trade_type}}</span>
+                            <span class="tag">{{i.category}}</span>
+                        </div>
+                        <div class="card-location">📍 {{i.place}}</div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+            
+            <div class="card-item">
+                <div class="card-image">RIKU 포토카드</div>
+                <div class="card-info">
+                    <h4>리쿠 (RIKU)</h4>
+                    <div class="card-meta">
+                        <span class="card-album">WISH 1집</span>
+                        <span class="card-likes">❤️ 18</span>
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag">판매</span>
+                        <span class="tag">앨범포카</span>
+                    </div>
+                    <div class="card-location">📍 홍대</div>
+                </div>
+            </div>
+            
+            <div class="card-item">
+                <div class="card-image">YUSHI 포토카드</div>
+                <div class="card-info">
+                    <h4>유시 (YUSHI)</h4>
+                    <div class="card-meta">
+                        <span class="card-album">WISH 1집</span>
+                        <span class="card-likes">❤️ 31</span>
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag">교환</span>
+                        <span class="tag">팬사인회</span>
+                    </div>
+                    <div class="card-location">📍 신촌</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

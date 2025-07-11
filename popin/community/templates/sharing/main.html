@@ -1,0 +1,473 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/static/css/community/sharing.css">
+  <script src="/static/js/community/sharing.js" defer></script>
+  <title>나눔</title>
+</head>
+<body>
+  <div class="list">
+    <div class = 'group'>
+
+    <div class="girl">
+      <h3>걸그룹</h3>
+      <div class="line"></div>
+      <ul>
+        <li><a href="#" data-category="BLACKPINK" >BLACKPINK</a></li>
+        <li><a href="#" data-category="aespa" >aespa</a></li>
+        <li><a href="#" data-category="IVE" >IVE</a></li>
+        <li><a href="#" data-category="(G)I-DLE" >(G)I-DLE</a></li>
+        <li><a href="#" data-category="TWICE" >TWICE</a></li>
+        <li><a href="#" data-category="NewJeans" >NewJeans</a></li>
+        <li><a href="#" data-category="Red Velvet" >Red Velvet</a></li>
+        <li><a href="#" data-category="LE SSERAFIM" >LE SSERAFIM</a></li>
+        <li><a href="#" data-category="ILLIT" >ILLIT</a></li>
+        <li><a href="#" data-category="KISS OF LIFE" >KISS OF LIFE</a></li>
+        <li><a href="#" data-category="Hearts2Hearts" >Hearts2Hearts</a></li>
+      </ul>
+    </div>
+    <div class="boy">
+      <h3>보이그룹</h3>
+      <div class="line"></div>
+      <ul>
+        <li><a href="" data-category="NCT" >NCT</a></li>
+        <li><a href="" data-category="SEVENTEEN" >SEVENTEEN</a></li>
+        <li><a href="" data-category="BOYNEXTDOOR" >BOYNEXTDOOR</a></li>
+        <li><a href="" data-category="RIIZE" >RIIZE</a></li>
+        <li><a href="" data-category="ENHYPEN" >ENHYPEN</a></li>
+        <li><a href="" data-category="&TEAM" >&TEAM</a></li>
+        <li><a href="" data-category="PLAVE" >PLAVE</a></li>
+        <li><a href="" data-category="TWS" >TWS</a></li>
+        <li><a href="" data-category="EXO" >EXO</a></li>
+        <li><a href="" data-category="BTS" >BTS</a></li>
+        <li><a href="" data-category="기타" >기타</a></li>
+      </ul>
+    </div>
+    </div>
+    <div class="dashboard">
+      <div class="top">
+        <h3>나눔</h3>
+      </div>
+      <div class="line"></div>
+      <div class="box">
+          <div><p>1,234</p><a>진행 중인 나눔</a></div>
+          <div><p>5,678</p><a>완료된 나눔</a></div>
+          <div><p>12</p><a>이번 주 나눔</a></div>
+        </div>
+      <div class="search-filter-container">
+      <div class="search-toggle">
+        <button class="toggle-btn active" data-type="general">일반 검색</button>
+        <button class="toggle-btn" data-type="tag">태그 검색</button>
+      </div>
+      <input type="text" id="generalSearch" class="search-input" placeholder="제목으로 검색">
+      <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
+
+      <select id="stateFilter" class="filter-select">
+        <option value="">나눔 종류</option>
+        <option value="앨범">앨범</option>
+        <option value="굿즈">굿즈</option>
+        <option value="기타">기타</option>
+      </select>
+      <select id="sortSelect" class="filter-select">
+          <option value="">정렬</option>
+          <option value="최신순">최신순</option>
+          <option value="조회순">조회순</option>
+      </select>
+    </div>
+        <div class="postlist">
+          <!-- 동행 카드들 -->
+          <div class="post-card" data-category="aespa" data-imgs="/static/images/test/sharing.jpg">
+              <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">AESPA</span>
+                <span class = "stype">앨범</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">에스파 더티워크 앨범 나눔</h3>
+                <div class="post-right">
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#앨범</span>
+                <span class="post-tag">#aespa</span>
+                <span class="post-tag">#오프라인</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>등촌동 SBS홀</span>
+                  </div>
+                  <div class="info-check">
+                      <span class="info-icon">✅</span>
+                      <span>에스파 위버스 멤버쉽 확인</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  에스파 앨범 나눔합니다
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 wintercute</span>
+                      <span class="post-meta">2025-01-01</span>
+                    </div>
+                    <div class="participants">
+                      <span>👁️ 67</span>
+                    </div>
+              </div>
+          </div>
+          <div class="post-card" data-category="aespa" data-imgs="/static/images/test/sharing.jpg">
+              <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">AESPA</span>
+                <span class = "stype">앨범</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">에스파 더티워크 앨범 나눔</h3>
+                <div class="post-right">
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#앨범</span>
+                <span class="post-tag">#aespa</span>
+                <span class="post-tag">#오프라인</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>등촌동 SBS홀</span>
+                  </div>
+                  <div class="info-check">
+                      <span class="info-icon">✅</span>
+                      <span>에스파 위버스 멤버쉽 확인</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  에스파 앨범 나눔합니다
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 wintercute</span>
+                      <span class="post-meta">2025-03-01</span>
+                    </div>
+                    <div class="participants">
+                      <span>👁️ 628</span>
+                    </div>
+              </div>
+          </div>
+          <div class="post-card" data-category="aespa" data-imgs="/static/images/test/sharing.jpg">
+              <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">AESPA</span>
+                <span class = "stype">앨범</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">에스파 더티워크 앨범 나눔</h3>
+                <div class="post-right">
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#앨범</span>
+                <span class="post-tag">#aespa</span>
+                <span class="post-tag">#오프라인</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>등촌동 SBS홀</span>
+                  </div>
+                  <div class="info-check">
+                      <span class="info-icon">✅</span>
+                      <span>에스파 위버스 멤버쉽 확인</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  에스파 앨범 나눔합니다
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 wintercute</span>
+                      <span class="post-meta">2013-01-01</span>
+                    </div>
+                    <div class="participants">
+                      <span>👁️ 2</span>
+                    </div>
+              </div>
+          </div>
+          <div class="post-card" data-category="aespa" data-imgs="/static/images/test/sharing.jpg">
+              <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">AESPA</span>
+                <span class = "stype">앨범</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">에스파 더티워크 앨범 나눔</h3>
+                <div class="post-right">
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#앨범</span>
+                <span class="post-tag">#aespa</span>
+                <span class="post-tag">#오프라인</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>등촌동 SBS홀</span>
+                  </div>
+                  <div class="info-check">
+                      <span class="info-icon">✅</span>
+                      <span>에스파 위버스 멤버쉽 확인</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  에스파 앨범 나눔합니다
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 wintercute</span>
+                      <span class="post-meta">2025-12-12</span>
+                    </div>
+                    <div class="participants">
+                      <span>👁️ 509</span>
+                    </div>
+              </div>
+          </div>
+          {% for i in ""|center:30 %}
+          <div class="post-card" data-category="NCT">
+              <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">NCT DREAM</span>
+                <span class = "stype">기타</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">드사쇼 막콘 마크 핀버튼 나눔</h3>
+                <div class="post-right">
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#콘서트</span>
+                <span class="post-tag">#NCT DREAM</span>
+                <span class="post-tag">#핀버튼</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 8월 3일 (토) 10:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>고척돔</span>
+                  </div>
+                  <div class="info-check">
+                      <span class="info-icon">✅</span>
+                      <span>마크 버블 1년 이상</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  드사쇼 막콘에서 마크 핀버튼 나눔해요~ 
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 쩗쭓짧</span>
+                      <span class="post-meta">2025-02-28</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 28</span>
+                  </div>
+              </div>
+            </div>
+            {% endfor %}
+            <div class="post-card" data-category="aespa" data-imgs="/static/images/test/sharing.jpg">
+              <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">AESPA</span>
+                <span class = "stype">앨범</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">에스파 더티워크 앨범 나눔</h3>
+                <div class="post-right">
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#앨범</span>
+                <span class="post-tag">#aespa</span>
+                <span class="post-tag">#오프라인</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>등촌동 SBS홀</span>
+                  </div>
+                  <div class="info-check">
+                      <span class="info-icon">✅</span>
+                      <span>에스파 위버스 멤버쉽 확인</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  에스파 앨범 나눔합니다
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 wintercute</span>
+                      <span class="post-meta">2025-01-01</span>
+                    </div>
+                    <div class="participants">
+                      <span>👁️ 67</span>
+                    </div>
+              </div>
+           </div>
+            <div class="post-card" data-category="aespa" data-imgs="/static/images/test/sharing.jpg">
+              <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">AESPA</span>
+                <span class = "stype">앨범</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">가나다라마바사람살려</h3>
+                <div class="post-right">
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#앨범</span>
+                <span class="post-tag">#aespa</span>
+                <span class="post-tag">#오프라인</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>등촌동 SBS홀</span>
+                  </div>
+                  <div class="info-check">
+                      <span class="info-icon">✅</span>
+                      <span>에스파 위버스 멤버쉽 확인</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  에스파 앨범 나눔합니다
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 wintercute</span>
+                      <span class="post-meta">2025-01-01</span>
+                    </div>
+                    <div class="participants">
+                      <span>👁️ 67</span>
+                    </div>
+              </div>
+           </div>
+              <div class="pagination">
+                  <a href="#" title="첫 페이지">«</a>
+                  <a href="#" title="이전 페이지">‹</a>
+                  <strong>1</strong>
+                  <a href="#">2</a>
+                  <a href="#">3</a>
+                  <a href="#">4</a>
+                  <a href="#">5</a>
+                  <a href="#" title="다음 페이지">›</a>
+                  <a href="#" title="마지막 페이지">»</a>
+                </div>
+            <div id="postModal" class="modal">
+                <div class="modal-content">
+                    <button class="close-btn" onclick="closePostModal()">&times;</button>
+                    <div id="modalPostMeta" class="post-meta-wrapper">
+                      <span id="modalPostArtist" class="artist"></span>
+                      <span id="modalPostStype" class="stype"></span>
+                    </div>
+                    <h2 id="modalPostTitle">제목</h2>
+                    <div class = "modall">
+                      <div id="modalPostTags" class="post-tags"></div>
+                      <p id="modalPostCreated"></p>
+                    </div>
+                    <p id="modalPostDate">📅 날짜</p>
+                    <p id="modalPostPlace">📍 장소</p>
+                    <p id="modalPostCheck">✅ 인증수단</p>
+                    <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
+                    설명 내용
+                    </div>
+                    <div id="modalPostImages" style="display:flex; gap:10px;"></div>
+                  </div>
+                    <!-- 이미지 확대 모달 -->
+                <div id="imageModal" class="modal" style="display:none; justify-content:center; align-items:center;">
+                  <button id="prevBtn">‹</button>
+                  <img id="modalImage" style="max-width:80%; max-height:80%;" />
+                  <button id="nextBtn">›</button>
+                </div>
+                  <!-- 메뉴에서 해당 게시물이 없을 때 -->
+                </div>
+                
+              </div>
+              <p id="noResultsMessage" style="display:none; text-align:center; margin-top : 20px; padding:20px;">
+              해당 조건에 맞는 게시물이 없습니다.</p>
+          </div>
+          <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
+        </body>
+{%endblock%}
+<!--//상단헤더-->
+</body>
+</html>

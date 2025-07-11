@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <title>현황공유 작성</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .nav-menu a:hover {
+      color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .nav-menu a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 50%;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    .nav-menu a:hover::after {
+      width: 100%;
+    }
+
+    .home {
+      all: unset;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      color: #7E6EB0;
+      padding: 10px 15px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .home:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .Bboard {
+      width: 900px;
+      min-height: 700px;
+      border-radius: 25px;
+      margin: 100px auto;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .dash-top {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .dash-top h2 {
+      font-size: 24px;
+      color: #333;
+    }
+
+    .line {
+      border-bottom: 1px solid rgba(185, 180, 190, 0.96);
+      margin: 20px auto 0 auto;
+    }
+
+    table.writebox {
+      width: 880px;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+      margin: 0 auto;
+    }
+
+    table.writebox th {
+      width: 120px;
+      text-align: center;
+      vertical-align: middle;
+      padding: 10px;
+      font-size: 16px;
+      color: #555;
+    }
+
+    table.writebox td {
+      padding-top: 5px;
+    }
+
+    input.wlong,
+    textarea.tta {
+      width: calc(80% - 10px);
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      transition: border 0.3s ease;
+    }
+
+    input.wlong:focus,
+    textarea.tta:focus {
+      border: 2px solid #7E6EB0;
+    }
+
+    textarea.tta {
+      height: 120px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    /* 카테고리 버튼 스타일 */
+    .category-buttons {
+      width: calc(80% - 10px);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .category-btn {
+      padding: 10px 20px;
+      border: 2px solid #e0e0e0;
+      background: white;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      color: #666;
+    }
+
+    .category-btn:hover {
+      border-color: #7E6EB0;
+      color: #7E6EB0;
+      transform: translateY(-2px);
+    }
+
+    .category-btn.active {
+      background: #7E6EB0;
+      border-color: #7E6EB0;
+      color: white;
+    }
+
+    .file-upload-area {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: calc(80% - 10px);
+      background: #FAFAFA;
+    }
+
+    .file-upload-area:hover {
+      border-color: #7E6EB0;
+      background: rgba(126, 110, 176, 0.05);
+    }
+
+    .file-upload-area.dragover {
+      border-color: #7E6EB0;
+      background: rgba(126, 110, 176, 0.1);
+      transform: scale(1.02);
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      color: #7E6EB0;
+      margin-bottom: 10px;
+    }
+
+    .file-list {
+      margin-top: 15px;
+      width: calc(80% - 10px);
+    }
+
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      background: linear-gradient(135deg, #F8F9FF 0%, #F0F2FF 100%);
+      border: 1px solid #E0E5FF;
+      border-radius: 8px;
+      margin: 8px 0;
+      transition: all 0.3s ease;
+    }
+
+    .file-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(126, 110, 176, 0.15);
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .file-icon {
+      width: 32px;
+      height: 32px;
+      background: #7E6EB0;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+    }
+
+    .file-name {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .file-size {
+      font-size: 12px;
+      color: #666;
+      margin-left: 5px;
+    }
+
+    .file-remove {
+      color: #FF4444;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 18px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .file-remove:hover {
+      background: #FF4444;
+      color: white;
+    }
+
+    .file-count {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #7E6EB0;
+      font-weight: 500;
+    }
+
+    .btn {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-submit {
+      background: #7E6EB0;
+      color: white;
+    }
+
+    .btn-submit:hover {
+      background: #6B5B9A;
+      transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+      background: #f5f5f5;
+      color: #666;
+      border: 2px solid #e0e0e0;
+    }
+
+    .btn-cancel:hover {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .required {
+      color: #ff4444;
+    }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
+      .Bboard {
+        width: 95%;
+        padding: 20px 15px;
+        margin: 50px auto;
+      }
+
+      table.writebox {
+        width: 100%;
+      }
+
+      table.writebox th {
+        width: 100px;
+        font-size: 14px;
+      }
+
+      input.wlong,
+      textarea.tta,
+      .category-buttons,
+      .file-upload-area,
+      .file-list {
+        width: 100%;
+      }
+
+      .btn {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">PO-PIN</div>
+      <ul class="nav-menu">
+        <li><a href="#home">홈</a></li>
+        <li><a href="#exchange">포카교환</a></li>
+        <li><a href="#community">커뮤니티</a></li>
+        <li><a href="#decorate">포카꾸미기</a></li>
+        <li><a href="#customer">고객지원</a></li>
+      </ul>
+      <div class="banner-right">
+        <a href="#" class="home">
+          <i class="fi-rr-caret-left"></i>이전으로
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="Bboard">
+    <div class="notice">
+      <div class="dash-top">
+        <h2>현황공유 작성</h2>
+        <div class="line"></div>
+      </div>
+    </div>
+
+    <table class="writebox">
+      <tbody>
+        <tr>
+          <th scope="row"><label for="title">제목 <span class="required">*</span></label></th>
+          <td><input type="text" class="wlong" id="title" placeholder="현황공유 제목을 입력하세요"/></td>
+        </tr>
+        <tr>
+          <th scope="row"><label for="artist">아티스트 <span class="required">*</span></label></th>
+          <td><input type="text" class="wlong" id="artist" placeholder="아티스트명을 입력하세요" required/></td>
+        </tr>
+        <tr>
+          <th scope="row"><label>카테고리 <span class="required">*</span></label></th>
+          <td>
+            <div class="category-buttons">
+              <button type="button" class="category-btn" data-category="콘서트">콘서트</button>
+              <button type="button" class="category-btn" data-category="팝업스토어">팝업스토어</button>
+              <button type="button" class="category-btn" data-category="팬사인회">팬사인회</button>
+              <button type="button" class="category-btn" data-category="전시회">전시회</button>
+              <button type="button" class="category-btn" data-category="굿즈샵">굿즈샵</button>
+              <button type="button" class="category-btn" data-category="기타">기타</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row"><label for="eventDate">날짜 <span class="required">*</span></label></th>
+          <td><input type="datetime-local" class="wlong" id="eventDate" required/></td>
+        </tr>
+        <tr>
+          <th scope="row"><label for="location">장소 <span class="required">*</span></label></th>
+          <td><input type="text" class="wlong" id="location" placeholder="예: 강남구 CGV" required/></td>
+        </tr>
+        <tr>
+          <th scope="row"><label for="region">지역</label></th>
+          <td>
+            <select id="region" class="wlong" style="width: calc(80% - 10px); padding: 10px; font-size: 14px; border-radius: 8px; border: 1px solid #ccc; outline: none; transition: border 0.3s ease; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: white url('data:image/svg+xml;charset=US-ASCII,%3csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'%237E6EB0\'%3e%3cpolygon points=\'0,0 14,0 7,7\'/%3e%3c/svg%3e') no-repeat right 10px center; background-size: 12px 7px; cursor: pointer;">
+              <option value="">지역 선택</option>
+              <option value="서울">서울</option>
+              <option value="경기">경기</option>
+              <option value="부산">부산</option>
+              <option value="대구">대구</option>
+              <option value="인천">인천</option>
+              <option value="광주">광주</option>
+              <option value="대전">대전</option>
+              <option value="울산">울산</option>
+              <option value="강원">강원</option>
+              <option value="충북">충북</option>
+              <option value="충남">충남</option>
+              <option value="전북">전북</option>
+              <option value="전남">전남</option>
+              <option value="경북">경북</option>
+              <option value="경남">경남</option>
+              <option value="제주">제주</option>
+              <option value="기타">기타</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row"><label for="description">현황 설명 <span class="required">*</span></label></th>
+          <td><textarea class="tta" id="description" placeholder="현재 상황을 자세히 설명해주세요&#10;예: 대기 줄 길이, 품절 상품, 특이사항 등" required></textarea></td>
+        </tr>
+        <tr>
+          <th scope="row"><label for="tags">태그</label></th>
+          <td>
+            <input type="text" class="wlong" id="tags" placeholder="태그를 쉼표로 구분해서 입력하세요 (예: 팬사인회, 강남, 품절)">
+            <div style="font-size: 12px; color: #999; margin-top: 5px; width: calc(80% - 10px);">쉼표(,)로 구분하여 여러 태그를 입력할 수 있습니다</div>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row"><label for="file">사진 첨부</label></th>
+          <td>
+            <div class="file-upload-area" id="fileUploadArea">
+              <input type="file" id="fileInput" multiple accept="image/*" style="display:none;">
+              <div class="upload-icon">📸</div>
+              <p><strong>클릭하거나 파일을 드래그하여 업로드</strong></p>
+              <p style="font-size: 12px; color: #999; margin-top: 5px;">JPG, PNG, GIF 파일만 업로드 가능 (최대 5장)</p>
+            </div>
+            <div class="file-list" id="fileList"></div>
+            <div class="file-count" id="fileCount" style="display:none;"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="btn">
+      <button type="button" class="btn-submit" onclick="submitForm()">현황공유 등록</button>
+      <button type="button" class="btn-cancel" onclick="goBack()">취소</button>
+    </div>
+  </div>
+
+  <script>
+    let uploadedImages = [];
+    let selectedCategory = '';
+
+    // 카테고리 버튼 클릭 이벤트
+    document.addEventListener('DOMContentLoaded', function() {
+      const categoryButtons = document.querySelectorAll('.category-btn');
+      
+      categoryButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          // 모든 버튼에서 active 클래스 제거
+          categoryButtons.forEach(btn => btn.classList.remove('active'));
+          
+          // 클릭된 버튼에 active 클래스 추가
+          this.classList.add('active');
+          
+          // 선택된 카테고리 저장
+          selectedCategory = this.getAttribute('data-category');
+        });
+      });
+    });
+
+    // 파일 업로드 관련
+    document.addEventListener("DOMContentLoaded", function () {
+      const fileUploadArea = document.getElementById('fileUploadArea');
+      const fileInput = document.getElementById('fileInput');
+      const fileList = document.getElementById('fileList');
+      const fileCount = document.getElementById('fileCount');
+
+      fileUploadArea.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', function(e) {
+        handleFiles(e.target.files);
+      });
+
+      fileUploadArea.addEventListener('dragenter', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      fileUploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        fileUploadArea.classList.add('dragover');
+      });
+
+      fileUploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!fileUploadArea.contains(e.relatedTarget)) {
+          fileUploadArea.classList.remove('dragover');
+        }
+      });
+
+      fileUploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        fileUploadArea.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+      });
+
+      function handleFiles(files) {
+        Array.from(files).forEach(file => {
+          if (!file.type.startsWith('image/')) {
+            alert(`${file.name}은(는) 이미지 파일이 아닙니다.`);
+            return;
+          }
+
+          if (uploadedImages.length >= 5) {
+            alert('이미지는 최대 5장까지만 업로드할 수 있습니다.');
+            return;
+          }
+
+          if (uploadedImages.some(f => f.name === file.name && f.size === file.size)) {
+            alert(`${file.name}은(는) 이미 추가된 파일입니다.`);
+            return;
+          }
+
+          const imageData = {
+            file: file,
+            name: file.name,
+            size: file.size,
+            id: Date.now() + Math.random()
+          };
+          uploadedImages.push(imageData);
+          displayFile(file);
+        });
+
+        updateFileCount();
+      }
+
+      function displayFile(file) {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.setAttribute('data-filename', file.name);
+
+        fileItem.innerHTML = `
+          <div class="file-info">
+            <div class="file-icon">📸</div>
+            <div>
+              <div class="file-name">${file.name}</div>
+              <div class="file-size">${formatFileSize(file.size)}</div>
+            </div>
+          </div>
+          <span class="file-remove" onclick="removeFile('${file.name}', ${file.size})">×</span>
+        `;
+
+        fileList.appendChild(fileItem);
+      }
+
+      window.removeFile = function(fileName, fileSize) {
+        uploadedImages = uploadedImages.filter(file => !(file.name === fileName && file.size === fileSize));
+        const fileItems = document.querySelectorAll('.file-item');
+        fileItems.forEach(item => {
+          if (item.getAttribute('data-filename') === fileName) {
+            item.remove();
+          }
+        });
+        updateFileCount();
+      };
+
+      function updateFileCount() {
+        if (uploadedImages.length > 0) {
+          fileCount.style.display = 'block';
+          fileCount.textContent = `총 ${uploadedImages.length}개의 파일이 선택되었습니다.`;
+        } else {
+          fileCount.style.display = 'none';
+        }
+      }
+
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      // 현재 시간을 기본값으로 설정
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      document.getElementById('eventDate').value = now.toISOString().slice(0, 16);
+    });
+
+    // 폼 제출 처리
+    function submitForm() {
+      const tagsInput = document.getElementById('tags').value.trim();
+      const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+      
+      const formData = {
+        title: document.getElementById('title').value.trim(),
+        artist: document.getElementById('artist').value.trim(),
+        category: selectedCategory,
+        eventDate: document.getElementById('eventDate').value,
+        location: document.getElementById('location').value.trim(),
+        region: document.getElementById('region').value,
+        description: document.getElementById('description').value.trim(),
+        tags: tags,
+        images: uploadedImages
+      };
+      
+      // 필수 필드 확인
+      if (!formData.title || !formData.artist || !formData.category || 
+          !formData.eventDate || !formData.location || !formData.description) {
+        alert('필수 항목을 모두 입력해주세요.');
+        return;
+      }
+      
+      console.log('폼 데이터:', formData);
+      alert('현황공유가 성공적으로 등록되었습니다!');
+    }
+
+    // 취소 버튼
+    function goBack() {
+      if (confirm('작성을 취소하시겠습니까? 입력한 내용이 모두 삭제됩니다.')) {
+        window.history.back();
+      }
+    }
+  </script>
+</body>
+</html>

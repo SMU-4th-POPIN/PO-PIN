@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>멤버 선택 - PO-PIN</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+      font-family: inherit;
+    }
+
+    .signup-wrapper {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 25px;
+      padding: 1rem 1rem 0.5rem;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.08);
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+    }
+
+    /* 네비게이션 버튼 박스 */
+    .nav-buttons {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .nav-btn {
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .nav-btn.active {
+      background: white;
+      color: #667eea;
+      border-color: white;
+      font-weight: 700;
+    }
+
+    .signup-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 3rem;
+      width: 100%;
+      box-shadow: 0 30px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      max-height: 900px;
+      overflow-y: auto;
+    }
+
+    .page-title {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #7E6EB0;
+      margin-bottom: 1.3rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      letter-spacing: -0.05em;
+    }
+
+    .subtitle {
+      font-size: 20px;
+      font-weight: 500;
+      color: #BFB2D6;
+      text-align: center;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .search-container {
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .search-box {
+      padding: 12px 20px;
+      border: 2px solid #ddd;
+      border-radius: 25px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 300px;
+      transition: all 0.3s ease;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border: 2px solid #667eea;
+      background: white;
+      color: #667eea;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .selected-count {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .selected-members {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .selected-members h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .selected-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .selected-item {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 15px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .remove-btn {
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      color: white;
+      font-size: 12px;
+    }
+
+    .search-notice {
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+      border: 2px dashed #667eea;
+      border-radius: 20px;
+      margin: 20px 0;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    }
+
+    .search-notice .icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .search-notice .main-text {
+      color: #667eea;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .search-notice .sub-text {
+      font-size: 14px;
+      color: #999;
+    }
+
+    .groups-container {
+      display: grid;
+      gap: 20px;
+    }
+
+    .group-card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .group-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .group-name {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .group-type {
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .boy-group {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .girl-group {
+      background: #fce4ec;
+      color: #c2185b;
+    }
+
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+    }
+
+    .member-toggle {
+      padding: 8px 12px;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .member-toggle:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .member-toggle.selected {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-color: #667eea;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .member-toggle.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .selection-limit-notice {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      color: #856404;
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      margin-top: 1.5rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      .signup-container {
+        padding: 2rem;
+      }
+
+      .nav-buttons {
+        gap: 0.3rem;
+      }
+
+      .nav-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+
+      .members-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      }
+
+      .member-toggle {
+        font-size: 11px;
+        padding: 6px 10px;
+      }
+
+      .search-box {
+        max-width: 300px;
+      }
+
+      .search-notice {
+        padding: 30px 15px;
+      }
+
+      .search-notice .icon {
+        font-size: 40px;
+      }
+
+      .search-notice .main-text {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+
+
+<body>
+  <div class="signup-wrapper">
+    <div class="nav-buttons">
+      <button class="nav-btn" onclick="goToPage('terms', event)">약관 동의</button>
+      <button class="nav-btn" onclick="goToPage('info', event)">회원 정보</button>
+      <button class="nav-btn" onclick="goToPage('location', event)">장소 선택</button>
+      <button class="nav-btn active" onclick="goToPage('member', event)">멤버 선택</button>
+    </div>
+    
+    <div class="signup-container">
+      <div class="header">
+        <h1 class="page-title">PO-PIN</h1>
+        <h3 class="subtitle">최애 멤버 선택</h3>
+        <br />
+        <hr />
+      </div>
+      
+      <form id="memberForm" method="POST" action="{% url 'signup:member_select' %}">
+        {% csrf_token %}
+      <div class="search-container">
+        <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
+          <input type="hidden" name="group_name" id="selectedGroup">
+          <input type="hidden" name="member_name" id="selectedMember">
+
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">전체</button>
+          <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
+          <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
+          
+        </div>
+      </div>
+
+      <div class="selected-count">선택된 멤버: <span id="selectedCount">0</span>/2명</div>
+
+      <div class="selected-members" id="selectedMembers" style="display: none;">
+        <h3>🌟 내 최애 멤버들</h3>
+        <div class="selected-list" id="selectedList"></div>
+      </div>
+
+      <div class="search-notice" id="searchNotice">
+        <span class="icon">🔍</span>
+        <div class="main-text">검색어를 입력하여 아이돌 그룹을 찾아보세요!</div>
+        <div class="sub-text">그룹명 또는 멤버명으로 검색 가능합니다</div>
+      </div>
+      
+      <div class="groups-container" id="groupsContainer"></div>
+      <div id="hiddenInputsContainer"></div>
+      <button id="completeBtn" class="btn btn-primary" onclick="completeMemberSelection()" type="button" disabled>완료</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+   document.addEventListener("DOMContentLoaded", function () {
+  let selectedMembers = new Set();
+  let currentFilter = 'all';
+
+  function updateSelectedDisplay() {
+    const count = document.getElementById('selectedCount');
+    const container = document.getElementById('selectedMembers');
+    const list = document.getElementById('selectedList');
+    const completeBtn = document.getElementById('completeBtn');
+
+    count.textContent = selectedMembers.size;
+    if (selectedMembers.size === 0) {
+      container.style.display = 'none';
+      completeBtn.disabled = true;
+    } else {
+      container.style.display = 'block';
+      completeBtn.disabled = false;
+      list.innerHTML = Array.from(selectedMembers).map(item => {
+        const [group, member] = item.split('-');
+        return `
+          <div class="selected-item">
+            <span>${group} - ${member}</span>
+            <button class="remove-btn" data-item="${item}">×</button>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  document.getElementById("idolSearch").addEventListener("input", function () {
+    const query = this.value.trim();
+    const container = document.getElementById("groupsContainer");
+    const searchNotice = document.getElementById("searchNotice");
+
+    if (!query) {
+      container.innerHTML = '';
+      searchNotice.style.display = 'block';
+      return;
+    }
+
+    fetch(`/idols/search/?q=${query}`)
+      .then(response => response.json())
+      .then(data => {
+        container.innerHTML = "";
+        searchNotice.style.display = 'none';
+
+        const addGroupCard = (name, gender, members) => {
+          const groupCard = document.createElement("div");
+          groupCard.className = "group-card";
+          const typeClass = gender === "M" ? "boy-group" : "girl-group";
+
+          groupCard.innerHTML = `
+            <div class="group-header">
+              <div class="group-name">${name}</div>
+              <div class="group-type ${typeClass}">
+                ${gender === "M" ? "보이그룹" : "걸그룹"}
+              </div>
+            </div>
+            ${selectedMembers.size >= 2 ? '<div class="selection-limit-notice">최애 멤버는 2명까지만 선택할 수 있습니다!</div>' : ''}
+            <div class="members-grid">
+              ${members.map(member => {
+                const isSelected = selectedMembers.has(`${name}-${member.name}`);
+                const isDisabled = !isSelected && selectedMembers.size >= 2;
+                return `
+                  <button type="button" class="member-toggle ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+                          data-group="${name}" data-member="${member.name}">
+                    ${member.name}
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          `;
+          container.appendChild(groupCard);
+        };
+
+        const groups = {};
+        data.members.forEach(member => {
+          const groupName = member.group__name;
+          if (!groups[groupName]) {
+            groups[groupName] = {
+              gender: member.group__gender,
+              members: []
+            };
+          }
+          groups[groupName].members.push(member);
+        });
+
+        Object.entries(groups).forEach(([groupName, info]) => {
+          addGroupCard(groupName, info.gender, info.members);
+        });
+
+        updateSelectedDisplay();
+      });
+  });
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      currentFilter = e.target.dataset.filter;
+      document.getElementById("idolSearch").dispatchEvent(new Event("input")); // 다시 필터링
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('member-toggle') && !e.target.classList.contains('disabled')) {
+      const group = e.target.dataset.group;
+      const member = e.target.dataset.member;
+      const key = `${group}-${member}`;
+
+      if (selectedMembers.has(key)) {
+        selectedMembers.delete(key);
+        e.target.classList.remove('selected');
+      } else {
+        if (selectedMembers.size < 2) {
+          selectedMembers.add(key);
+          e.target.classList.add('selected');
+        }
+      }
+
+      updateSelectedDisplay();
+    }
+
+    if (e.target.classList.contains('remove-btn')) {
+      const item = e.target.dataset.item;
+      selectedMembers.delete(item);
+      updateSelectedDisplay();
+      document.getElementById("idolSearch").dispatchEvent(new Event("input"));
+    }
+  });
+
+  document.getElementById("completeBtn").addEventListener("click", function () {
+    if (selectedMembers.size === 0) {
+      alert("최소 1명 이상의 멤버를 선택해주세요.");
+      return;
+    }
+
+    const container = document.getElementById("hiddenInputsContainer");
+    container.innerHTML = "";
+
+    selectedMembers.forEach(item => {
+      const [group, member] = item.split('-');
+
+      const groupInput = document.createElement("input");
+      groupInput.type = "hidden";
+      groupInput.name = "group_name";
+      groupInput.value = group;
+
+      const memberInput = document.createElement("input");
+      memberInput.type = "hidden";
+      memberInput.name = "member_name";
+      memberInput.value = member;
+
+      container.appendChild(groupInput);
+      container.appendChild(memberInput);
+    });
+
+    document.getElementById("memberForm").submit();
+  });
+
+  updateSelectedDisplay();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,484 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/static/css/community/proxy.css">
+  <script src="/static/js/community/proxy.js" defer></script>
+  <title>대리구매</title>
+</head>
+<body>
+  <div class="list">
+    <div class = 'group'>
+    <div class="girl">
+      <h3>걸그룹</h3>
+      <div class="line"></div>
+      <ul>
+        <li><a href="#" data-category="BLACKPINK" >BLACKPINK</a></li>
+        <li><a href="#" data-category="aespa" >aespa</a></li>
+        <li><a href="#" data-category="IVE" >IVE</a></li>
+        <li><a href="#" data-category="(G)I-DLE" >(G)I-DLE</a></li>
+        <li><a href="#" data-category="TWICE" >TWICE</a></li>
+        <li><a href="#" data-category="NewJeans" >NewJeans</a></li>
+        <li><a href="#" data-category="Red Velvet" >Red Velvet</a></li>
+        <li><a href="#" data-category="LE SSERAFIM" >LE SSERAFIM</a></li>
+        <li><a href="#" data-category="ILLIT" >ILLIT</a></li>
+        <li><a href="#" data-category="KISS OF LIFE" >KISS OF LIFE</a></li>
+        <li><a href="#" data-category="Hearts2Hearts" >Hearts2Hearts</a></li>
+      </ul>
+    </div>
+    <div class="boy">
+      <h3>보이그룹</h3>
+      <div class="line"></div>
+      <ul>
+        <li><a href="" data-category="NCT" >NCT</a></li>
+        <li><a href="" data-category="SEVENTEEN" >SEVENTEEN</a></li>
+        <li><a href="" data-category="BOYNEXTDOOR" >BOYNEXTDOOR</a></li>
+        <li><a href="" data-category="RIIZE" >RIIZE</a></li>
+        <li><a href="" data-category="ENHYPEN" >ENHYPEN</a></li>
+        <li><a href="" data-category="&TEAM" >&TEAM</a></li>
+        <li><a href="" data-category="PLAVE" >PLAVE</a></li>
+        <li><a href="" data-category="TWS" >TWS</a></li>
+        <li><a href="" data-category="EXO" >EXO</a></li>
+        <li><a href="" data-category="BTS" >BTS</a></li>
+        <li><a href="" data-category="기타" >기타</a></li>
+      </ul>
+    </div>
+    </div>
+    <div class="dashboard">
+      <div class="top">
+        <h3>대리구매</h3>
+      </div>
+      <div class="line"></div>
+      <div class = "comment">
+        대리구매는 신뢰할 수 있는 사용자와 진행하시고, 거래 전 충분한 소통을 권장합니다.
+      </div>
+      <div class="search-filter-container">
+        <div class="search-toggle">
+          <button class="toggle-btn active" data-type="general">일반 검색</button>
+          <button class="toggle-btn" data-type="tag">태그 검색</button>
+        </div>
+        <input type="text" id="generalSearch" class="search-input" placeholder="제목으로 검색">
+        <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
+
+        <select id="stateFilter" class="filter-select">
+          <option value="">전체 상태</option>
+          <option value="모집중">모집중</option>
+          <option value="긴급모집">긴급모집</option>
+          <option value="마감임박">마감임박</option>
+        </select>
+        <select id="sortFilter" class="filter-select">
+            <option value ="">정렬</option>
+            <option value ="최신순">최신순</option>
+            <option value = "조회순">조회순</option>
+        </select>
+      </div>
+        <div class="postlist">
+          <!-- 동행 카드들 -->
+          <div class="post-card" 
+          data-category="BLACKPINK" 
+          data-imgs="/static/images/test/proxy1.png,/static/images/test/proxy2.png,/static/images/test/proxy3.png">
+            <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">BLACKPINK</span>
+                <span class = "ptype">전시회</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">엔시티 위시 전시회 엠디 대리구매</h3>
+                <div class="post-right">
+                  <span class="post-status status-urgent">긴급모집</span>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#전시회</span>
+                <span class="post-tag">#NCTWISH</span>
+                <span class="post-tag">#이태원</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>언더스탠드에비뉴</span>
+                  </div>
+                  <div class="info-people">
+                      <span class="info-icon">👥</span>
+                      <span>3/5명 (모집중)</span>
+                  </div>
+                  <div class="info-mon">
+                      <span class="info-icon">💰</span>
+                      <span>개당 수고비 0.1</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  썸머 오브 위시 엠디 댈구합니다 엽서,핀버튼 장당 수고비 0.3 나머지 수고비 0.5  인당 3개까지 구매 가능
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 wintercute</span>
+                      <span class="post-meta">2024-07-05</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 100</span>
+                      <span>💬 23</span>
+                  </div>
+              </div>
+              <div class="post-actions">
+                  <button class="join-btn active">채팅하기</button>
+              </div>
+          </div>
+          <div class="post-card" 
+          data-category="EXO" 
+          data-imgs="/static/images/test/proxy1.png,/static/images/test/proxy2.png,/static/images/test/proxy3.png">
+            <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">EXO</span>
+                <span class = "ptype">전시회</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">엔시티 위시 전시회 엠디 대리구매</h3>
+                <div class="post-right">
+                  <span class="post-status status-urgent">긴급모집</span>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#전시회</span>
+                <span class="post-tag">#NCTWISH</span>
+                <span class="post-tag">#이태원</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>언더스탠드에비뉴</span>
+                  </div>
+                  <div class="info-people">
+                      <span class="info-icon">👥</span>
+                      <span>3/5명 (모집중)</span>
+                  </div>
+                  <div class="info-mon">
+                      <span class="info-icon">💰</span>
+                      <span>개당 수고비 0.1</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  썸머 오브 위시 엠디 댈구합니다 엽서,핀버튼 장당 수고비 0.3 나머지 수고비 0.5  인당 3개까지 구매 가능
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 wintercute</span>
+                      <span class="post-meta">2025-07-30</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 1</span>
+                      <span>💬 23</span>
+                  </div>
+              </div>
+              <div class="post-actions">
+                  <button class="join-btn active">채팅하기</button>
+              </div>
+          </div>
+          <div class="post-card" 
+          data-category="BTS" 
+          data-imgs="/static/images/test/proxy1.png,/static/images/test/proxy2.png,/static/images/test/proxy3.png">
+            <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">BTS</span>
+                <span class = "ptype">전시회</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">엔시티 위시 전시회 엠디 대리구매</h3>
+                <div class="post-right">
+                  <span class="post-status status-urgent">긴급모집</span>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#전시회</span>
+                <span class="post-tag">#NCTWISH</span>
+                <span class="post-tag">#이태원</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>언더스탠드에비뉴</span>
+                  </div>
+                  <div class="info-people">
+                      <span class="info-icon">👥</span>
+                      <span>3/5명 (모집중)</span>
+                  </div>
+                  <div class="info-mon">
+                      <span class="info-icon">💰</span>
+                      <span>개당 수고비 0.1</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  썸머 오브 위시 엠디 댈구합니다 엽서,핀버튼 장당 수고비 0.3 나머지 수고비 0.5  인당 3개까지 구매 가능
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 wintercute</span>
+                      <span class="post-meta">2003-04-12</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 1000</span>
+                      <span>💬 23</span>
+                  </div>
+              </div>
+              <div class="post-actions">
+                  <button class="join-btn active">채팅하기</button>
+              </div>
+          </div>
+          <div class="post-card" 
+          data-category="BLACKPINK" 
+          data-imgs="/static/images/test/proxy1.png,/static/images/test/proxy2.png,/static/images/test/proxy3.png">
+            <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">BLACKPINK</span>
+                <span class = "ptype">전시회</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">블핑 전시회 엠디 대리구매</h3>
+                <div class="post-right">
+                  <span class="post-status status-urgent">긴급모집</span>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#전시회</span>
+                <span class="post-tag">#NCTWISH</span>
+                <span class="post-tag">#이태원</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>언더스탠드에비뉴</span>
+                  </div>
+                  <div class="info-people">
+                      <span class="info-icon">👥</span>
+                      <span>3/5명 (모집중)</span>
+                  </div>
+                  <div class="info-mon">
+                      <span class="info-icon">💰</span>
+                      <span>개당 수고비 0.1</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  썸머 오브 위시 엠디 댈구합니다 엽서,핀버튼 장당 수고비 0.3 나머지 수고비 0.5  인당 3개까지 구매 가능
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 wintercute</span>
+                      <span class="post-meta">2024-10-05</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 100</span>
+                      <span>💬 23</span>
+                  </div>
+              </div>
+              <div class="post-actions">
+                  <button class="join-btn active">채팅하기</button>
+              </div>
+          </div>
+          <div class="post-card" data-category="BTS"  data-imgs = "/static/images/test/proxy3.png">
+              <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">BTS</span>
+                <span class = "ptype">전시회</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">엔시티 드림 드림쇼4 대리구매해요~</h3>
+                <div class="post-right">
+                  <span class="post-status status-recruiting">모집중</span>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#콘너트</span>
+                <span class="post-tag">#NCT DREAM</span>
+                <span class="post-tag">#구일역</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 8월 3일 (토) 10:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>고척돔</span>
+                  </div>
+                  <div class="info-people">
+                      <span class="info-icon">👥</span>
+                      <span>4/5명 (1명 더 모집)</span>
+                  </div>
+                  <div class="info-mon">
+                      <span class="info-icon">💰</span>
+                      <span>상세 내용 참고</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  엔드림 드사쇼 엠디 댈구합니다 현장수령 가능 당일 배송해드려요 응원봉 0.3 트레카 0.1 ...
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 쩗쭓짧</span>
+                      <span class="post-meta">2025-07-05</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 150</span>
+                      <span>💬 6</span>
+                  </div>
+              </div>
+              <div class="post-actions">
+                <button class="join-btn active">채팅하기</button>
+              </div>
+            </div>
+          <div class="post-card" data-category="BTS"  data-imgs = "/static/images/test/proxy3.png">
+              <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">BTS</span>
+                <span class = "ptype">전시회</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">엔시티 드림 드림쇼4 대리구매해요~</h3>
+                <div class="post-right">
+                  <span class="post-status status-recruiting">모집중</span>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#콘너트</span>
+                <span class="post-tag">#NCT DREAM</span>
+                <span class="post-tag">#구일역</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 8월 3일 (토) 10:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>고척돔</span>
+                  </div>
+                  <div class="info-people">
+                      <span class="info-icon">👥</span>
+                      <span>4/5명 (1명 더 모집)</span>
+                  </div>
+                  <div class="info-mon">
+                      <span class="info-icon">💰</span>
+                      <span>상세 내용 참고</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  엔드림 드사쇼 엠디 댈구합니다 현장수령 가능 당일 배송해드려요 응원봉 0.3 트레카 0.1 ...
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 쩗쭓짧</span>
+                      <span class="post-meta">2025-07-02</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 70</span>
+                      <span>💬 6</span>
+                  </div>
+              </div>
+              <div class="post-actions">
+                <button class="join-btn active">채팅하기</button>
+              </div>
+            </div>
+          </div>      
+            <div class="pagination">
+            <a href="#" title="첫 페이지">«</a>
+            <a href="#" title="이전 페이지">‹</a>
+            <strong>1</strong>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+            <a href="#">5</a>
+            <a href="#" title="다음 페이지">›</a>
+            <a href="#" title="마지막 페이지">»</a>
+            </div>
+            <!-- 게시글 상세 모달 -->
+            <div id="postModal" class="modal">
+              <div class="modal-content">
+                <button class="close-btn" onclick="closePostModal()" style="position:absolute; top:15px; right:20px; background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+                <div id="modalPostMeta" class="post-meta-wrapper">
+                  <span id="modalPostArtist" class="artist"></span>
+                  <span id="modalPostPtype" class="ptype"></span>
+                </div>
+                <h2 id="modalPostTitle"></h2>
+                <div class = "modall">
+                  <div id="modalPostTags" class="post-tags"></div>
+                  <p id="modalPostCreated"></p>
+                </div>
+                <p id="modalPostDate">📅 날짜</p>
+                <p id="modalPostPlace">📍 장소</p>
+                <p id="modalPostPeople">👥 인원</p>
+                <p id="modalPostMoney">💰 수고비</p>
+                <p id="modalPostDescription"></p>
+                <div id="modalPostImages" style="display:flex; gap:10px;"></div>
+              </div>
+            </div>
+
+            <!-- 이미지 확대 모달 -->
+            <div id="imageModal" class="modal" style="display:none; justify-content:center; align-items:center;">
+              <button id="prevBtn">‹</button>
+              <img id="modalImage" style="max-width:80%; max-height:80%;" />
+              <button id="nextBtn">›</button>
+            </div>
+               <!-- 메뉴에서 해당 게시물이 없을 때 -->
+                <p id="noResultsMessage" style="display:none; text-align:center; padding:20px;">
+                </p>
+            </div>
+          </div>
+          </div>
+    </div>
+    <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
+{%endblock content%}
+</body>
+</html>

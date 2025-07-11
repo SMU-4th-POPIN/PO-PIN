@@ -1,0 +1,339 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% comment %} <link rel="stylesheet" type="text/css" href="/static/css/login/login.css"> {% endcomment %}
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/static/css/community/chgReview.css">
+  <script src="/static/js/community/chgReview.js" defer></script>
+  <title>교환/판매 후기</title>
+  <style>
+
+  </style>
+</head>
+<body>
+  <div class="list">
+    <div class="menu">
+      <h3>거래 통계</h3>
+      <div class = "box">
+        <div class = "box1">
+          <p>📊 이번 주 거래량</p>
+          127건
+        </div>
+        <div class = "box2">
+          <p>⭐ 평균 평점</p>
+          4.6/5.0
+        </div>
+      </div>
+      </table>
+    </div>
+    <div class="dashboard">
+      <div class="top">
+        <h3>교환/판매 후기</h3>
+      </div>
+      <div class="line"></div>
+      <div class="search-filter-container">
+        <div class="search-toggle">
+          <button class="toggle-btn active" data-type="general">일반 검색</button>
+          <button class="toggle-btn" data-type="tag">태그 검색</button>
+        </div>
+        <input type="text" id="generalSearch" class="search-input" placeholder="제목, 작성자·거래자 ID로 검색">
+        <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
+
+        <select id="ratingFilter" class="filter-select">
+          <option value="">전체 평점</option>
+          <option value="5">⭐ 5</option>
+          <option value="4">⭐ 4</option>
+          <option value="3">⭐ 3</option>
+          <option value="2">⭐ 2</option>
+          <option value="1">⭐ 1</option>
+        </select>
+        
+
+        <select id="sortFilter" class="filter-select">
+          <option value="">정렬</option>
+          <option value="latest">최신순</option>
+          <option value="rating">평점순</option>
+          <option value="views">조회순</option>
+        </select>
+      </div>
+        <ul class="board-list">
+          <li class="board-item" data-images="/static/images/test/chgR1.jpg,/static/images/test/chgR2.jpg">
+            <div class="boardf">
+              <span class="artist">AESPA</span>
+              <span class="onoff off">오프라인</span>
+              <span class="Tway chg">교환</span>
+            </div>
+            <div class="board-item-header">
+              <div class="title-star-wrapper">
+                <h3 class="board-title">신속하고 깔끔한 교환이었어요!</h3>
+                <div class="vertical-line"></div>
+                <span class="star">⭐ 5</span>
+              </div>
+              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">#앨범</span>
+              <span class="post-tag">#온라인</span>
+              <span class="post-tag">#aespa</span>
+            </div>
+            <div class="board-preview">
+              거래 상대방이 정말 친절하고 약속도 잘 지켜주셔서 만족스러운 교환이었습니다. 포토카드 상태도 완벽했어요!
+            </div>
+            <div class="post-footer">
+              <div class="board-meta">
+                <span class="writer_id">🙋‍♂️ kpop_lover</span>
+                <span style="font-weight: 500;">⇄</span>
+                <span class="partner_id">poca_master</span>
+                <span>👁️ 124</span>
+              </div>
+              <span class="post-date">2025-07-05</span>
+            </div>
+          </li>
+
+          <li class="board-item" data-images="/static/images/test/chgR1.jpg">
+            <div class="boardf">
+              <span class="artist">NCT</span>
+              <span class="onoff on">온라인</span>
+              <span class="Tway chg">교환</span>
+            </div>
+            <div class="board-item-header">
+              <div class="title-star-wrapper">
+                <h3 class="board-title">좋은 교환 경험</h3>
+                <div class="vertical-line"></div>
+                <span class="star">⭐ 3</span>
+              </div>
+              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
+            </div>
+            <div class="board-preview">
+              처음 교환해보는 거였는데 상대방이 친절하게 안내해주셔서 수월했습니다. 다음에도 기회가 되면 교환하고 싶어요.
+            </div>
+            <div class="post-footer">
+              <div class="board-meta">
+                <span class="writer_id">🙋‍♂️ kpop_lover</span>
+                <span style="font-weight: 500;">⇄</span>
+                <span class="partner_id">poca_master</span>
+                <span>👁️ 124</span>
+              </div>
+              <span class="post-date">2025-07-01</span>
+            </div>
+          </li>
+
+          <li class="board-item" data-images="/static/images/test/chgR1.jpg,/static/images/test/chgR2.jpg,/static/images/test/chgR3.jpg">
+            <div class="boardf">
+              <span class="artist">NCT WISH</span>
+              <span class="onoff off">오프라인</span>
+              <span class="Tway buy">양도</span>
+            </div>
+            <div class="board-item-header">
+              <div class="title-star-wrapper">
+                <h3 class="board-title">아쉬운 점이 있었지만 전반적으로 만족</h3>
+                <div class="vertical-line"></div>
+                <span class="star">⭐ 5</span>
+              </div>
+              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">#럭드</span>
+              <span class="post-tag">#온라인</span>
+              <span class="post-tag">#NCT WISH</span>
+            </div>
+            <div class="board-content">
+              약속 시간에 조금 늦으셨지만 미리 연락주셨고, 포토카드 상태는 설명대로 좋았습니다. 다음엔 더 정확한 시간 약속 부탁드려요.
+            </div>
+            <div class="post-footer">
+              <div class="board-meta">
+                <span class="writer_id">🙋‍♂️ kpop_lover</span>
+                <span style="font-weight: 500;">⇄</span>
+                <span class="partner_id">poca_master</span>
+                <span>👁️ 124</span>
+              </div>
+              <span class="post-date">2025-07-03</span>
+            </div>
+          </li>
+
+          <li class="board-item">
+            <div class="boardf">
+              <span class="artist">AESPA</span>
+              <span class="onoff online">온라인</span>
+              <span class="Tway buy">양도</span>
+            </div>
+            <div class="board-item-header">
+              <div class="title-star-wrapper">
+                <h3 class="board-title">완벽한 거래였습니다!</h3>
+                <div class="vertical-line"></div>
+                <span class="star">⭐ 5</span>
+              </div>
+              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">#앨범</span>
+              <span class="post-tag">#오프라인</span>
+              <span class="post-tag">#aespa</span>
+            </div>
+            <div class="board-preview">
+              시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+            </div>
+            <div class="post-footer">
+              <div class="board-meta">
+                <span class="writer_id">🙋‍♂️ happy_trader</span>
+                <span style="font-weight: 500;">⇄</span>
+                <span class="partner_id">bababa</span>
+                <span>👁️ 203</span>
+              </div>
+              <span class="post-date">2025-07-02</span>
+            </div>
+          </li>
+
+          <li class="board-item">
+            <div class="boardf">
+              <span class="artist">RIIZE</span>
+              <span class="onoff off">오프라인</span>
+              <span class="Tway buy">양도</span>
+            </div>
+            <div class="board-item-header">
+              <div class="title-star-wrapper">
+                <h3 class="board-title">완벽한 거래였습니다!</h3>
+                <div class="vertical-line"></div>
+                <span class="star">⭐ 5</span>
+              </div>
+              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">#교환</span>
+              <span class="post-tag">#오프라인</span>
+              <span class="post-tag">#riize</span>
+            </div>
+            <div class="board-preview">
+              시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+            </div>
+            <div class="post-footer">
+              <div class="board-meta">
+                <span class="writer_id">🙋‍♂️ kpop_lover</span>
+                <span style="font-weight: 500;">⇄</span>
+                <span class="partner_id">dududu</span>
+                <span>👁️ 60</span>
+              </div>
+              <span class="post-date">2025-07-04</span>
+            </div>
+          </li>
+
+          <li class="board-item">
+            <div class="boardf">
+              <span class="artist">aespa</span>
+              <span class="onoff off">오프라인</span>
+              <span class="Tway buy">양도</span>
+            </div>
+            <div class="board-item-header">
+              <div class="title-star-wrapper">
+                <h3 class="board-title">완벽한 거래였습니다!</h3>
+                <div class="vertical-line"></div>
+                <span class="star">⭐ 4</span>
+              </div>
+              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">#집</span>
+              <span class="post-tag">#온라인</span>
+            </div>
+            <div class="board-preview">
+              시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+            </div>
+            <div class="post-footer">
+              <div class="board-meta">
+                <span class="writer_id">🙋‍♂️ kpop_lover</span>
+                <span style="font-weight: 500;">⇄</span>
+                <span class="partner_id">poca_collector</span>
+                <span>👁️ 88</span>
+              </div>
+              <span class="post-date">2025-07-06</span>
+            </div>
+          </li>
+
+          <li class="board-item">
+            <div class="boardf">
+              <span class="artist">AESPA</span>
+              <span class="onoff off">오프라인</span>
+              <span class="Tway buy">양도</span>
+            </div>
+            <div class="board-item-header">
+              <div class="title-star-wrapper">
+                <h3 class="board-title">완벽한 거래였습니다!</h3>
+                <div class="vertical-line"></div>
+                <span class="star">⭐ 4</span>
+              </div>
+              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">앨범</span>
+              <span class="post-tag">오프라인</span>
+              <span class="post-tag">aespa</span>
+            </div>
+            <div class="board-preview">
+              시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+            </div>
+            <div class="post-footer">
+              <div class="board-meta">
+                <span class="writer_id">🙋‍♂️ kpop_lover</span>
+                <span style="font-weight: 500;">⇄</span>
+                <span class="partner_id">riize_collector</span>
+                <span>👁️ 124</span>
+              </div>
+              <span class="post-date">2025-07-07</span>
+            </div>
+          </li>
+        </ul>
+                
+                <!-- 페이지네이션을 게시글 바로 아래로 이동 -->
+                <div class="pagination">
+                  <a href="#" title="첫 페이지">«</a>
+                  <a href="#" title="이전 페이지">‹</a>
+                  <strong>1</strong>
+                  <a href="#">2</a>
+                  <a href="#">3</a>
+                  <a href="#">4</a>
+                  <a href="#">5</a>
+                  <a href="#" title="다음 페이지">›</a>
+                  <a href="#" title="마지막 페이지">»</a>
+                </div>
+                
+                <div id="postModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999;">
+                  <div class="modal-content" style="background:white; padding:30px; border-radius:15px; max-width:600px; width:90%; position:relative;">
+                    <button class="close-btn" onclick="closePostModal()">&times;</button>
+                    <div id="modalPostMeta" class="post-meta-wrapper">
+                      <span id="modalPostArtist" class="artist"></span>
+                      <span id="modalPostOnoff" class="onoff"></span>
+                      <span id="modalPostTway" class="Tway"></span>
+                    </div>
+                    <h2 id="modalPostTitle">제목</h2>
+                    <div class = "modall">
+                      <div id="modalPostTags" class="post-tags"></div>
+                      <p id="modalPostDate">작성일</p>
+                    </div>
+                    <p id="modalPostWriter">작성자</p>
+                    <p id="modalPostPartner">거래자</p>
+                    <p id="modalPostStar">별점</p>
+                    <p id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">설명 내용</p>
+                    <div id="modalPostImages" style="display:flex; flex-wrap:wrap; gap:10px; margin:20px 0;"></div>
+                    </div>
+                  </div>
+                <div id="imageModal" class="modal" style="display:none;">
+                        <button id="prevBtn">‹</button>
+                        <img id="modalImage" />
+                        <button id="nextBtn">›</button>
+                      </div>
+                      <!-- 메뉴에서 해당 게시물이 없을 때 -->
+                      <p id="noResultsMessage" style="display:none; text-align:center; padding:20px; margin-top : 20px;">
+                      </p>
+                </div>
+    </div>
+  </div>
+  <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
+{% endblock content %}
+</body>
+</html>

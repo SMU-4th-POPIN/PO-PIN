@@ -1,0 +1,832 @@
+
+.profile-card,
+.content {
+  max-width: 100%;
+  padding: 2rem;
+}
+
+/* 모바일에서도 양쪽 여백 유지 */
+@media (max-width: 768px) {
+  .profile-card,
+  .content {
+    padding: 1rem;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+.main {
+    max-width: 1200px;
+    padding: 0 1rem;
+    display: flex;
+    flex-wrap:wrap;
+    gap:1rem;
+    flex-direction: column;
+    padding: 1rem;
+    }       
+}
+
+.main {
+    display: flex;
+    gap: 2rem;
+    padding: 0 1rem;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+
+.profile-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
+.profile-header {
+    display: contents;
+    align-items: center;
+    gap: 2rem;
+    justify-content: space-evenly;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+}
+
+.profile-info {
+    text-align:center;
+    margin-left: auto;
+    margin-top: 30px;
+}
+
+.profile-info h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.profile-info h3 {
+    color: #666;
+    font-weight: normal;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.stats {
+    display: inline-flex;
+    gap: 1rem;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 2rem;
+    gap: 0.5rem;
+    flex-wrap: nowrap; /* 스크롤을 위해 줄바꿈 방지 */
+    overflow-x: auto;   /* 가로 스크롤 허용 */
+    overflow-y:hidden;
+    -webkit-overflow-scrolling: touch; /* iOS 스크롤 부드럽게 */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(102, 126, 234, 0.3) transparent;
+    padding-bottom: 5px;
+    flex-wrap: nowrap;
+}
+
+/* 웹 브라우저용 스크롤바 스타일링 */
+.tabs::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tab {
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
+    font-weight: 500;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    min-width: max-content;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+}
+
+.tab.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+
+/* 스크롤바 숨김 (선택 사항) */
+.tabs::-webkit-scrollbar {
+    display: none; 
+  }
+  
+
+.edit-btn {
+    margin-left: 0.5rem;
+    opacity: 0.7;
+}
+
+.content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    min-width: 0
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+} */
+
+.section-content{
+    /*스크롤*/
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.section-header h2 {
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.change-btn, .view-all-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    font-weight: 500;
+}
+
+.change-btn:hover, .view-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.item {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+    border-bottom: 1px solid #e3e8ec;
+    border-left: 4px solid #667eea;
+    cursor: pointer;
+}
+
+.item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.item h3 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.item p {
+    color: #666;
+    line-height: 1.6;
+}
+
+#wishlist .item{
+    padding:0;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+#wishlist h2{
+    margin-bottom: 1.5rem;
+}
+
+.item .wishlist{
+    display: flex;
+    height: 100%;
+    padding: 0.5rem;
+    gap: 1rem;
+}
+
+
+.wish-list-img{
+    width: 110px;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wish-list-img img{
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    object-fit: cover;
+    object-position: center;
+}
+
+
+.polaroid-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.polaroid {
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    position: relative;
+    transform: rotate(-1deg);
+    cursor:pointer;
+    height: 307px;
+}
+
+.polaroid:nth-child(even) {
+    transform: rotate(1deg);
+}
+
+.polaroid:hover {
+    transform: rotate(0deg) translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.polaroid-image {
+    width: 100%;
+    height: 200px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.polaroid-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.polaroid-text {
+    text-align: center;
+    padding: 0.5rem;
+}
+
+/* 버튼 기본 스타일 */
+#favorite-btn {
+    width: 60px;  /* 원하는 버튼 크기로 조정 */
+    height: 60px;
+    border: none;
+    border-radius: 50%; /* 원형 버튼 */
+    padding: 0;
+    cursor: pointer;
+    overflow: hidden; /* 이미지가 버튼 영역을 벗어나지 않도록 */
+    background: transparent;
+    position: absolute;
+    left: 40%;
+}
+
+/* 버튼 내 이미지 스타일 */
+#favorite-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 비율 유지하면서 버튼에 꽉 채움 */
+    object-position: center; /* 이미지 중앙 정렬 */
+    display: block;
+}
+
+/* 반응형 대응 */
+@media (max-width: 768px) {
+    #favorite-btn {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+.group-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.3rem;
+}
+
+.member-name {
+    font-size: 1rem;
+    color: #667eea;
+    font-weight: 500;
+}
+
+/* 폴라로이드에 빈티지 효과 추가 */
+.album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.album-card {
+    background: rgba(248, 249, 250, 0.8);
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.album-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.album-cover {
+    width: 100%;
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.album-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.album-info h4 {
+    color: #333;
+    margin-bottom: 0.3rem;
+    font-size: 1rem;
+}
+
+.album-info p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-count {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.cards-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.back-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.current-album {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.photocard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.photocard {
+    background: white;
+    border-radius: 8px;
+    padding: 0.8rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    text-align: center;
+    cursor:pointer;
+}
+
+.photocard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.photocard-img {
+    width: 100%;
+    height: 120px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+}
+
+.photocard-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photocard h5 {
+    color: #333;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+}
+
+.photocard p {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.card {
+    background: rgba(248, 249, 250, 0.8);
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-img {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.card h4 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.rating {
+    margin-right: 0.5rem;
+}
+
+.review-item {
+    border-left: 4px solid #667eea;
+}
+
+.blocked-user {
+    border-left: 4px solid #e74c3c;
+}
+
+.unblock-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+    transition: background 0.3s ease;
+}
+
+.unblock-btn:hover {
+    background: #c0392b;
+}
+
+.section-header button{
+    background: #ffff;
+    padding: 1.5rem 3rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border:none;    
+    background: rgba(255, 255, 255, 0.7);
+    margin-bottom: 15px;
+    border: 2px solid #ebebeb;
+}
+
+.transaction-tab.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+.blocked-tab.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+
+.review-tab.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+.community-tab.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+.view-all-container {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+/* 모바일 환경 */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .tabs {
+        scrollbar-width:none;
+        -ms-overflow-style: none;
+        padding:0;
+        justify-content: left;
+    }
+    
+    /* 스크롤바 숨김 (선택 사항) */
+    .tabs::-webkit-scrollbar {
+        display: none; 
+    }
+  
+
+    .tab {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .stats {
+        gap: 1rem;
+    }
+
+    .polaroid-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .polaroid {
+        transform: rotate(0deg);
+    }
+
+    .polaroid:nth-child(even) {
+        transform: rotate(0deg);
+    }
+}
+
+/* 모바일 모달 조정 */
+@media (max-width: 480px) {
+    #modalContent {
+        width: 95%;
+        padding: 1.5rem;
+        border-radius: 20px;
+    }
+}
+
+/* 모달창 스타일 */
+a{
+    text-decoration: none;
+}
+
+#favorite-btnSave {
+    cursor: pointer;
+    width: 100%;
+    height: 50px;
+    border-radius: 8px;
+    border: 1px solid #c1c1c1;
+    margin-top: 1rem;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    font-size: 20px;
+}
+
+#favorite-btnClose {
+    cursor: pointer;
+    border-radius: 8px;
+    background: none; 
+    border: none; 
+    padding: 0; 
+    height: 40px;
+}
+
+#modalContainer {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999 !important; 
+}
+
+#modalContent {
+    background-color: #ffffff;
+    width: 500px;
+    height: 700px;
+    padding: 2rem;
+    border-radius: 30px;
+    position: relative;
+}
+
+#modalContainer.hidden {
+    display: none;
+}
+
+/* 프로필 수정 */
+.profileTop{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.profileTop img{
+    margin-right:10px;
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+}
+
+.profileTop h1{
+    padding: 10px;
+}
+
+.profileContent{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin-left: 11%;
+}
+
+.profileContent label{
+    margin: 5px;
+    width: 27%;
+}
+
+.profileContent input {
+    height: 50px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #c1c1c1;
+}
+
+.ImgUploadBtn input{
+    border:none;
+}
+
+.profile_img_wrapper{
+    display: flex;
+    flex-direction: column;
+}
+
+.profile_img_container{
+    margin: auto;   
+}
+
+.profile_img_container img{
+    width: 150px;
+    height: 180px;
+    border-radius: 25%;
+    margin-bottom: 15px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.myinfo-profile{
+    display:flex;
+}
+
+.wish-list-txt h3{
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.wish-list-txt p {
+    margin: 0.5rem 0 0;
+    color: #666;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 5px;
+    vertical-align: middle;
+    color: white;
+}
+
+.badge.complete {
+    background-color: #696969;
+}
+
+.badge.reserved {
+    background-color: #ff9800;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+input[type="text"]:focus,
+input[type="number"],
+input[type="button"]
+select,
+textarea{
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>회원 정보 - PO-PIN</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+      font-family: inherit;
+    }
+
+    .signup-wrapper {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 25px;
+      padding: 1rem 1rem 0.5rem;
+      transform: scale(0.86);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.08);
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+    }
+
+    /* 네비게이션 버튼 박스 */
+    .nav-buttons {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .nav-btn {
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .nav-btn.active {
+      background: white;
+      color: #667eea;
+      border-color: white;
+      font-weight: 700;
+    }
+
+    .signup-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 3rem;
+      width: 100%;
+      box-shadow: 0 30px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .page-title {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #7E6EB0;
+      margin-bottom: 1.3rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      letter-spacing: -0.05em;
+    }
+
+    .subtitle {
+      font-size: 20px;
+      font-weight: 500;
+      color: #BFB2D6;
+      text-align: center;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+      text-align: left;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e1e8ed;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .email-verification {
+      display: flex;
+      gap: 0.5rem;
+      align-items: end;
+    }
+
+    .email-verification input {
+      flex: 1;
+    }
+
+    .btn-verify {
+      padding: 1rem 1.5rem;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .btn-verify:hover {
+      background: #5a6fd8;
+      transform: translateY(-1px);
+    }
+
+    .btn-verify:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      margin-top: 1.5rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .success-message {
+      color: #27ae60;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      .signup-container {
+        padding: 2rem;
+      }
+
+      .nav-buttons {
+        gap: 0.3rem;
+      }
+
+      .nav-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .email-verification {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+
+
+
+  </style>
+
+</head>
+<body>
+  <div class="signup-wrapper">
+    <div class="nav-buttons">
+      <button class="nav-btn" onclick="goToPage('terms', event)">약관 동의</button>
+      <button class="nav-btn active" onclick="goToPage('info', event)">회원 정보</button>
+      <button class="nav-btn" onclick="goToPage('location', event)">장소 선택</button>
+      <button class="nav-btn" onclick="goToPage('member', event)">멤버 선택</button>
+    </div>
+
+    <div class="signup-container">
+      <div class="header">
+        <h1 class="page-title">PO-PIN</h1>
+        <h3 class="subtitle">회원 정보 입력</h3>
+        <br />
+        <hr />
+      </div>
+
+      <form id="signupForm" method="POST" action="{% url 'signup:signup' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="username">아이디</label>
+          <input id="user_id" name="user_id" placeholder="영문, 숫자 조합 4-16자" required type="text" />
+          <div class="error-message" id="usernameError">아이디는 4-16자의 영문, 숫자 조합이어야 합니다.</div>
+        </div>
+        <!--아이디가 이미 사용중일때 알림-->
+         {% if messages %}
+          <ul class="messages">
+            {% for message in messages %}
+              <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <div class="form-group">
+          <label for="password">비밀번호</label>
+          <input id="password" name="password" placeholder="영문, 숫자, 특수문자 조합 8자 이상" required type="password" />
+          <div class="error-message" id="passwordError">비밀번호는 8자 이상이어야 합니다.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">비밀번호 확인</label>
+          <input id="confirmPassword" name="confirmPassword" placeholder="비밀번호를 다시 입력해주세요" required type="password" />
+          <div class="error-message" id="confirmPasswordError">비밀번호가 일치하지 않습니다.</div>
+        </div>
+
+        <div class="form-group"> 
+          <label for="name">닉네임</label>
+          <input id="name" name="name" placeholder="실명을 입력해주세요" required type="text" />
+          <label for="name">이름</label>
+          <input id="name" name="name" placeholder="실명을 입력하세요" required type="text" />
+        </div>
+        <div class="form-group">
+          <label for="nickname">닉네임</label>
+          <input id="nickname" name="nickname" placeholder="※특수문자 입력 금지" required type="text" />main
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="birthdate">생년월일</label>
+            <input id="birth_date" name="birth_date" required type="date" />
+          </div>
+          <div class="form-group">
+            <label for="gender">성별</label>
+            <select id="gender" name="gender" required>
+              <option value="">선택해주세요</option>
+              <option value="M">남성</option>
+              <option value="F">여성</option>
+            </select>
+          </div>
+        </div>
+
+    <div class="form-group">
+  <label for="email">이메일</label>
+  <div style="display: flex; gap: 10px;">
+    <input type="email" name="email" id="email" class="form-control" required />
+    <button type="button" class="btn btn-outline-primary" onclick="sendVerificationEmail()">인증 요청</button>
+  </div>
+  <small id="emailStatus" style="color: green;"></small>
+</div>
+<div style="display: flex; gap: 10px; margin-top: 10px;">
+  <input type="text" id="verify-code" placeholder="인증번호 입력" class="form-control" />
+  <button type="button" class="btn btn-outline-primary" onclick="checkVerificationCode()">인증 확인</button>
+</div>
+        <button id="submitBtn" class="btn btn-primary" onclick="goToPage('location', event)" type="submit">다음</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+ function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // 쿠키 이름과 일치하는지 확인
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    let isEmailVerified = false;
+
+function checkVerificationCode() {
+    const code = document.getElementById("verify-code").value;
+    const email = document.getElementById("email").value;
+
+    fetch("/signup/verify_email_code/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify({ email: email, code: code })
+    })
+    .then(res => res.json())
+    .then(data => {
+       console.log("서버 응답:", data);  //  서버에서 온 응답 확인
+        
+       if (data.success) {
+            alert(" 인증 성공!");
+            isEmailVerified = true;
+            console.log("✅ isEmailVerified = true 로 설정됨!");
+        } else {
+            alert("인증 실패: " + data.message);
+             isEmailVerified = false;
+        }
+    })
+      .catch(error => {
+        console.error("서버 통신 에러:", error);
+    });
+}
+
+
+
+
+  function sendVerificationEmail() {
+  const email = document.getElementById('email').value;
+
+  fetch('/signup/send_verification_email/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken')  // 🔥 getCookie 함수 필요함
+    },
+    body: JSON.stringify({ email: email })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      document.getElementById('emailStatus').innerText = '인증 메일이 발송되었습니다.';
+    } else {
+      document.getElementById('emailStatus').innerText = '실패: ' + data.error;
+    }
+
+    document.getElementById('verificationGroup').style.display = 'block';
+  });
+}
+
+    function goToPage(page, event) {
+  if (page === 'location' && !isEmailVerified) {
+    event.preventDefault();  // 이동 막기
+    alert('이메일 인증을 먼저 완료해주세요.');
+    return;
+  }
+
+  // 기존 버튼 스타일 처리
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+
+  // 페이지 이동 안내 (실제 이동 코드 대신 알림인 상태로 보임)
+  switch(page) {
+    case 'terms':
+      alert('약관 동의 페이지로 이동합니다.');
+      break;
+    case 'info':
+      alert('현재 회원 정보 페이지입니다.');
+      break;
+    case 'location':
+      alert('장소 선택 페이지로 이동합니다.');
+      break;
+    case 'member':
+      alert('멤버 선택 페이지로 이동합니다.');
+      break;
+  }
+}
+    // 폼 유효성 검사
+    document.getElementById('username').addEventListener('input', function() {
+      const username = this.value;
+      const error = document.getElementById('usernameError');
+      const regex = /^[a-zA-Z0-9]{4,16}$/;
+      
+      if (!regex.test(username)) {
+        error.style.display = 'block';
+      } else {
+        error.style.display = 'none';
+      }
+    });
+
+    document.getElementById('password').addEventListener('input', function() {
+      const password = this.value;
+      const error = document.getElementById('passwordError');
+      
+      if (password.length < 8) {
+        error.style.display = 'block';
+      } else {
+        error.style.display = 'none';
+      }
+    });
+
+    document.getElementById('confirmPassword').addEventListener('input', function() {
+      const password = document.getElementById('password').value;
+      const confirmPassword = this.value;
+      const error = document.getElementById('confirmPasswordError');
+      
+      if (password !== confirmPassword) {
+        error.style.display = 'block';
+      } else {
+        error.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

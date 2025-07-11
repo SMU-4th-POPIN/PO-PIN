@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Keyword AJAX</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+  <h2>MypageJsontestPage</h2>
+  <button id="keyword">키워드</button>
+  <button id="latest">최근본글</button>
+  <button id="mypoca">마이포카</button>
+  <button id="wishlist">위시리스트</button>
+  <button id="trade">교환내역</button>
+  <button id="blocklist">차단유저리스트</button>
+  <button id="update_blocklist">차단해제</button>
+  <div id="div_box"></div>
+
+  <br><br>
+  <form id="profileForm" enctype="multipart/form-data">
+    <label for="nickname">닉네임:</label><br>
+    <input type="text" id="nickname" name="nickname" required><br><br>
+
+    <label for="introduction">자기소개:</label><br>
+    <textarea id="introduction" name="introduction" rows="4" cols="40"></textarea><br><br>
+
+    <label for="profile_image">프로필 이미지:</label><br>
+    <input type="file" id="profile_image" name="profile_image" accept="image/*"><br><br>
+
+    <button type="submit">수정하기</button>
+  </form>
+
+  <script>
+    $(document).ready(function() {
+      $("#keyword").click(function() {
+        $.ajax({
+          url: "/mypage/keyword/",
+          type: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}" // CSRF 토큰 포함
+          },
+          dataType: "json",
+          success: function(data) {
+            console.log("그룹:", data.groups);
+            console.log("멤버:", data.members);
+
+            // 기존 내용 비우기
+            $('#div_box').empty();
+
+            // 그룹 추가
+            data.groups.forEach(function(group) {
+              $('#div_box').append('<p>그룹: ' + group.name + '</p>');
+            });
+
+            // 멤버 추가
+            data.members.forEach(function(member) {
+              $('#div_box').append('<p>멤버: ' + member.name + ' (그룹: ' + member.group__name + ')</p>');
+            });
+          },
+          error: function(xhr, status, error) {
+            console.error("에러 발생:", error);
+          }
+        });
+      });
+
+      $("#latest").click(function() {
+        $.ajax({
+          url: "/mypage/latest/",
+          type: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}" // CSRF 토큰 포함
+          },
+          dataType: "json",
+          success: function(data) {
+            console.log("그룹:", data.photocards);
+
+            // 기존 내용 비우기
+            $('#div_box').empty();
+
+            // 포토카드  추가
+            data.photocards.forEach(function(photocard) {
+              $('#div_box').append('<p> 제목: ' + photocard.title + '</p>');
+              $('#div_box').append('<p> 앨범: ' + photocard.album + '</p>');
+              $('#div_box').append('<p> 이미지: <img src=' + photocard.image_url + ' style="width:100px;"></p>');
+              $('#div_box').append('<p> 번호: ' + photocard.pno + '</p>');
+              $('#div_box').append('<p> 멤버: ' + photocard.member + '</p>');
+              $('#div_box').append('<p> 등록일자: ' + photocard.created_at + '</p>');
+              $('#div_box').append('<p> 거래가능일자: ' + photocard.available_at + '</p>');
+            });
+          },
+          error: function(xhr, status, error) {
+            console.error("에러 발생:", error);
+          }
+        });
+      });
+
+      $("#mypoca").click(function() {
+        $.ajax({
+          url: "/mypage/mypoca/",
+          type: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}" // CSRF 토큰 포함
+          },
+          dataType: "json",
+          success: function(data) {
+            console.log("결과: ", data.group_album_dict);
+
+            // 기존 내용 비우기
+            $('#div_box').empty();
+
+            // group_album_dict 순회
+            for (let group_name in data.group_album_dict) {
+              // 그룹명 출력
+              $('#div_box').append('<h2>그룹명: ' + group_name + '</h2>');
+
+              let album_map = data.group_album_dict[group_name];
+
+              for (let album_name in album_map) {
+                $('#div_box').append('<h3>앨범: ' + album_name + '</h3><ul>');
+
+                let photocards = album_map[album_name];
+                $('#div_box').append('<h4> 개수: ' + photocards.length + '</h4>');
+
+                photocards.forEach(function(photocard) {
+                  $('#div_box').append('<li> 제목: ' + photocard.title + '</li>');
+                  $('#div_box').append('<li> 이미지: <img src=' + photocard.image_url + ' style="width:100px;"></li>');
+                  $('#div_box').append('<li> 멤버:' + photocard.member + '</li><br>');
+                });
+                $('#div_box').append('</ul>');
+              }
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error("에러 발생:", error);
+          }
+        });
+      });
+
+      $("#wishlist").click(function () {
+        $.ajax({
+          url: "/mypage/wishlist/",
+          type: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          dataType: "json",
+          success: function (data) {
+            console.log("결과: ", data.wishlist);
+
+            $('#div_box').empty(); // 기존 내용 비우기
+
+            data.wishlist.forEach(function (photocard) {
+              $('#div_box').append(
+                '<div>' +
+                  '<img src="' + photocard.image_url + '" alt="포카 이미지" style="width:100px;"><br>' +
+                  '<p> 제목: ' + photocard.title + '</p>' +
+                  '<p> 앨범: ' + photocard.album + '</p>' +
+                  '<p> 거래 상태: 거래' + photocard.trade_state + '</p>' +
+                '</div>'
+              );
+            });
+          },
+          error: function (xhr, status, error) {
+            console.error("에러 발생:", error);
+          }
+        });
+      });
+
+      $("#trade").click(function () {
+        $.ajax({
+          url: "/mypage/trade/",
+          type: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          dataType: "json",
+          success: function (data) {
+            console.log("결과: ", data.sell_poca);
+            console.log("결과: ", data.buy_poca);
+
+            $('#div_box').empty(); // 기존 내용 비우기
+
+            data.sell_poca.forEach(function (photocard) {
+              $('#div_box').append(
+                '<div>' +
+                  '<img src="' + photocard.image_url + '" alt="포카 이미지" style="width:100px;"><br>' +
+                  '<p> 제목: ' + photocard.title + '</p>' +
+                  '<p> 앨범: ' + photocard.album + '</p>' +
+                  '<p> 거래 상태: 거래' + photocard.trade_state + '</p>' +
+                  '<p> 구매 방식: ' + photocard.trade_type + '</p>' +
+                '</div>'
+              );
+            });
+
+            $('#div_box').append('<hr>');
+
+            data.buy_poca.forEach(function (photocard) {
+              $('#div_box').append(
+                '<div>' +
+                  '<img src="' + photocard.image_url + '" alt="포카 이미지" style="width:100px;"><br>' +
+                  '<p> 제목: ' + photocard.title + '</p>' +
+                  '<p> 앨범: ' + photocard.album + '</p>' +
+                  '<p> 거래 상태: 거래' + photocard.trade_state + '</p>' +
+                  '<p> 구매 방식: ' + photocard.trade_type + '</p>' +
+                '</div>'
+              );
+            });
+          },
+          error: function (xhr, status, error) {
+            console.error("에러 발생:", error);
+          }
+        });
+      });
+      
+      $("#blocklist").click(function () {
+        $.ajax({
+          url: "/mypage/blocklist/",
+          type: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          dataType: "json",
+          success: function (data) {
+            console.log("결과: ", data.blocked_users);
+
+            $('#div_box').empty(); // 기존 내용 비우기
+
+            data.blocked_users.forEach(function (user) {
+              $('#div_box').append(
+                '<div>' +
+                  '<p> 유저 아이디: ' + user.user_id + '</p>' +
+                  '<p> 유저 닉네임: ' + user.name + '</p>' +
+                '</div>'
+              );
+            });
+          },
+          error: function (xhr, status, error) {
+            console.error("에러 발생:", error);
+          }
+        });
+      });
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+    $('#profileForm').on('submit', function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+
+      $.ajax({
+        url: '/mypage/update_profile/',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰 필요
+        },
+        success: function(response) {
+          alert(response.message);
+        },
+        error: function(xhr) {
+          alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
+        }
+      });
+    });
+
+    $('#update_blocklist').on('click', function() {
+      const id = $('#userid').val();
+
+      $.ajax({
+        url: '/mypage/update_blocklist/',  // URL은 실제 프로젝트에 맞게 수정
+        type: 'POST',
+        data: JSON.stringify({ id: 'bbb' }),  // JSON 형식으로 전송
+        contentType: 'application/json',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        success: function(response) {
+          $('#result').text(response.blocked_users?.[0]?.message || '성공적으로 처리되었습니다.');
+        },
+        error: function(xhr) {
+          $('#result').text('오류: ' + (xhr.responseJSON?.error || xhr.responseJSON?.message || '요청 실패'));
+        }
+      });
+    });
+
+    });
+  </script>
+
+</body>
+</html>

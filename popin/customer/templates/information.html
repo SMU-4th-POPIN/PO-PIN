@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>앱 소개 | PO-PIN</title>
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 헤더 */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-menu a:hover {
+      color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .nav-menu a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 50%;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    .nav-menu a:hover::after {
+      width: 100%;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1.5rem;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-outline {
+      border: 2px solid #667eea;
+      color: #667eea;
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .home {
+      all: unset;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      color: #7E6EB0;
+      padding: 10px 15px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .home:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .home i {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* 메인 컨텐츠 컨테이너 - 중앙 정렬 */
+    .main-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .about-container {
+      max-width: 900px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 60px 40px;
+      border-radius: 25px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .about-container h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #5c4ca6;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .about-container p {
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 20px;
+      color: #555;
+      text-align:center;
+    }
+
+    .feature {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .feature-box {
+      flex: 1;
+      min-width: 250px;
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .feature-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+    .feature-box h4 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #5c4ca6;
+      align-items: center;
+      gap: 10px;
+      text-align:center;
+    }
+
+    .feature-box h4 i {
+      color: #667eea;
+    }
+
+    .feature-box p {
+      margin-bottom: 0;
+      font-size: 14px;
+    }
+
+    .download {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .download a {
+      padding: 15px 30px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .download a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    /* 반응형 디자인 */
+    @media (max-width: 768px) {
+      .nav {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .nav-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      .about-container {
+        padding: 40px 20px;
+      }
+
+      .feature {
+        flex-direction: column;
+      }
+
+      .feature-box {
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">PO-PIN</div>
+      <ul class="nav-menu">
+        <li><a href="#home">홈</a></li>
+        <li><a href="#exchange">포카교환</a></li>
+        <li><a href="#community">커뮤니티</a></li>
+        <li><a href="#decorate">포카꾸미기</a></li>
+        <li><a href="#customer">고객지원</a></li>
+      </ul>
+      <div class="auth-buttons">
+        <a href="#" class="btn btn-outline">로그인</a>
+        <a href="#" class="btn btn-primary">회원가입</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <div class="about-container">
+      <h2>PO-PIN 앱 소개</h2>
+      <p>
+        PO-PIN은 K-POP 팬들을 위한 포토카드 위치기반 교환 및 커뮤니티 플랫폼입니다.
+        <br>팬들이 원하는 포토카드를 쉽게 찾고, 믿을 수 있는 사용자들과 거래하며,
+        <br>함께 모여 정보를 공유하고 소통할 수 있도록 설계되었습니다.
+      </p>
+
+      <div class="feature">
+        <div class="feature-box">
+          <h4><i class="fi fi-sr-id-badge"></i> 사용자 인증</h4>
+          <p>신뢰할 수 있는 교환을 위해 <br> 닉네임, 위치, 활동 이력을 <br>확인할 수 있습니다.</p>
+        </div>
+        <div class="feature-box">
+          <h4><i class="fi fi-sr-gallery"></i> 포토카드 꾸미기</h4>
+          <p>나만의 포토카드를 꾸며 <br> 다른 팬들과 공유해보세요.</p>
+        </div>
+        <div class="feature-box">
+          <h4><i class="fi fi-sr-users-alt"></i> 커뮤니티</h4>
+          <p>나눔, 대리구매, 후기 등 팬들이 모여 소통할 수 있는 게시판이 <br>마련되어 있어요.</p>
+        </div>
+      </div>
+
+      <div class="download">
+        <a href="#">앱 다운로드</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
