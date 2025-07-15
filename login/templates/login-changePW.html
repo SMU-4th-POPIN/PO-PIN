@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
+    <link rel="stylesheet" type="text/css" href="/static/css/login/changePW.css">
+    <title>포핀 | 비밀번호 재설정</title>
+</head>
+<body>
+    <div class="login-form">
+        <div class="top">
+            <h2>PO-PIN</h2>
+        </div>
+        <form method="POST" action="{% url 'login:loginCPW' %}">
+            {% csrf_token %}
+            <hr>
+            <h3 style="text-align:center; color:#7E6EB0;">비밀번호 재설정</h3>
+            <div class="subtitle">새로운 비밀번호를 입력하세요.</div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="color:red; font-size:13px; margin-bottom:10px;">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <label for="pw1">새 비밀번호</label>
+            <input type="password" name="pw1" id="pw1" placeholder="8자 이상 16자 이하 입력">
+
+            <label for="pw2">새 비밀번호 확인</label>
+            <input type="password" name="pw2" id="pw2" placeholder="동일한 비밀번호 입력">
+
+            <input class="findPW" type="submit" value="비밀번호 재설정">
+            <input class="back" type="button" value="로그인 페이지로" onclick="location.href='{% url 'login:loginp' %}'">
+        </form>
+    </div>
+</body>
+</html>

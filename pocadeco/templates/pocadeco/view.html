@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>데코포카 정보 반환 페이지</h2>
+    <p>nickname: {{nickname}}</p>
+    <p>title: {{title}}</p>
+    <p>result_image: <img src="/media/{{result_image}}/" alt=""></p>
+    {%for tag in tags%}
+        <p>tag: {{tag}}</p>
+    {%endfor%}
+    
+    <p>group: {{group}}</p>
+    <p>member: {{member}}</p>
+    <p>hit: {{hit}}</p>
+    <p>like: {{like}}</p>
+</body>
+</html>

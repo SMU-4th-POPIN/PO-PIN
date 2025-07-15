@@ -1,0 +1,574 @@
+{% load static %}
+<title>{% block title %}포토카드 교환{% endblock %}</title>
+<meta name='csrf-token' content='{{csrf_token}}'>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<style>
+    .fb{
+        position:fixed;
+        bottom:20px; right:20px;
+        width:55px; height:55px;
+        justify-content:center;
+        background-color: white;
+        border:1px solid white;
+        padding:1rem;
+        border-radius: 50%;
+    }
+
+    .fb a{
+        color:#333;
+        text-decoration: none;
+        font-size:1.2rem;
+    }
+
+    .content{
+        width:1200px;
+        display:flex;
+        margin:0 auto;
+        box-sizing: border-box;
+    }
+
+    /* 검색 필터 영역 */
+    .sfilter{
+        width:330px;
+        height:835px;
+        background: rgba(255, 255, 255, 0.95);
+        margin: 20px 10px 20px 25px;
+        padding:20px;
+        border-radius: 20px;
+        transition: all 0.3s ease;  /* 크기나 상태 변화 시 부드럽게 전환 */
+        display: block; /* 기본적으로 보임 */
+    }
+
+    .sfilter h4{color:#666666;}
+
+    .sfilter > div{padding-top:20px;}
+
+    /* 그룹 검색 */
+    .groupsearch{
+        display:flex; justify-content: space-between; gap:3px; width:100%; box-sizing: border-box; margin-bottom:10px;
+    }
+
+    #searchinput {width:100%; box-sizing:border-box;
+        border:2px solid #ddd; background-color:white; color:#333; font-size:16px;
+        padding:10px; border-radius: 5px; cursor:pointer; margin-top:10px;
+    }
+
+    .sfilter > .fchoice {padding:0 0 10px 0;}
+
+    /* 멤버 선택 토글 */
+    .memberToggle{display:none;}
+    
+    .members {
+        display:grid;
+        grid-template-rows: repeat(3, 40px);
+        grid-template-columns: repeat(2, 124px);
+        gap:10px;
+        margin-top:10px;
+        max-height:190px;
+        overflow-y: auto;
+        max-width:280px;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+    .members label {
+        font-size: 15px;
+        color: #333;
+        background-color: white;
+        border: 2px solid #e4e4e4;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 35px;
+        cursor:pointer;
+        user-select: none;
+        width:100%; height:100%;
+        box-sizing: border-box;
+    }
+    .memberToggle:checked + label {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding-top:2px;
+        box-sizing: border-box;
+    }
+
+
+    /* 드롭다운 */
+    .dropdown{
+        position: relative;
+        display: inline-block;
+        width:100%;
+        margin-bottom:10px;
+    }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 257px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        width:100%;
+    }
+
+    .last-dropdown .dropdown-content {
+        max-height: 200px; /* 드롭다운 최대 높이 설정 */
+        overflow-y: auto;  /* 세로 스크롤 활성화 */
+    }
+
+    .dropdown-content .dropdown-item {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+    .dropdown-content .dropdown-item:hover {
+        background-color: #ddd;
+    }
+
+    .dropdown-text {
+        background:#eee;
+        cursor: pointer;
+        border:2px solid #ddd;
+        border-radius: 5px;
+        padding:10px;
+        margin-top:10px;
+    }
+
+    .clocation{
+        display:flex;
+        justify-content: space-between;
+        align-items:center;
+        border:2px solid #ddd;
+        border-radius: 5px;
+        margin-top:10px;
+        padding:10px;
+        user-select: none;
+    }
+
+    .clocation a{color:#333;}
+
+    .fgroup, .fdiv{margin-top:15px;}
+
+    .fchoice{margin-bottom:10px;}
+
+    #searchBtn{
+        width:258px; height:50px; width:100%;
+        font-weight:600; font-size:18px;
+        border: 2px solid #667eea;
+        color: #667eea;
+        background: transparent;
+        border-radius:5px;
+        cursor:pointer;
+        margin-top:5px;
+    }
+
+    #searchBtn:hover {background: #667eea; color: white;}
+
+
+    /* 포토카드 리스트 영역 */
+    .photocardList {
+        width:870px;
+        height:835px;
+        background: rgba(255, 255, 255, 0.95);
+        margin: 20px 25px 20px 10px;
+        padding:15px;
+        border-radius: 20px;
+    }
+
+    .photoGrid {
+        display:grid;
+        grid-template-rows: repeat(2, 395px);
+        grid-template-columns: repeat(4, 185px);
+        gap:10px;
+        justify-content:center;
+        max-height:800px;
+        overflow-y: auto;
+        width:100%; height:100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    .no-results {
+        font-size: 1.1rem;
+        color: #888;
+        font-weight:500;
+        text-align: center;
+        margin-top:10px;
+    }
+
+    .cardItem a{text-decoration:none;}
+
+    /*
+    .cardItem:hover{transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);}
+    */
+
+    .card-image {width:183px; height:284px;}
+
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .card-info {padding:7px;}
+
+    .card-info h3 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 7px;
+        color: #333;
+    }
+
+    .card-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+    .card-album {
+        color: #666;
+        font-size: 12px;
+    }
+
+    .card-likes {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: #e74c3c;
+        font-size: 12px;
+    }
+
+    .card-tags {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 5px;
+        flex-wrap: wrap;
+    }
+
+    .tag {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 10px;
+        font-weight: 500;
+    }
+
+    .card-location {
+        color: #666;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+
+    /* 반응형 디자인 */
+    @media (max-width: 768px) {
+        .nav {
+            position: relative;
+            width:100%;
+        }
+        
+        .nav-menu, .user-info {
+            display: none;
+        }
+
+        .mobile-menu-btn {
+            display: block;
+        }
+
+        .mobile-sidebar-menu{
+            display:none;   /* 기본은 닫힘 */
+        }
+
+        .mobile-sidebar-menu.active {
+            display:block;
+        }
+
+        .content{
+            display:inline-block;
+            width:90%;
+        }
+
+        .sfilter {
+            width:100%;
+            height: 60px;  /* 모바일에서는 접힌 상태로 높이를 줄임 */
+            overflow: hidden;  /* 접힌 부분이 잘리도록 설정 */
+            cursor: pointer;  /* 클릭 시 펼쳐지도록 포인터 커서 설정 */
+            box-sizing: border-box;
+            margin-left:20px;
+        }
+
+        /* sfilter가 펼쳐질 때 */
+        .sfilter.active {
+            height: 835px;  /* 펼쳐졌을 때 원래 높이로 설정 */
+            overflow: visible;  /* 펼쳐졌을 때 내용이 다 보이도록 */
+        }
+
+        .members {
+            display: grid;
+            grid-template-columns: repeat(2, 48%);
+            max-width: 100%;
+        }
+
+        .photocardList{width:100%; overflow:hidden; box-sizing: border-box; margin-left:20px;}
+
+        .photoGrid {
+            display:grid;
+            grid-template-rows: 600px;
+            grid-template-columns: 100%;
+            gap:10px;
+            justify-content: center;
+            max-height:755px;
+            overflow-y: auto;
+            width:100%; height:100%;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        .card-image{width:100%; height:480px;}
+
+        .fb {
+            position:fixed;
+            right:0;
+            bottom:20px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .header {
+            padding: 1rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 320px) {
+        .mobile-menu {
+            width: 280px;
+        }
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        // "검색 필터" 텍스트를 클릭했을 때만 펼치거나 접기
+        $('.filter-label').click(function () {
+            $(this).closest('.sfilter').toggleClass('active'); // sfilter 전체에 active 클래스 토글
+        });
+
+        // 드롭다운 //
+        $('.dropdown-text').click(function() {
+            var dropdownContent = $(this).next('.dropdown-content');
+            dropdownContent.toggle();
+        });
+
+        // 메뉴 항목 클릭 시 텍스트 변경
+        $('.dropdown-content .dropdown-item').click(function(e) {
+            e.preventDefault();
+            var selectedOption = $(this).attr('value');  // data-option -> value로 변경
+            $(this).closest('.dropdown').find('.dropdown-text').text(selectedOption);
+            $(this).closest('.dropdown').find('.dropdown-content').hide();
+
+            // 거래 방식 드롭다운에서 선택 시
+            if ($(this).closest('.dropdown').hasClass('trade-dropdown')) {
+                setTradeValue(selectedOption);  // trade 값 설정
+            }
+            // 거래 장소 드롭다운에서 선택 시
+            else if ($(this).closest('.dropdown').hasClass('place-dropdown')) {
+                setPlaceValue(selectedOption);  // place 값 설정
+            }
+        });
+
+        // 메뉴 외부 클릭 시 드롭다운 닫기
+        $(document).click(function(e) {
+            if (!$(e.target).closest('.dropdown').length) {
+                $('.dropdown-content').hide();
+            }
+        });
+
+        // 거래 방식 값을 설정하는 함수
+        function setTradeValue(value) {
+            $('#tradeInput').val(value);  // hidden input에 trade 값을 설정
+        }
+
+        // 거래 장소 값을 설정하는 함수
+        function setPlaceValue(value) {
+            $('#placeInput').val(value);  // hidden input에 place 값을 설정
+        }
+
+        // 그룹 검색
+        const groupMembers = {
+            {% for groupMember in list %}
+                "{{groupMember.group.name}}":[{% for member in groupMember.group.members.all %}"{{member.name}}"{% if not forloop.last %},{% endif %}{% endfor %}],
+                "{{groupMember.group.name_en}}":[{% for member in groupMember.group.members.all %}"{{member.name}}"{% if not forloop.last %},{% endif %}{% endfor %}]{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        };
+
+        // 그룹 검색 입력 시 동작
+        $('#searchinput').on('input', function() {
+            const searchText = $(this).val().toLowerCase();
+            $('.members').empty(); // 멤버 목록 초기화
+
+            let matchedGroupName = "";
+
+            if (searchText) {
+                $('.fchoice').show(); // 검색 결과 영역 보이기
+
+                for (const group in groupMembers) {
+                    if (group.toLowerCase().includes(searchText)) {
+                        matchedGroupName = group; // 가장 먼저 매치된 그룹명 저장
+                        $('#groupInputHidden').val(matchedGroupName); // hidden input에 정확한 그룹명 세팅
+
+                        // 멤버 표시
+                        $('.members').append(`
+                            <input type="checkbox" id="memberAll" name="selectedMembers" class="memberToggle" value="전체">
+                            <label for="memberAll">전체</label>
+                        `);
+                        groupMembers[group].forEach(function(member, index) {
+                            const memberId = 'member' + group + (index + 1);
+                            $('.members').append(`
+                                <input type="checkbox" id="${memberId}" name="selectedMembers" class="memberToggle" value="${member}">
+                                <label for="${memberId}">${member}</label>
+                            `);
+                        });
+                        break;  // 첫 번째 매칭만 사용
+                    }
+                }
+            } else {
+                $('.fchoice').hide();
+                $('#groupInputHidden').val('');
+            }
+        });
+
+        // 멤버 선택 토글 //
+        // 전체 선택 / 해제 처리
+        $(document).on('change', '#memberAll', function() {
+            const isChecked = $(this).prop('checked');  // 전체 체크박스 상태
+            // 모든 멤버 체크박스 상태를 전체 체크박스 상태에 맞춰 변경
+            $('.memberToggle').prop('checked', isChecked);
+        });
+
+        // 각 멤버 선택 박스가 선택되었을 때
+        $(document).on('change', '.memberToggle', function() {
+            const totalOptions = $('.memberToggle').not('#memberAll').length;  // 전체 멤버 개수
+            const selectedOptions = $('.memberToggle:checked').not('#memberAll').length;  // 선택된 멤버 개수
+
+            // 모든 멤버가 선택되면 '전체 선택' 체크박스를 체크
+            if (selectedOptions === totalOptions) {
+                $('#memberAll').prop('checked', true);
+            } else {
+                $('#memberAll').prop('checked', false);  // 아니면 '전체 선택' 체크박스를 해제
+            }
+        });
+
+    });
+</script>
+
+<body>
+    {% if request.session.user_id %}
+        {% include "header_login.html" %}
+    {% else %}
+        {% include "header_logout.html" %}
+    {% endif %}
+    <button class="fb"><a href="/photocard/write/"><i class="fas fa-pencil"></i></a></button>
+
+    <div class="content">
+        <section class="sfilter">
+            <h3 class="filter-label">🔍 검색필터</h3>
+            <form method="get" action="{% url 'photocard:exchange' %}">
+                <div class="fgroup">
+                    <h4>그룹 검색</h4>
+                    <div class="groupsearch">
+                        <input type="text" id="searchinput" placeholder="그룹 검색 후 멤버 선택 가능">
+                    </div>
+                </div>
+                <div class="fchoice" style="display: none;">
+                    <h4>멤버 선택</h4>
+                    <div class="members">
+                        {% for group in groupMembers %}
+                            <!-- 전체 선택 체크박스 -->
+                            <input type="checkbox" id="memberAll{{ group }}" name="selectedMembers" value="{{ group.name }}">
+                            <label for="memberAll{{ group }}">전체</label>
+
+                            {% for member in group.members %}
+                                <!-- 각 멤버 체크박스, member.name을 value로 설정 -->
+                                <input type="checkbox" id="member{{ group.name }}{{ member }}" name="selectedMembers" value="{{ member }}">
+                                <label for="member{{ group.name }}{{ member }}">{{ member }}</label>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="fcategory">
+                    <h4>거래 방식</h4>
+                    <div class="dropdown trade-dropdown">
+                        <div class="dropdown-text" id="dropdownText">{{ trade|default:"전체" }}</div>
+                        <div class="dropdown-content">
+                            <div class="dropdown-item" value="전체" onclick="setTradeValue('전체')">전체</div>
+                            {% for value, label in trade_choices %}
+                                <div class="dropdown-item" value="{{ value }}" onclick="setTradeValue('{{ value }}')">{{ label }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="flocation">
+                    <h4>📍 위치 설정</h4>
+                    <div class="clocation">강남구 (현재 위치)<a href="/photocard/location/"><i class="fas fa-map"></i></a></div>
+                    <div class="fdiv">
+                        <h4>자주 거래되는 장소</h4>
+                        <div class="dropdown place-dropdown">
+                            <div class="last-dropdown">
+                                <div class="dropdown-text" id="dropdownTextPlace">{{ place|default:"전체" }}</div>
+                                <div class="dropdown-content">
+                                    <div class="dropdown-item" value="전체" onclick="setPlaceValue('전체')">전체</div>
+                                    {% for value, label in place_choices %}
+                                        <div class="dropdown-item" value="{{value}}" onclick="setPlaceValue('{{ value }}')">{{label}}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="searchgroup" id="groupInputHidden">
+                <input type="hidden" name="trade" id="tradeInput" value="{{ trade|default:'전체' }}">
+                <input type="hidden" name="place" id="placeInput" value="{{ place|default:'전체' }}">
+                <div class="searchBtn">
+                    <button type="submit" id="searchBtn">검색</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="photocardList">
+            <div class="no-results" style="{% if photocards %}display:none;{% else %}display:block;{% endif %}">검색 결과가 없습니다.</div>
+            <div class="photoGrid">
+                {% for p in photocards %}
+                    <div class="cardItem" data-pno="{{ p.pno }}">
+                        <a href="/photocard/detail/{{p.pno}}/">
+                            <div class="card-image">
+                                <img src="/media/{{p.image}}" alt="{{p.pno}}">
+                            </div>
+                            <div class="card-info">
+                                <h3>{{p.member}}</h3>
+                                <div class="card-meta">
+                                    <span class="card-album">{{p.album}}</span>
+                                    <span class="card-likes">
+                                        ❤️ <span class="wish_count">{{p.wish_count}}</span>
+                                    </span>
+                                </div>
+                                <div class="card-tags">
+                                    <span class="tag">{{p.trade_type}}</span>
+                                    <span class="tag">{{p.category}}</span>
+                                </div>
+                                <div class="card-location">📍 {{p.place}}</div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+    </div>

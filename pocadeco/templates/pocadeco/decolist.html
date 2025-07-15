@@ -1,0 +1,643 @@
+
+{% load static %}
+<!--상단 헤더-->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="/static/css/mypage.css">
+        <title>포토카드 꾸미기 게시판</title>
+    </head>
+    <style>
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-top: 20px;
+            
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .content {
+            flex: 1;
+        }
+
+        .navbar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn1 {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            width: 85px;
+            height: 67px;
+            border: none;
+            border-radius: 100px;
+        }
+
+        .btn1 img{
+            width:100%;
+            height:100%;
+        }
+
+        .btn1:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn1.active {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.6);
+        }
+
+        .upload-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            padding: 12px 24px;
+            font-size: 16px;
+            position: fixed;
+            bottom: 7%;
+            right: 32px;
+            z-index: 999;
+        }
+
+        .search-results {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            display: none;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-item {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.3s ease;
+        }
+
+        .search-item:hover {
+            background: #f8f9fa;
+        }
+
+        .search-item:last-child {
+            border-bottom: none;
+        }
+
+        .selected-artist {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .remove-artist {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sort-section {
+            margin-bottom: 25px;
+        }
+
+        .sort-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sort-options select{
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #868686;
+        }
+
+        .sort-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .sort-option:hover {
+            background: #f8f9fa;
+        }
+
+        .sort-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .sort-option label {
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .filter-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #333;
+        }
+
+        .group-item {
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .group-header {
+            padding: 12px;
+            background: #f8f9fa;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .group-header:hover {
+            background: #e9ecef;
+        }
+
+        .group-header.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .members-list {
+            padding: 10px;
+            background: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .members-list.open {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .member-item {
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .member-item:hover {
+            background: #e9ecef;
+        }
+
+        .member-item.selected {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(187px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            min-height: 400px;
+        }
+        .photo-grid:has(.no-results) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+        }
+
+        .photo-card {
+            background: #ffff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            padding:15px;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .photo-image {
+            width: 100%;
+            height: 273px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #666;
+            position: relative;
+            overflow: hidden;
+            border-radius:8px;
+        }
+
+        .photo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-info {
+            padding: 15px;
+        }
+
+        .photo-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .photo-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .photo-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .tag {
+            padding: 4px 8px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .tags {
+            padding: 4px 8px;
+            background: #F0F0F0;
+            color: #666;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .photo-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .content{
+                width:100%;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .sort-buttons {
+                justify-content: center;
+            }
+            
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            .photo-card{
+                width:100%;
+            }
+        }
+        /* 페이지네이션 */
+
+        .page-num {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top:20px;
+        }
+
+        .page-num li{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            text-decoration: none;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .page-num li.active, .page-num li.active:hover{
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .page-num li:hover{background: #f0f0f0;}
+
+        .page-num a{text-decoration:none; color:#333;}
+    </style>
+</head>
+<body>
+    {% if request.session.user_id %}
+        {% include "header_login.html" %}
+    {% else %}
+        {% include "header_logout.html" %}
+    {% endif %}
+    <div class="container">
+        <div class="main-content">
+            <div class="sidebar">
+                <form method="get" action="/pocadeco/decolist/">
+                    <div class="search-section">
+                        <h3 class="filter-title" id="select_artist">검색어 입력</h3>
+                        <input type="text" id="searchInput" class="search-input" name="search-input" placeholder="검색어를 입력해주세요">
+                        <div class="search-results" id="searchResults"></div>
+                        <div id="selectedArtist"></div>
+                    </div>
+                    <div class="filter-section" id="selectgroup" style="display:none;">
+                        <h3 class="filter-title">그룹 필터</h3>
+                        <div id="groupsList">
+                            <!-- 조회된 그룹 리스트 표시 -->
+                        </div>
+                    </div>
+
+                    <div class="sort-section">
+                        <h3 class="filter-title">정렬 옵션</h3>
+                        <div class="sort-options">
+                            <select name="sort" id="sort">
+                                <option value="최신순" {% if request.GET.sort == "최신순" %}selected{% endif %}>최신순</option>
+                                <option value="인기순" {% if request.GET.sort == "인기순" %}selected{% endif %}>인기순</option>
+                                <option value="조회순" {% if request.GET.sort == "조회순" %}selected{% endif %}>조회순</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn1" style="width:100%;" id="searchBtn">검색하기</button>
+                </div>
+            </form>
+            <div class="content">
+                <div class="navbar">
+                    <div class="navbar-header">
+                        <h1>포토카드 꾸미기 게시판</h1>
+                        <p>나만의 포토카드를 꾸미고 공유해보세요!</p>
+                    </div>
+                </div>
+
+                <!--데코포카 리스트-->
+                <div class="photo-section">
+                    <div class="photo-grid" id="photoGrid">
+                        {%for deco in decoList %}
+                            <div class="photo-card" data-id="{{deco.user}}">
+                                <a href="/pocadeco/decoview/{{deco.id}}/">
+                                    <div class="photo-image">
+                                        {%if deco.result_image %}
+                                            <img src="/media/{{deco.result_image}}/" alt={{deco.title}}> 
+                                        {%else%}
+                                                <img src="🎨 포토카드" alt="🎨 포토카드"> 
+                                        {%endif%}
+                                    </div>
+                                    <div class="photo-info">
+                                        <div class="photo-title">{{deco.title}}</div>
+                                        <div class="photo-meta">
+                                            <span>{{deco.user}}</span>
+                                            <span>{{deco.created_at|date:"Y-m-d"}}</span>
+                                        </div>
+                                        <!--미구현-->
+                                        <div class="photo-tags">
+                                            <span class="tag">{{deco.group}}</span>
+                                            <span class="tag">{{deco.member}}</span>
+                                        </div>
+                                        <div class="photo-tags">
+                                            {%for tag in deco.tags%}
+                                                <span class="tags">{{tag}}</span>
+                                            {%endfor%}
+                                        </div>
+                                        <div class="photo-stats">
+                                            <div class="stat-item">
+                                                <span>👀</span>
+                                                <span>{{deco.hit}}</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span>❤️</span>
+                                                <span>{{deco.likes}}</span>
+                                            </div>
+                                        </div>
+                                        <!--미구현-->
+                                    </div>
+                                </a>
+                            </div>
+                        {% empty %}
+                            <p>검색된 게시글이 없습니다.</p>
+                            <!-- JS에서 렌더링 -->
+                        {% endfor %}
+                    </div>
+                </div>
+
+                
+                <ul class="page-num">
+                    {% if page_num.has_previous %}
+                        <a href="?page=1&search-input={{searchInput}}&sort={{sort}}"><li>«</li></a>
+                        <a href="?page={{page_num.previous_page_number}}&search-input={{searchInput}}&sort={{sort}}"><li>‹</i></li></a>
+                    {% else %}
+                        <li>«</li>
+                        <li>‹</i></li>
+                    {% endif %}
+
+                    {% for num in page_num.paginator.page_range%}
+                        {% if page_num.number == num %}
+                            <li class="active">{{num}}</li>
+                        {% else %}
+                            <a href="?page={{num}}&search-input={{searchInput}}&sort={{sort}}"><li>{{num}}</li></a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_num.has_next %}
+                        <a href="?page={{page_num.next_page_number}}&search-input={{searchInput}}&sort={{sort}}"><li>›</i></li></a>
+                        <a href="?page={{page_num.paginator.num_pages}}&search-input={{searchInput}}&sort={{sort}}"><li>»</i></li></a>
+                    {% else %}
+                        <li>›</li>
+                        <li>»</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <a href="/pocadeco/main/"><button class="btn1 upload-btn"><img src="/static/images/write_icon.png/"></button></a>
+    </div>
+
+    <script>
+        // DOM 요소들
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const selectedArtistDiv = document.getElementById('selectedArtist');
+        const sortOptions = document.querySelectorAll('input[name="sort"]');
+        const selectmember = document.getElementById('selectmember');
+        const photosection = document.getElementById('photo-section');
+        const photoGrid = document.getElementById('photoGrid');
+        const groupsList = document.getElementById('groupsList');
+
+        let debounceTimer = null;
+        let currentResults = [];
+
+          const keyword = [
+            "승관",
+            "데코",
+            "차은우",
+            "내가"
+        ];
+
+        // 키워드를 searchInput에 입력
+        // 입력된 키워드가 포함된 데코포토 리스트 출력
+        // 키워드 => 포토카드 제목, 이미지 파일명, 아이디, 닉네임
+
+          function renderResults(filteredList) {
+            searchResults.innerHTML = ""; // 초기화
+            if (filteredList.length === 0) {
+            searchResults.innerHTML = "<p>검색 결과가 없습니다.</p>";
+            return;
+            }
+            const ul = document.createElement("ul");
+            filteredList.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            ul.appendChild(li);
+            });
+            searchResults.appendChild(ul);
+        }
+
+        searchBtn.addEventListener("click", () => {
+            const keyword = searchInput.value.trim().toLowerCase();
+            if (!keyword) {
+            searchResults.innerHTML = "<p>검색어를 입력해주세요.</p>";
+            return;
+            }
+
+            // 키워드를 포함하는 항목 필터링
+            const filtered = keyword.filter(artist =>
+            artist.toLowerCase().includes(keyword)
+            );
+
+            renderResults(filtered);
+        });
+
+    </script>
+
+</body>
+</html>

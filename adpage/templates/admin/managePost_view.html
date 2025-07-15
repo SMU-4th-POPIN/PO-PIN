@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
+  <title>관리자 | 공지사항 작성</title>
+  <style>
+        *{margin : 0; padding : 0;  box-sizing : border-box;}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .banner{
+            width : 1000px;
+            height : 70px;
+            background :rgba(255, 255, 255, 0.95);
+            border-radius : 20px;
+            display : flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            margin-top : 5px;
+        }
+        .banner h2{ 
+            font-size : 30px; 
+            color : #7E6EB0;
+            align-items : center; 
+            margin-left: 15px;
+        }
+        .banner-right {
+            display: flex;
+            align-items: center;
+        }
+        .table{display : flex;}
+        .menu {
+            display: flex;
+            align-items: center;
+        }
+        .menu ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 10px;
+        }
+        .menu li{
+            display : flex;
+            text-align : center;
+            align-items : center;
+            justify-content: center;
+            padding: 0 15px;
+            font-weight : 500;
+            width : 115px;
+            height : 40px;
+            border-radius : 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color : #764ba2;
+            border : 2px solid  #764ba2;
+        }
+        .home {
+            all: unset;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #7E6EB0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .home:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .home i {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .notice{
+            margin-top : -15px;
+            width : 100%;
+            height : 800px;
+            background : white;
+            border-radius : 25px;
+            background : rgba(255, 255, 255, 0.95);
+        }
+        .dash-top{height : 80px; width : 860px; text-align : center;
+                margin : 30px 40px 0 70px;font-size : 16px; padding-top : 28px;}
+        .dash-top hr{ color : rgba(219, 213, 213, 0.63); margin-top : 15px;}
+        
+    .line {
+      border-bottom: 1px solid rgba(185, 180, 190, 0.96);
+      margin: 20px auto 0 auto;
+    }
+
+    td{ text-align : center; align-items : center;
+    }
+
+    /* 테이블 스타일 개선 */
+    table {
+      width: 100%;
+      max-width: 900px;
+      margin: 20px 0;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    table.writebox {
+      width: 80%;
+      border-collapse: collapse;
+      margin: 20px auto;
+      margin-top : 40px;
+    }
+
+    table.writebox tr {
+      border-bottom: 1px solid #f0f0f0;
+      transition: background-color 0.3s ease;
+      align-items : center;
+    }
+
+    table.writebox tr:hover {
+      background-color: #f8f9ff;
+    }
+
+    table.writebox tr:last-child {
+      border-bottom: none;
+    }
+
+    table.writebox th {
+      width: 150px;
+      align-items : center;
+      text-align: center;
+      vertical-align: top;
+      padding: 20px 25px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #7E6EB0;
+      background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+      border-right: 1px solid #e8e8e8;
+      position: relative;
+      
+    }
+    a{color : #764ba2; }
+
+    table.writebox th::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 40%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+
+    table.writebox td {
+        padding: 20px 25px;
+        font-size: 15px;
+        color: #555;
+        background: white;
+        line-height: 1.6;
+        text-align: left; /* 이 줄 추가 또는 수정 */
+      }
+
+        /* 특별한 스타일링 */
+        .rating-value {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stars {
+            color: #ffc107;
+            font-size: 18px;
+        }
+
+        .board-tag {
+            background:rgba(139, 118, 204, 0.96);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .file-link {
+            color: #7E6EB0;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .file-link:hover {
+            color: #667eea;
+        }
+
+        a{text-decoration : none;}
+
+    select.selectB,
+    input.wlong,
+    textarea.tta,
+    input.fileType {
+    width: calc(100% - 10px); /* <td> 공간의 100%에서 좌우 여백을 고려하여 10px 정도 빼줌 */
+    /* 또는 단순히 width: 100%; 로 설정하여 td의 가용 공간을 모두 사용하게 함 */
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    }
+
+
+    select.selectB:focus,
+    input.wlong:focus,
+    textarea.tta:focus,
+    input.fileType:focus {
+      border: 2px solid #7E6EB0;
+    }
+
+    textarea.tta {
+      height: 200px;
+      resize: vertical;
+    }
+
+    input.fix {
+      transform: scale(1.2);
+    }
+    .btn {  display: flex;
+            justify-content: center;
+            margin-top : 40px;
+        }
+    .btn button {
+        display: flex; 
+        align-items: center;
+        justify-content: center; 
+        padding: 12px 25px;
+        font-size: 16px;
+        margin: 0 5px;
+        color :white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+                    background :rgba(139, 118, 204, 0.96);
+        }
+        .fix{margin-left : 10px;}
+        table{background :rgba(126, 110, 176, 0.08);
+        border-radius : 25px;}
+        
+  </style>
+</head>
+<body>
+  <div>
+    <div class="banner">
+      <a href = "{% url 'home:main' %}"><h2>PO-PIN</h2></a>
+      <div class = "menu">
+                <ul>
+                    <li><a href="{% url 'adpage:main' %}">메인</a></li>
+                    <li><a href="{% url 'adpage:notice' %}">공지사항</a></li>
+                    <li><a href="{% url 'adpage:post' %}">게시글 관리</a></li>
+                    <li><a href="{% url 'adpage:user' %}">사용자 관리</a></li>
+                </ul>
+            </div>
+      <div class="banner-right">
+
+        <a href="{% url 'home:main' %}" class="home">
+            <i class="fi fi-rr-home"></i>홈으로
+        </a>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="notice">
+        <div class="dash-top">
+          <h2>게시글 상세보기</h2>
+          <div class="line"></div>
+        </div>
+        <table class="writebox">
+          <tbody>
+            <tr>
+              <th scope="row"><label for="board">게시판</label></th>
+              <td>교환후기 게시판</td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="title">제목</label></th>
+              <td>ㅇㅇ님과 교환 후기</td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="fix">작성자</label></th>
+              <td>
+                듀
+              </td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="content">거래자</label></th>
+              <td>
+                뱌뱌
+              </td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="content">작성일</label></th>
+              <td>
+                2025-06-26
+              </td>
+            </tr>
+            <tr>
+            <tr>
+              <th scope="row"><label for="content">상세내용</label></th>
+              <td>
+                너무 착하시구 하자도 없어용~~
+                다음에도 거래 ㄱㄱ
+              </td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="content">평점</label></th>
+              <td>
+                <div class="rating-value">
+                  <span class="stars">★★★★★</span>
+                  <span>(5/5)</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="file">첨부파일</label></th>
+              <td>
+                <div class="file-info">
+                  <span>popin.jpg</span>
+                </div>
+              </td>
+              </div>
+            </div>
+            </tr>
+          </tbody>
+        </table>
+        <div class = "btn">
+            <button type = "button" value = "delete" onclick = "deleteBtn()">삭제</button>
+            <a href = "{% url 'adpage:post' %}"><button type = "button" value = "back">이전</button></a>
+          </div>
+      </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+<script>
+  function deleteBtn(){
+    if(confirm("해당 게시글을 삭제하시겠습니까?")){
+      alert("삭제되었습니다.");
+    }
+    else{
+      alert("취소되었습니다.");
+    }
+  }
+</script>
+</html>

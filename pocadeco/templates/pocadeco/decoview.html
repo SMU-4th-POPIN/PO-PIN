@@ -1,0 +1,361 @@
+{% load static %}
+<title>{% block title %}포카꾸미기 상세{% endblock %}</title>
+<meta name='csrf-token' content='{{csrf_token}}'>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<style>
+    .content {
+        background: rgba(255, 255, 255, 0.95);
+        width:100%;
+        max-width:1200px;
+        display:block;
+        margin:20px auto;
+        border-radius: 20px;
+        padding:20px;
+    }
+
+    .content_background{
+        width:550px;
+        margin: 0 auto;
+        border-radius:20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .pocanavi, .pocanavi button {
+        font-size:1.3rem;
+        background:#fff; height:50px;
+        display:flex; justify-content:space-between; align-items:center;
+        padding:0 15px;
+    }
+
+    .pocanavi button{border:none; background:transparent; padding:0;}
+
+    .icons {width:55px; display:flex; justify-content: space-between;}
+
+    .icons a{color:#333;}
+
+    .pocanavi i{cursor:pointer;}
+
+    .red{color:red;}
+
+    .deco-item {
+        width:100%; 
+        text-align:center;
+        background:#fff;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        padding:27px;
+    }
+
+    .result_img {
+        width: 350px;
+        height: 500px;
+        background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+        display: inline-block;
+        align-items: center;
+        font-size: 18px;
+        color: #666;
+        position: relative;
+        overflow: hidden;
+        border-radius:8px;
+    }
+
+    .result_img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .photo-info {
+        padding: 20px 5px;
+        width: 350px;
+        display: inline-block;
+        align-items: center;
+    }
+
+    .photo-title {
+        font-size: 17px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .photo-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .create_at{font-size:12px;}
+
+    .photo-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+
+    .tag {
+        padding: 4px 8px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .tags > .tag{
+        padding: 4px 8px;
+        background: #F0F0F0;
+        color: #666;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .photo-stats {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: #888;
+        margin-top:20px;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+
+
+    /* 공유하기 바텀시트 */
+    .share-bottom-sheet {
+        position: fixed;
+        width:100%;
+        left:50%;
+        transform: translateX(-50%);
+        justify-content: center;
+        bottom: -100%; /* 처음에는 화면 밖에 숨기기 */
+        background-color: #ffffff;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        padding: 20px;
+        box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease; /* 애니메이션 */
+        width:550px; height:100px;
+        display:flex; justify-content:space-between; align-items:center;
+        z-index:106;
+    }
+
+    .share-bottom-sheet.show {
+        bottom: 0; /* 바텀시트가 화면에 나타날 때 */
+    }
+    
+    .share-button {
+        font-size: 16px;
+        cursor: pointer;
+        padding: 10px 20px;
+        margin: 10px 0;
+        background:transparent;
+        color: white;
+        border: none;
+        width:300px;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
+    .share-button img{width: 50px; height:50px; border-radius: 50%; object-fit:cover;}
+
+    .share-button i{width: 50px; height:50px; background: #eee; border-radius: 50%; 
+                    color:black; font-size:1rem; text-align: center; line-height:48px;}
+
+    /* 바텀시트 외부 영역 */
+    .share-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+        display: none; /* 기본적으로 숨기기 */
+        z-index:105;
+    }
+
+    .share-overlay.show {
+        display: block; /* 바텀시트가 열리면 오버레이가 보이도록 */
+    }
+    /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .nav {
+                position: relative;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .content{margin-top:0; margin-bottom:0;}
+
+            .content_background{width:90%;}
+
+            .deco-item {max-width:100%; padding:10px;}
+
+            .result_img, .photo-info{width:100%;}
+
+            .share-bottom-sheet{max-width:500px;}
+            
+            .map-bottom-sheet{max-width:500px;}
+
+            #map-bottomSheet.active, #share-bottomSheet.show{width:100%;}
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .mobile-menu {
+                width: 280px;
+            }
+        }
+    </style>
+<script>
+    $(document).ready(function() {
+        // 위시버튼 //
+        $("#heart").click(function() {
+            let id = {{id}};
+            let csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            $.ajax({
+                url: '/pocadeco/toggle_wish/' + id + '/',
+                type: 'POST',
+                headers: { 'X-CSRFToken': csrfToken },
+                data: { action: 'action' }, // 클릭한 버튼 상태에 따른 액션
+                success: function(response) {
+                    // 위시 상태에 따른 새로 갱신된 찜 수 반영
+                    $(".wish_count").text(response.new_like_count);
+                    if (response.action === 'increased') {
+                        $("#heart").removeClass("fal fa-heart").addClass("fas fa-heart red");
+                    } else {
+                        $("#heart").removeClass("fas fa-heart red").addClass("fal fa-heart");
+                    }
+                },
+                error: function() {
+                    alert("실패");
+                }
+            });
+        });
+        
+        // 공유하기 //
+        const url = "https://example.com"; // 공유할 URL
+        const text = "이 웹사이트를 공유합니다!"; // 공유할 텍스트
+        // 바텀시트 토글 (공유하기 아이콘 클릭 시 바텀시트 나타나게)
+        $(".share-icon").click(function() {
+            $(".share-bottom-sheet").toggleClass("show"); // 바텀시트 보이기
+            $(".share-overlay").toggleClass("show"); // 오버레이 보이기
+        });
+        // 바텀시트 외부 클릭 시 바텀시트 닫기
+        $(".share-overlay").click(function() {
+            $(".share-bottom-sheet").removeClass("show"); // 바텀시트 숨기기
+            $(".share-overlay").removeClass("show"); // 오버레이 숨기기
+        });
+        // X로 공유하기
+        $(".shareToX").click(function(){
+            window.open(
+                `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
+                '_blank','width=600,height=400');
+        });
+        // 카카오톡으로 공유하기
+        $(".shareToKakao").click(function(){
+            window.open(
+                `https://kauth.kakao.com/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code`,
+                '_blank','width=600,height=400');
+        });
+        // 링크 복사
+        $(".copyLink").click(function(){
+            const tempInput = document.createElement("input");
+            document.body.appendChild(tempInput);
+            tempInput.value = url;  // 클립보드에 복사할 URL 설정
+            tempInput.select();
+            document.execCommand("copy"); // 클립보드로 복사
+            document.body.removeChild(tempInput);
+
+            alert("링크가 클립보드에 복사되었습니다!"); // 복사 완료 알림
+        });
+
+    });
+</script>
+
+<body>
+    {% if request.session.user_id %}
+        {% include "header_login.html" %}
+    {% else %}
+        {% include "header_logout.html" %}
+    {% endif %}
+    <div class="content">
+        <div class="content_background">
+            <div class="pocanavi">
+                <button onclick="window.history.back();"><i class="fal fa-chevron-left"></i></button>
+                <div class="icons">
+                    <i class="{% if is_wish %}fas fa-heart red{% else %}fal fa-heart{% endif %}" id="heart"></i>
+                    <i class="fal fa-share-square share-icon"></i>
+                </div>
+                <!-- 오버레이 (바텀시트 외부) -->
+                <div class="share-overlay" id="share-overlay" onclick="toggleBottomSheet()"></div>
+
+                <!-- 바텀시트 내용 -->
+                <div class="share-bottom-sheet" id="share-bottomSheet">
+                    <div class="share-button shareToX"><img src="/static/images/share/x_logo.png"></div>
+                    <div class="share-button shareToKakao"><img src="/static/images/share/kakao_logo.png"></div>
+                    <div class="share-button copyLink"><i class="fal fa-link"></i></div>
+                </div>
+            </div>
+            <div class="deco-item">
+                <div class="result_img"><img src="/media/{{result_image}}" alt=""></div>
+                <div class="photo-info">
+                    <div class="photo-title">{{title}}</div>
+                    <div class="photo-meta">
+                        <span>{{nickname}}</span>
+                        <span class="create_at">{{created_at|date:"Y-m-d h:i"}}</span>
+                    </div>
+                    <div class="photo-tags">
+                        <span class="tag">{{group}}</span>
+                        <span class="tag">{{member}}</span>
+                    </div>
+                    <div class="photo-tags">
+                        <div class="tags">
+                            {% for tag in tags %}
+                                <span class="tag">{{tag}}</span>
+                            {%endfor%}
+                        </div>
+                    </div>
+                    <div class="photo-stats">
+                        <div class="stat-item">
+                            <span>👀</span><span>{{hit}}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>❤️</span><span class="wish_count">{{like}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

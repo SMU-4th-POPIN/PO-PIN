@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포토카드 교환 - 위치 기반 검색</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <style>
+        /* 기본 스타일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 9px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .search-controls {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            height: 44px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%; /* input 아래에 오도록 */
+            left: 0;
+            right: 0;
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1001; /* 다른 요소 위에 표시 */
+            display: none; /* 기본 숨김 */
+        }
+
+        .autocomplete-item {
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #f2f2f2;
+        }
+
+        .popular-locations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+            text-align: center; /* Added for card content centering */
+        }
+
+        .location-card .icon {
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .location-card {
+            width: 100%;
+            height: 100px;
+            border: 2px solid #e1e8ed;
+            border-radius: 15px;
+            background: white;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 12px;
+            color: #333;
+            line-height: 1.2;
+        }
+
+        .location-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .location-card.selected {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        .search-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .map-container {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: 600px;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* 바텀시트 CSS 클래스 이름 통일: .bottom-sheet */
+        /* 이 부분이 가장 중요합니다. 클래스 이름을 .bottom-sheet 로 변경했습니다. */
+        .bottom-sheet { 
+            position: fixed;
+            bottom: -100%; /* Initially hidden */
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 25px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
+            transition: bottom 0.3s ease;
+            z-index: 1000;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .bottom-sheet.active {
+            bottom: 0;
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between; /* 양 끝 정렬 */
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative; /* 자식 요소의 absolute 위치를 위한 기준 */
+        }
+
+        .sheet-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #764ba2;
+            flex-grow: 1; /* 남은 공간을 차지하여 중앙 정렬 보조 */
+            text-align: center; /* 텍스트 중앙 정렬 */
+        }
+
+        .close-btn {
+            background: #f8f9fa;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #666;
+            /* 이전 버전에서 여기에 주석 처리된 position: absolute 등이 있었는데,
+               flexbox로 중앙 정렬을 했으므로 이 주석 처리된 스타일은 필요 없습니다. */
+        }
+
+        .close-btn:hover {
+            background: #e9ecef;
+        }
+
+        .card-info {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .card-image {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            overflow: hidden; /* Ensure content stays within bounds */
+        }
+
+        .card-details h3 {
+            margin-bottom: 3px;
+            color: #333;
+        }
+
+        .card-details p {
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 3px;
+        }
+
+        .distance-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: rgb(255, 255, 255);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .contact-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .popular-locations {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            /* 모바일 환경에서 sheet-header는 기본으로 space-between 유지, close-btn은 오른쪽 끝에 */
+            .card-info {
+                grid-template-columns: 1fr; /* Stack elements vertically */
+                text-align: center;
+                gap: 10px;
+            }
+            .card-image {
+                margin: 0 auto; /* Center image */
+            }
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid rgb(227, 102, 234); /* 스피너 색상 */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto 10px; /* Adjust margin for visibility */
+            display: none; /* 기본적으로 숨김 */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>포토카드 교환</h1>
+            <p>위치 기반으로 근처의 포토카드 교환 매물을 찾아보세요!</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" id="totalPosts">0</span>
+                <span class="stat-label">전체 게시글</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="nearbyPosts">0</span>
+                <span class="stat-label">근처 게시글</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="activeUsers">0</span>
+                <span class="stat-label">활성 사용자</span>
+            </div>
+        </div>
+
+        <div class="search-controls">
+            <div class="controls-grid">
+                <div class="form-group">
+                    <label for="location">위치 설정</label>
+                    <input type="text" id="location" placeholder="현재 위치 또는 주소 입력">
+                </div>
+                <div class="form-group">
+                    <label for="radius">검색 범위</label>
+                    <select id="radius">
+                        <option value="1000">1km 이내</option>
+                        <option value="3000" selected>3km 이내</option>
+                        <option value="5000">5km 이내</option>
+                        <option value="10000">10km 이내</option>
+                    </select>
+                </div>
+                <div class="form-group" style="position: relative;"> <label for="artistMemberInput">그룹 또는 멤버</label>
+                    <input type="text" id="artistMemberInput" placeholder="그룹 또는 멤버 이름을 입력하세요." autocomplete="off">
+                    <div id="autocompleteList" class="autocomplete-list"></div>
+                </div>
+            </div>
+
+            <div>
+                <button class="search-btn" id="searchBtn">포토카드 찾기</button>
+                <div class="spinner" id="loading"></div>
+                <div class="popular-locations">
+                    <div class="location-card" data-location="sangam" title="상암월드컵경기장">
+                        <div class="icon">⚽</div>
+                        <span>상암 월드컵 <br> 경기장</span>
+                    </div>
+                    <div class="location-card" data-location="hyundai" title="더현대 서울">
+                        <div class="icon">🏢</div>
+                        <span>더현대 서울</span>
+                    </div>
+                    <div class="location-card" data-location="inspire" title="인스파이어">
+                        <div class="icon">✨</div>
+                        <span>인스파이어</span>
+                    </div>
+                    <div class="location-card" data-location="hongdae" title="홍대입구역">
+                        <div class="icon">🚇</div>
+                        <span>홍대입구역</span>
+                    </div>
+                    <div class="location-card" data-location="olympic" title="올림픽공원">
+                        <div class="icon">🌳</div>
+                        <span>올림픽 공원</span>
+                    </div>
+                    <div class="location-card" data-location="kwangya" title="광야">
+                        <div class="icon">🌌</div>
+                        <span>광야</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <div class="bottom-sheet" id="bottomSheet">
+        <div class="sheet-header">
+            <div class="sheet-title">포토카드 교환 정보</div>
+            <button class="close-btn">×</button> </div>
+        <div id="sheetContent">
+            </div>
+    </div>
+
+    
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5ea6102d7e07d123e2946fdd3acdd99e"></script>
+    <script>
+        let map;
+        let markers = []; // 카카오맵 마커들을 저장할 배열
+        let currentLocation = { lat: 37.5665, lng: 126.9780 }; // 기본 위치: 서울 시청
+
+        // 주요 아이돌 그룹 및 멤버 데이터
+        const groupMembersData = {
+            "NCT WISH": ["시온", "리쿠", "유우시", "재희", "료", "사쿠야"],
+            "RIIZE": ["쇼타로", "은석", "성찬", "원빈", "승한", "소희", "앤톤"],
+            "ILLIT": ["윤아", "민주", "모카", "원희", "이로하"],
+            "NCT 127": ["태일", "쟈니", "태용", "유타", "도영", "재현", "정우", "마크", "해찬"],
+            "&TEAM": ["케이", "후마", "니콜라스", "의주", "하루아", "타키", "마키"],
+            "BTS": ["RM", "진", "슈가", "제이홉", "지민", "뷔", "정국"],
+            "NewJeans": ["민지", "하니", "다니엘", "해린", "혜인"],
+            "IVE": ["유진", "가을", "레이", "원영", "리즈", "이서"],
+            "aespa": ["카리나", "지젤", "윈터", "닝닝"],
+            "TWICE": ["나연", "정연", "모모", "사나", "지효", "미나", "다현", "채영", "쯔위"],
+            "Stray Kids": ["방찬", "리노", "창빈", "현진", "한", "필릭스", "승민", "아이엔"],
+            "SEVENTEEN": ["에스쿱스", "정한", "조슈아", "준", "호시", "원우", "우지", "디에잇", "민규", "도겸", "승관", "버논", "디노"],
+            "TXT": ["수빈", "연준", "범규", "태현", "휴닝카이"],
+            "ENHYPEN": ["정원", "희승", "제이", "제이크", "성훈", "선우", "니키"],
+            "ZEROBASEONE": ["성한빈", "김지웅", "장하오", "석매튜", "김태래", "리키", "김규빈", "박건욱", "한유진"],
+            "BOYNEXTDOOR": ["성호", "리우", "재현", "태산", "이한", "운학"],
+            "LE SSERAFIM": ["사쿠라", "김채원", "허윤진", "카즈하", "홍은채"],
+            "ITZY": ["예지", "리아", "류진", "채령", "유나"],
+            "Red Velvet": ["아이린", "슬기", "웬디", "조이", "예리"],
+            "EXO": ["수호", "시우민", "백현", "첸", "찬열", "디오", "카이", "세훈"],
+            "NCT DREAM": ["마크", "런쥔", "제노", "해찬", "재민", "천러", "지성"]
+        };
+
+        const sampleData = [];
+
+        // 샘플 데이터 생성 함수
+        function generateMoreData() {
+            const groups = Object.keys(groupMembersData);
+            const types = ["교환", "판매", "구매"];
+            const baseLocations = [
+                {lat: 37.568490, lng: 126.897344}, // 상암 월드컵 경기장
+                {lat: 37.525533, lng: 126.928268}, // 더현대 서울
+                {lat: 37.383849, lng: 126.639000}, // 인스파이어
+                {lat: 37.556892, lng: 126.923917}, // 홍대입구역
+                {lat: 37.521624, lng: 127.123623}, // 올림픽공원
+                {lat: 37.511017, lng: 127.059769}  // 광야
+            ];
+
+            for (let i = 1; i <= 250; i++) {
+                const baseLocation = baseLocations[Math.floor(Math.random() * baseLocations.length)];
+                const group = groups[Math.floor(Math.random() * groups.length)];
+                const members = groupMembersData[group];
+                const member = members[Math.floor(Math.random() * members.length)];
+                const type = types[Math.floor(Math.random() * types.length)];
+
+                sampleData.push({
+                    id: i,
+                    title: `${group} ${member} 포토카드 ${type}`,
+                    group: group,
+                    member: member,
+                    type: type,
+                    description: `${group} ${member} 포토카드 ${type} 관련 설명입니다.`,
+                    lat: baseLocation.lat + (Math.random() - 0.5) * 0.05,
+                    lng: baseLocation.lng + (Math.random() - 0.5) * 0.05,
+                    user: `user_${i}`,
+                    time: `${Math.floor(Math.random() * 12) + 1}시간 전`
+                });
+            }
+        }
+        generateMoreData();
+
+        // 카카오맵 초기화 함수
+        function initKakaoMap() {
+    const mapContainer = document.getElementById('map');
+    
+
+    currentLocation = { lat: 37.556892, lng: 126.923917 }; 
+
+    const mapOption = {
+        center: new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng),
+        level: 5
+    };
+    map = new kakao.maps.Map(mapContainer, mapOption);
+
+    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+        const target = mouseEvent.domEvent.target;
+        if (!target.closest('.custom-map-marker') && !target.closest('.bottom-sheet')) {
+            closeBottomSheet();
+        }
+    });
+
+    loadInitialMarkers();
+}
+        function loadInitialMarkers() {
+            searchNearby();
+        }
+
+        // 지도에 마커 추가 및 관리 함수
+        function addMarkersToMap(data) {
+            // 기존 마커 제거
+            for (let i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+            markers = [];
+
+            data.forEach(item => {
+                const position = new kakao.maps.LatLng(item.lat, item.lng);
+
+                const customOverlayContent = `
+                    <div class="custom-map-marker" onclick="showBottomSheetFromMarker(${item.id})" style="
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        border-radius: 50%;
+                        width: 30px;
+                        height: 30px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: bold;
+                        font-size: 12px;
+                        border: 3px solid white;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+                        cursor: pointer;
+                    ">
+                        ${item.type === '교환' ? '🔄' : item.type === '판매' ? '💰' : '🛒'}
+                    </div>
+                `;
+
+                const customOverlay = new kakao.maps.CustomOverlay({
+                    map: map,
+                    position: position,
+                    content: customOverlayContent,
+                    yAnchor: 1
+                });
+
+                markers.push(customOverlay);
+            });
+        }
+
+        // 마커 클릭 시 호출될 함수
+        function showBottomSheetFromMarker(itemId) {
+            const itemData = sampleData.find(item => item.id === itemId);
+            if (itemData) {
+                showBottomSheet(itemData);
+            }
+        }
+
+        // 바텀 시트 열기 함수
+        function showBottomSheet(data) {
+            const content = `
+                <div class="card-info">
+                    <div class="card-image">
+                        ${data.group.substring(0,10)}
+                    </div>
+                    <div class="card-details">
+                        <h3>${data.title}</h3>
+                        <p><strong>그룹:</strong> ${data.group}</p>
+                        <p><strong>멤버:</strong> ${data.member}</p>
+                        <p><strong>타입:</strong> ${data.type}</p>
+                        <p><strong>설명:</strong> ${data.description}</p>
+                        <p><strong>등록자:</strong> ${data.user}</p>
+                        <p><strong>등록시간:</strong> ${data.time}</p>
+                        <span class="distance-badge">${Math.floor(calculateDistance(currentLocation.lat, currentLocation.lng, data.lat, data.lng) * 1000)}m</span>
+                    </div>
+                </div>
+                <button class="contact-btn" onclick="contactUser('${data.user}')">
+                    포토카드 상세보기
+                </button>
+            `;
+
+            document.getElementById('sheetContent').innerHTML = content;
+            document.getElementById('bottomSheet').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 바텀 시트 닫기 함수
+        function closeBottomSheet() {
+            document.getElementById('bottomSheet').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 사용자에게 연락하는 함수
+        function contactUser(username) {
+            alert(`'${username}' 님의 포토카드 상세 정보를 확인합니다.`);
+            closeBottomSheet();
+        }
+
+        // 두 지점 간 거리 계산 (킬로미터)
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371; // 지구 반지름 (킬로미터)
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // 주변 포토카드 검색 함수 (수정된 버전)
+         // 주변 포토카드 검색 함수
+   function searchNearby() {
+        const radiusElement = document.getElementById('radius');
+        const artistMemberInput = document.getElementById('artistMemberInput');
+        const loadingSpinner = document.getElementById('loading');
+    
+    if (!radiusElement) {
+        console.error('radius 요소를 찾을 수 없습니다.');
+        return;
+    }
+    if (!artistMemberInput) {
+        console.error('artistMemberInput 요소를 찾을 수 없습니다.');
+        return;
+    }
+
+    const radius = parseInt(radiusElement.value) || 3000;
+    const artistMemberInputValue = artistMemberInput.value.trim().toLowerCase();
+
+    if (loadingSpinner) loadingSpinner.style.display = 'block';
+
+    setTimeout(() => {
+        let filteredData = sampleData;
+
+        if (artistMemberInputValue) {
+            filteredData = filteredData.filter(item => {
+                const groupMatch = item.group.toLowerCase().includes(artistMemberInputValue);
+                const memberMatch = item.member.toLowerCase().includes(artistMemberInputValue);
+                const combinedMatch = `${item.group.toLowerCase()} - ${item.member.toLowerCase()}`.includes(artistMemberInputValue);
+                return groupMatch || memberMatch || combinedMatch;
+            });
+        }
+
+        let filteredByRadius = [];
+        filteredData.forEach(item => {
+            const distanceKm = calculateDistance(
+                currentLocation.lat, currentLocation.lng,
+                item.lat, item.lng
+            );
+            const distanceMeters = distanceKm * 1000;
+            
+            if (distanceMeters <= radius) {
+                filteredByRadius.push(item);
+            }
+        });
+
+        filteredData = filteredByRadius;
+        
+        if (filteredData.length > 0) {
+            const bounds = new kakao.maps.LatLngBounds();
+            filteredData.forEach(item => {
+                bounds.extend(new kakao.maps.LatLng(item.lat, item.lng));
+            });
+            map.setBounds(bounds);
+        } else {
+            map.setCenter(new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng));
+            map.setLevel(5);
+        }
+
+        addMarkersToMap(filteredData);
+        
+        const nearbyPostsElement = document.getElementById('nearbyPosts');
+        if (nearbyPostsElement) {
+            nearbyPostsElement.textContent = filteredData.length;
+        }
+
+        if (loadingSpinner) loadingSpinner.style.display = 'none';
+
+        if (filteredData.length === 0) {
+            // alert('검색 조건에 맞는 포토카드 교환 글이 없습니다.');
+        }
+    }, 1000);
+}
+
+        // 인기 장소 좌표 데이터
+        const locationCoords = {
+            'sangam': { lat: 37.568490, lng: 126.897344, name: '상암 월드컵 경기장' },
+            'hyundai': { lat: 37.525533, lng: 126.928268, name: '더현대 서울' },
+            'inspire': { lat: 37.383849, lng: 126.639000, name: '인스파이어' },
+            'hongdae': { lat: 37.556892, lng: 126.923917, name: '홍대입구역' },
+            'olympic': { lat: 37.521624, lng: 127.123623, name: '올림픽공원' },
+            'kwangya': { lat: 37.511017, lng: 127.059769, name: '광야' }
+        };
+
+             // 현재 위치 가져오기
+        function getCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                currentLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                // map.setView([currentLocation.lat, currentLocation.lng], 14);  <-- 여기 문제
+                map.setCenter(new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng)); // 지도 중심 이동
+                map.setLevel(5); // 적절한 확대 레벨 설정 (숫자가 작을수록 확대)
+
+                document.getElementById('location').value = '현재 위치';
+                searchNearby();
+            },
+            error => {
+                console.error('위치 정보를 가져올 수 없습니다:', error);
+                alert('위치 정보를 가져올 수 없습니다. 기본 위치(서울로 설정됩니다.');
+                searchNearby(); // 에러 발생 시에도 기본 위치 기준으로 마커를 표시
+            }
+        );
+    } else {
+        alert('이 브라우저에서는 위치 정보를 지원하지 않습니다.');
+        searchNearby(); // 위치 정보 미지원 시에도 기본 위치 기준으로 마커 표시
+    }
+}
+        // 아이돌/멤버 자동완성 목록 생성
+        let combinedAutocompleteList = [];
+        for (const group in groupMembersData) {
+            combinedAutocompleteList.push(group);
+            groupMembersData[group].forEach(member => {
+                combinedAutocompleteList.push(`${group} - ${member}`);
+            });
+        }
+        combinedAutocompleteList = [...new Set(combinedAutocompleteList)].sort();
+
+        // 통계 숫자 애니메이션 효과
+        function animateStats() {
+            const stats = [
+                { element: 'totalPosts', target: sampleData.length },
+                { element: 'nearbyPosts', target: 0 },
+                { element: 'activeUsers', target: 89 }
+            ];
+
+            stats.forEach(stat => {
+                const element = document.getElementById(stat.element);
+                if (!element) return;
+                let current = 0;
+                const increment = stat.target / 30;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= stat.target) {
+                        current = stat.target;
+                        clearInterval(timer);
+                    }
+                    element.textContent = Math.floor(current);
+                }, 50);
+            });
+        }
+
+        // DOMContentLoaded 이벤트 발생 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initKakaoMap();
+
+            // 위치 입력 필드 설정
+            const locationInput = document.getElementById('location');
+            if (locationInput) {
+                locationInput.placeholder = "현재 위치 사용하려면 클릭";
+                locationInput.addEventListener('click', getCurrentLocation);
+            }
+
+            // 검색 버튼 이벤트
+            const searchBtn = document.getElementById('searchBtn');
+            if (searchBtn) {
+                searchBtn.addEventListener('click', searchNearby);
+            }
+
+            // 바텀 시트 닫기 버튼 이벤트
+            const closeBtn = document.querySelector('.close-btn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeBottomSheet);
+            }
+
+            // 반경 변경 시 자동 검색
+            const radiusElement = document.getElementById('radius');
+            if (radiusElement) {
+                radiusElement.addEventListener('change', searchNearby);
+            }
+
+            // 자동완성 기능
+            const artistMemberInput = document.getElementById('artistMemberInput');
+            const autocompleteList = document.getElementById('autocompleteList');
+            
+            if (artistMemberInput && autocompleteList) {
+                artistMemberInput.addEventListener('input', function() {
+                    const inputValue = this.value.trim().toLowerCase();
+                    autocompleteList.innerHTML = '';
+                    autocompleteList.style.display = 'none';
+
+                    if (inputValue.length === 0) {
+                        return;
+                    }
+
+                    const filteredSuggestions = combinedAutocompleteList.filter(item =>
+                        item.toLowerCase().includes(inputValue)
+                    );
+
+                    if (filteredSuggestions.length > 0) {
+                        filteredSuggestions.forEach(suggestion => {
+                            const item = document.createElement('div');
+                            item.classList.add('autocomplete-item');
+                            item.textContent = suggestion;
+                            item.addEventListener('click', () => {
+                                artistMemberInput.value = suggestion;
+                                autocompleteList.innerHTML = '';
+                                autocompleteList.style.display = 'none';
+                                searchNearby();
+                            });
+                            autocompleteList.appendChild(item);
+                        });
+                        autocompleteList.style.display = 'block';
+                    }
+                });
+            }
+
+            // 인기 장소 카드 클릭 이벤트
+            document.querySelectorAll('.location-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.location-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    const locationKey = this.dataset.location;
+                    const locationData = locationCoords[locationKey];
+
+                    if (locationData) {
+                        currentLocation = {
+                            lat: locationData.lat,
+                            lng: locationData.lng
+                        };
+
+                        map.setCenter(new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng));
+                        map.setLevel(3);
+
+                        const locationElement = document.getElementById('location');
+                        if (locationElement) {
+                            locationElement.value = locationData.name;
+                        }
+
+                        searchNearby();
+                    }
+                });
+            });
+
+            // 자동완성 목록 외부 클릭 시 닫기
+            document.addEventListener('click', function(event) {
+                if (artistMemberInput && autocompleteList) {
+                    if (!artistMemberInput.contains(event.target) && !autocompleteList.contains(event.target)) {
+                        autocompleteList.style.display = 'none';
+                    }
+                }
+            });
+
+            // 통계 애니메이션 시작
+            setTimeout(animateStats, 500);
+        });
+
+        // 지도 외부 클릭 시 바텀 시트 닫기
+        document.addEventListener('click', function(event) {
+            const bottomSheet = document.getElementById('bottomSheet');
+            if (bottomSheet && bottomSheet.classList.contains('active')) {
+                const clickedOnCustomMarker = event.target.closest('.custom-map-marker');
+                const clickedInsideBottomSheet = event.target.closest('.bottom-sheet');
+
+                if (!clickedOnCustomMarker && !clickedInsideBottomSheet) {
+                    closeBottomSheet();
+                }
+            }
+        });
+</script>
+</body>
+</html>

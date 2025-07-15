@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
+  <title>관리자 | 공지사항 수정</title>
+  <style>
+    *{margin : 0; padding : 0;  box-sizing : border-box;}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .banner{
+            margin-top : -28px;
+            width : 1000px;
+            height : 70px;
+            background :rgba(255, 255, 255, 0.95);
+            border-radius : 20px;
+            display : flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .banner h2{ 
+            font-size : 30px; 
+            color : #7E6EB0;
+            align-items : center; 
+            margin-left: 15px;
+        }
+        .banner-center {
+            display: flex;
+            align-items: center;
+        }
+        .banner-right {
+            display: flex;
+            align-items: center;
+        }
+        .table{display : flex;
+            margin-top : 15px;}
+        .menu {
+            display: flex;
+            align-items: center;
+        }
+        .menu ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 10px;
+        }
+        .menu li{
+            display : flex;
+            text-align : center;
+            align-items : center;
+            justify-content: center;
+            padding: 0 15px;
+            font-weight : 500;
+            width : 115px;
+            height : 40px;
+            border-radius : 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color : #764ba2;
+            border : 2px solid  #764ba2;
+        }
+        .menu .board{
+            background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color : rgba(255, 255, 255, 0.95);
+            border : none;
+        }
+        .home {
+            all: unset;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #7E6EB0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .home:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .home i {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+    .Bboard {
+      width: 100%;
+      min-height: 700px;
+      border-radius: 25px;
+      margin-top : 15px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .dash-top {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .dash-top h2 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    
+    .dash-top hr{ 
+      color : rgba(219, 213, 213, 0.63); 
+      border: none;
+      height: 1px;
+      background: rgba(219, 213, 213, 0.63);
+      margin: 0 auto;
+      width: 100%;
+      max-width: 860px;
+    }
+
+    .line {
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+      margin: 15px auto 0 auto;
+    }
+
+    /* 폼 스타일 */
+    .form-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 20px 0;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    table.writebox {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+    }
+
+    table.writebox tr {
+      border-bottom: 1px solid #f0f0f0;
+      transition: background-color 0.3s ease;
+      align-items : center;
+      text-align : center;
+    }
+
+    table.writebox tr:hover {
+      background-color: #f8f9ff;
+    }
+
+    table.writebox tr:last-child {
+      border-bottom: none;
+    }
+
+    table.writebox th {
+      width: 150px;
+      text-align: center;
+      align-items : center;
+      line-height : 2.5;
+      vertical-align: top;
+      padding: 20px 25px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #7E6EB0;
+      background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+      border-right: 1px solid #e8e8e8;
+      position: relative;
+    }
+
+    table.writebox th::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 40%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+
+    table.writebox td {
+      text-align : left;
+      padding: 20px 25px;
+      font-size: 15px;
+      color: #555;
+      background: white;
+      line-height: 1.6;
+    }
+
+    /* 입력 필드 스타일 */
+    .form-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 15px;
+      background: white;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px 15px;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 15px;
+      resize: vertical;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      line-height: 1.6;
+    }
+
+    .form-textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* 체크박스 스타일 */
+    .custom-checkbox {
+      position: relative;
+      display: inline-block;
+    }
+
+    .custom-checkbox input[type="checkbox"] {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #7E6EB0;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: #667eea;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* 파일 업로드 스타일 */
+    .file-upload {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .file-input {
+      padding: 8px 15px;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .file-input:hover {
+      border-color: #667eea;
+    }
+
+    .current-file {
+      color: #7E6EB0;
+      font-size: 14px;
+      background: #f8f9ff;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
+    a{text-decoration : none;}
+
+    .menu li a {
+      text-decoration: none;
+      color: #764ba2;
+    }
+
+    .menu li.board a {
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    /* 버튼 스타일 */
+    .btn {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn button {
+      display: flex; 
+      align-items: center;
+      justify-content: center; 
+      padding: 12px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn button:nth-child(1) {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn button:nth-child(2) {
+      background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+    }
+
+    .btn button:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn button:active {
+      transform: translateY(0);
+    }
+
+  </style>
+</head>
+<body>
+  <div>
+    <div class="banner">
+      <a href = "{% url 'home:main' %}"><h2>PO-PIN</h2></a>
+      <div class="menu">
+        <ul>
+          <li><a href="{% url 'adpage:main' %}">메인</a></li>
+          <li><a href="{% url 'adpage:notice' %}">공지사항</a></li>
+          <li><a href="{% url 'adpage:post' %}">게시글 관리</a></li>
+          <li><a href="{% url 'adpage:user' %}">사용자 관리</a></li>
+        </ul>
+      </div>
+      <div class="banner-right">
+            <a href="{% url 'home:main' %}" class="home">
+                <i class="fi fi-rr-home"></i>홈으로
+            </a>
+        </div>
+    </div>
+
+    <div class="Bboard">
+      <div class="dash-top">
+        <h2>공지사항 수정</h2>
+        <hr>
+      </div>
+
+      <form action="{% url 'adpage:noticeR' notice.id %}" method="POST" enctype="multipart/form-data" name="updateFrm">
+        {% csrf_token %}
+        <table class="writebox">
+          <tbody>
+            <tr>
+              <th scope="row"><label for="board">공지 유형</label></th>
+              <td>
+                <select class="form-select" id="board" name="notice_type">
+                    <option value="일반" {%if notice.notice_type == "일반" %}selected{%endif%}>일반</option>
+                    <option value="점검" {%if notice.notice_type == "점검" %}selected{%endif%}>점검</option>
+                    <option value="업데이트" {%if notice.notice_type == "업데이트" %}selected{%endif%}>업데이트</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="title">제목</label></th>
+              <td>
+                <input type="text" class="form-input" id="title" name="title" value="{{notice.title}}" placeholder="제목을 입력하세요">
+              </td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="fix">상단고정</label></th>
+              <td>
+                <div class="custom-checkbox">
+                  <input type="checkbox" id="fix" name="is_pinned" {%if notice.is_pinned == True %}checked{%endif%}/>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="content">상세 내용</label></th>
+              <td>
+                <textarea class="form-textarea" id="content" name="content" placeholder="내용을 입력하세요">{{notice.content}}</textarea>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row"><label for="file">첨부파일</label></th>
+              <td>
+                <div class="file-upload">
+                  <input type="file" class="file-input" id="file" name="images" accept="image/*,.pdf,.doc,.docx" multiple>
+                  <div class="current-file">현재 파일: 
+                    {%for image in images%}
+                      {{image.image}}
+                    {%endfor%}
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      
+      
+        <div class="btn">
+          <button type="submit">수정 완료</button>
+          <button type="button" onclick="history.back()">취소</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 폼 제출 처리
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // 필수 입력 검증
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+      
+      if (!title) {
+        alert('제목을 입력해주세요.');
+        document.getElementById('title').focus();
+        return;
+      }
+      
+      if (!content) {
+        alert('내용을 입력해주세요.');
+        document.getElementById('content').focus();
+        return;
+      }
+      
+      // 수정 확인
+      if (confirm('공지사항을 수정하시겠습니까?')) {
+        alert('수정이 완료되었습니다.');
+        updateFrm.submit()
+      }
+    });
+
+    // 파일 업로드 시 파일명 표시
+    document.getElementById('file').addEventListener('change', function(e) {
+      const fileInput = e.target;
+      const currentFileDiv = document.querySelector('.current-file');
+
+      if (fileInput.files.length > 0) {
+        // 여러 파일 이름 표시 (예: 파일1.jpg, 파일2.pdf ...)
+        const fileNames = Array.from(fileInput.files).map(f => f.name).join(', ');
+        currentFileDiv.textContent = `선택한 파일: ${fileNames}`;
+      } else {
+        currentFileDiv.textContent = '현재 파일: popin.jpg';
+      }
+    });
+  </script>
+</body>
+</html>

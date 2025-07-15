@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="popin_logo.png" type="image/png">
+    <link rel="stylesheet" type="text/css" href="/static/css/login/findPW.css">
+    <title>로그인 - 비밀번호 찾기</title>
+</head>
+<body>
+    <div class="login-form">
+        <div class="top">
+            <h2>PO-PIN</h2>
+        </div>
+        <form method="POST" action="{% url 'login:loginPW' %}">
+            {% csrf_token %}
+            <hr>
+            <h3 style="text-align:center; color:#7E6EB0;">비밀번호 찾기</h3>
+            <div class="subtitle">아이디와 이메일을 입력하면,<br> 비밀번호 재설정 링크를 받으실 수 있습니다.</div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="color:red; font-size:13px; margin-bottom:10px;">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <label for="id">아이디</label>
+            <input type="text" name="id" id="id" placeholder="가입 시 사용한 아이디">
+
+            <label for="email">이메일 주소</label>
+            <input type="email" name="email" id="email" placeholder="가입 시 이메일 주소">
+
+            <input class="findPW" type="submit" value="비밀번호 재설정 링크 받기">
+            <input class="back" type="button" value="로그인 페이지로 돌아가기" onclick="location.href='{% url 'login:loginp' %}'">
+        </form>
+    </div>
+</body>
+</html>

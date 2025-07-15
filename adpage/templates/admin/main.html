@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css" />
+  <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <title>관리자</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 30px 30px 45px;
+      
+    }
+    .banner {
+        width: 1000px  ;
+        height: 70px  ;
+        background: rgba(255, 255, 255, 0.95)  ;
+        border-radius: 20px  ;
+        display: flex  ;
+        align-items: center  ;
+        justify-content: space-between  ;
+        padding: 0 25px  ;
+        margin-bottom: 20px  ;
+        margin-top : -10px;
+    }
+
+    .menu ul {
+        display: flex  ;
+        list-style: none  ;
+        gap: 10px  ;
+        align-items: center  ;
+        justify-content: center  ;
+        margin: 0  ;
+        padding: 0  ;
+    }
+    .banner h2 {
+      font-size: 30px;
+      color: #7e6eb0;
+      margin-left: 15px;
+    }
+    .banner-right { display: flex; align-items: center; }
+
+    .menu {
+      background: transparent;
+      display: flex;
+      align-items: center;
+    }
+    .menu li {
+      background: transparent;
+      border: 2px solid #764ba2;
+      border-radius: 15px;
+      color: #764ba2;
+      width: 115px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .menu li.board {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: rgba(255, 255, 255, 0.95);
+    }
+    .menu li:hover {
+      color: rgba(255, 255, 255, 0.95);
+    }
+    .menu .board a {
+      color: rgba(255, 255, 255, 0.95);
+    }
+    .menu li a {
+      text-decoration: none;
+      color: #764ba2;
+    }
+
+    .home {
+      all: unset;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      color: #7e6eb0;
+      padding: 10px 15px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    .home:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .content-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 1000px;
+    }
+
+    .white-box {
+      background: white;
+      padding: 15px;
+      margin-top :-5px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 100%;
+    }
+    .line{width : 95.8%; border : 0.05px solid rgba(158, 158, 158, 0.29); margin-left : 20px; height : 0.1px;}
+
+    .chart-container {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 100%;
+    }
+    .chart-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color :#333333; 
+      font-size : 25px;
+    }
+
+    a{text-decoration : none;}
+    .white-box h2 {
+        color :#333333; font-size : 25px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .white-box p {
+      text-align: center;
+      color: #666;
+      font-size: 16px;
+    }
+
+    .box {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+    }
+
+    .box div { 
+      display: flex;
+      flex-direction: column; 
+      justify-content: center; 
+      align-items: center;     
+      width: 200px;
+      height: 180px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .box p { 
+      color: #667EEA; 
+      font-size: 35px; 
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .box a { 
+      color: #666666; 
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="banner">
+    <a href = "{% url 'home:main' %}"><h2>PO-PIN</h2></a>
+    <div class="menu">
+      <ul>
+        <li class="board"><a href="{% url 'adpage:main' %}">메인</a></li>
+        <li><a href="{% url 'adpage:notice' %}">공지사항</a></li>
+        <li><a href="{% url 'adpage:post' %}">게시글 관리</a></li>
+        <li><a href="{% url 'adpage:user' %}">사용자 관리</a></li>
+      </ul>
+    </div>
+    <div class="banner-right">
+      <a href="{% url 'home:main' %}" class="home">
+        <i class="fi fi-rr-home"></i>홈으로
+      </a>
+    </div>
+  </div>
+
+  <div class="content-container">
+    <div class="white-box">
+      <h2>대시보드</h2>
+      <div class="line"></div>
+      <div class="box">
+        <div>
+          <p>{{total_users}}</p>
+          <a>전체 사용자</a>
+        </div>
+        <div>
+          <p>{{total_photocards}}</p>
+          <a>전체 게시글</a>
+        </div>
+        <div>
+          <p>12</p>
+          <a>대기중인 신고</a>
+        </div>
+        <div>
+          <p>{{block_users}}</p>
+          <a>차단 사용자</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <h2>월별 거래 통계</h2>
+      <canvas id="monthlyTransactionChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    // 차트 생성
+    window.addEventListener("DOMContentLoaded", () => {
+      const ctx = document.getElementById('monthlyTransactionChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: {{months}},
+          datasets: [
+            {
+              label: '전체 거래량',
+              data: {{all}},
+              backgroundColor: 'rgba(54, 162, 235, 0.7)' // 파랑
+            },
+            {
+              label: '교환',
+              data: {{exchange}},
+              backgroundColor: 'rgba(102, 126, 234, 0.7)' // 보라
+            },
+            {
+              label: '판매',
+              data: {{sell}},
+              backgroundColor: 'rgba(255, 159, 64, 0.7)' // 주황
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { stacked: false },
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#333' }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: { color: '#333' }
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

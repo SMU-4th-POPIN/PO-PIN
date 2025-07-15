@@ -1,0 +1,116 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/static/css/community/shar_view.css">
+  <script src="/static/js/community/chgR_view.js" defer></script>
+  <title>나눔 상세</title>
+</head>
+<body>
+  <div class="container">
+    <div class="main-content">
+      <div class="post-header">
+        <h1 class="post-title">NCT 드림 포토카드 나눔합니다!</h1>
+        <div class="post-meta">
+          <span class="post-tag">#나눔중</span>
+          <span class="post-tag">#NCT</span>
+          <span class="post-tag">#드림</span>
+          <div class="author-info">
+            <span style="font-weight: 550;">작성자 : kpop_lover</span>
+          </div>
+          <span>📅 2024-06-10</span>
+          <span>👁️ 124</span>
+        </div>
+      </div>
+
+      <div class="post-content">
+        <div class="sharing-details">
+          <h4>📋 나눔 정보</h4>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">🎵 아티스트</span>
+              <span class="detail-value">NCT DREAM</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">📀 종류</span>
+              <span class="detail-value">앨범</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">📍 위치</span>
+              <span class="detail-value">서울시 강남구 역삼역 근처</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">📅 날짜 및 시간</span>
+              <span class="detail-value">2024년 6월 15일 (토) 오후 2시~6시</span>
+            </div>
+          </div>
+          
+          <div class="requirements">
+            <h4>⚠️ 필수사항</h4>
+            <ul class="requirement-list">
+              <li>직거래만 가능합니다 (택배 불가)</li>
+              <li>본인 인증 후 나눔 진행</li>
+              <li>먼저 댓글 남겨주신 분 우선</li>
+              <li>노쇼 시 차단 조치</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sharing-content">
+          <h4>📝 나눔 내용</h4>
+          <p>안녕하세요! NCT DREAM 정규 2집 앨범을 구매했는데 포토카드가 중복으로 나와서 나눔하게 되었습니다.</p>
+          <br>
+          <p>총 3장의 포토카드를 나눔하며, 모두 미개봉 상태로 깨끗합니다. 포토카드는 지성, 런쥔, 재민 멤버들이고 각각 다른 컨셉으로 촬영된 것들이에요.</p>
+          <br>
+          <p>직거래로만 진행하며, 역삼역 근처에서 만나실 수 있는 분들께 나눔드리고 싶습니다. 시간은 주말 오후가 가장 좋고, 평일은 저녁 시간대도 가능해요.</p>
+          <br>
+          <p>댓글로 먼저 의사 표현해주시면 순서대로 연락드리겠습니다. 많은 관심 부탁드려요! 💚</p>
+        </div>
+
+        <div class="sharing-images">
+          <h4>📎 첨부 사진</h4>
+          <div class="image-gallery">
+            <div class="image-item" onclick="openModal(this)">
+              <img src="/static/images/test/chgR.jpg" alt="나눔 포토카드 1">
+            </div>
+            <div class="image-item" onclick="openModal(this)">
+              <img src="/static/images/test/chgR1.jpg" alt="나눔 포토카드 2">
+            </div>
+            <div class="image-item" onclick="openModal(this)">
+              <img src="/static/images/test/chgR2.jpg" alt="나눔 포토카드 3">
+            </div>
+            <div class="image-item" onclick="openModal(this)">
+              <img src="/static/images/test/chgR3.jpg" alt="앨범 전체">
+            </div>
+          </div>
+        </div>
+
+
+      <div class="action-buttons">
+        <a href="#" class="btn back" onclick="history.back()">이전으로</a>
+        <a href="{% url 'community:updateSh' %}" class="btn update">수정하기</a>
+        <a href="#" class="btn delete">삭제하기</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Modal -->
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <button class="modal-nav modal-prev" onclick="changeImage(-1)">❮</button>
+      <img class="modal-image" id="modalImage" alt="확대 이미지">
+      <button class="modal-nav modal-next" onclick="changeImage(1)">❯</button>
+      <div class="modal-caption" id="modalCaption"></div>
+    </div>
+  </div>
+
+  {% endblock content %}
+</body>
+</html>
