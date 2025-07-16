@@ -32,7 +32,7 @@ class User(models.Model):
     bias_group = models.ManyToManyField(
         Group, 
         blank=True, 
-        
+        #
         related_name='fans_group', # 역참조 이름
         verbose_name="최애 그룹"
     )
