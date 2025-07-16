@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
-
 from signupFT.models import User
 from photocard.models import Photocard
 from idols.models import Member
 from photocard.models import TempWish
-
 from django.db.models import Count
 from datetime import date
-
 from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+from django.contrib.auth import get_user_model
+from math import radians, sin, cos, sqrt, asin
+from .models import Photocard 
+
 
 # 포토카드 거래글 전체 읽어오기 (추후 위치 기반으로 수정 필요)
 def list(request):
@@ -514,36 +516,59 @@ def location2_geocode_api(request):
             return JsonResponse({'status': 'error', 'message': 'No result found'})
     else:
         return JsonResponse({'status': 'error', 'message': 'API request failed'})
+# 사용자 모델 가져오기
+User = get_user_model()
 
-# 거리 계산 함수 (하버사인 공식)
+
+# 하버사인 공식으로 두 좌표(위도,경도) 간 거리(km) 계산
 def haversine(lon1, lat1, lon2, lat2):
-    # 위도, 경도 → 라디안
+    # 위도, 경도 → 라디안 변환
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
 
-    # 거리 계산
+    # 경도/위도 차이
     dlon = lon2 - lon1
     dlat = lat2 - lat1
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+
+    # 하버사인 공식 적용
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * asin(sqrt(a))
-    r = 6371  # 지구 반지름 (km)
+    r = 6371  # 지구 반지름(km)
     return c * r
+
+
+# 위치 기반 포토카드 검색 API
+@require_GET
 def location2_api(request):
+    """
+    GET 파라미터:
+      - lat : 기준 위도
+      - lng : 기준 경도
+      - radius : 반경(km)
+      - query : 검색어(멤버명/그룹명)
+    반환:
+      - JSON (필터링된 포토카드 리스트)
+    """
     try:
+        # 파라미터 받기
         lat = float(request.GET.get('lat'))
         lng = float(request.GET.get('lng'))
         radius = float(request.GET.get('radius'))
         query = request.GET.get('query', '').strip().lower()
 
         results = []
+        # 위치정보가 있는 포토카드만 조회
         photocard_list = Photocard.objects.filter(latitude__isnull=False, longitude__isnull=False)
 
         for card in photocard_list:
+            # 거리 계산
             dist = haversine(lng, lat, card.longitude, card.latitude)
 
+            # 반경 안쪽인지 확인
             if dist <= radius:
                 member_name = card.member.name.lower() if card.member else ''
                 group_name = card.member.group.name.lower() if card.member and card.member.group else ''
 
+                # 검색어 필터 (없으면 전부 포함)
                 if query == '' or query in member_name or query in group_name:
                     results.append({
                         "title": f"{group_name} {member_name} ({card.trade_type})",
@@ -560,10 +585,29 @@ def location2_api(request):
         return JsonResponse({"status": "ok", "results": results})
 
     except Exception as e:
+        # 에러 발생 시 응답
         return JsonResponse({"status": "error", "message": str(e)})
-    
-def location2(request):
-    return render(request, 'photocard/location2.html') 
 
 
+# 위치 기반 검색 페이지 + 통계 전달
+def location(request):
+    """
+    location2.html 렌더링
+    템플릿에 DB에서 가져온 통계 데이터를 넘겨줌
+    """
+    # 전체 포토카드 게시글 수
+    total_posts = Photocard.objects.count()
 
+    # 활성 사용자 수
+    active_users = User.objects.filter(is_active=True).count()
+
+    # 근처 게시글 수 (기본 0, JS가 API 호출 후 업데이트)
+    nearby_posts = 0
+
+    context = {
+        'total_posts': total_posts,
+        'nearby_posts': nearby_posts,
+        'active_users': active_users,
+    }
+
+    return render(request, 'photocard/location.html', context)

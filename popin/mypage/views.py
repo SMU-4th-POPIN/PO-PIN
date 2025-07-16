@@ -238,40 +238,6 @@ def trade(request):
     return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=400)
 
 
-# #커뮤니티 작성글(동행, 나눔, 대리구매) 
-def review(request):
-    user_id = request.session.get("user_id")
-    if not user_id:
-        return JsonResponse({"error": "로그인 필요"}, status=403)
-
-    try:
-        user = User.objects.get(user_id=user_id)
-
-        # 사용자 작성 게시글 조회
-        
-        companion_posts = CompanionPost.objects.filter(author=user).values(
-            "id","title", "created_at", "views", "comments_count"
-        )
-
-        # 나눔
-        sharing_posts = SharingPost.objects.filter(author=user).values(
-            "id","title", "created_at", "views"
-        )
-
-        # 대리구매
-        proxy_posts = ProxyPost.objects.filter(author=user).values(
-           "id","title", "created_at", "views"
-        )
-
-        return JsonResponse({
-            "companion": list(companion_posts),
-            "sharing": list(sharing_posts),
-            "proxy": list(proxy_posts),
-        })
-
-    except User.DoesNotExist:
-        return JsonResponse({"error": "사용자 없음"}, status=404)
-###########################################
 #내가쓴 교환판매후기
 
 def my_written_reviews(request):

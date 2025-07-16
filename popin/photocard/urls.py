@@ -15,5 +15,5 @@ urlpatterns = [
     path('toggle_wish/<int:pno>/', views.toggle_wish, name='toggle_wish'),
     path('modify/<int:pno>/', views.modify, name='modify'),
     path('location/', views.location, name='location'),
-    path('location2/', views.location2, name='location2'),
+
 ]

@@ -13,7 +13,6 @@ urlpatterns = [
     path('update_profile/', views.update_profile, name='update_profile'),
     path('blocklist/', views.block_list, name='block_list'),
     path('update_blocklist/', views.update_blocklist, name='update_blocklist'),
-    path('review/', views.review, name='review'),#커뮤니티 작성글(동행, 나눔, 대리구매)
     path('reviews/written/', views.my_written_reviews, name='my_written_reviews'),
     path('reviews/received/', views.my_received_reviews, name='my_received_reviews'),
 

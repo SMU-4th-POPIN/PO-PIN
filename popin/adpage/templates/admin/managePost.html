@@ -351,9 +351,9 @@
           <hr>
         </div>
         <div class="box">
-          <div><p>1,234</p><a>전체 게시글</a></div>
-          <div><p>5,678</p><a>신고된 게시글</a></div>
-          <div><p>12</p><a>오늘 작성</a></div>
+          <div><p>{{total_posts }}</p><a>전체 게시글</a></div>
+          <div><p>{{reported_posts }}</p><a>신고된 게시글</a></div>
+          <div><p>{{today_posts }}</p><a>오늘 작성</a></div>
         </div>
 
         <div class="filter">
@@ -398,57 +398,30 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td><input type="checkbox" class="row-checkbox"></td>
-              <td>abcdefg</td>
-              <td>교환후기</td>
-              <td><a href="{% url 'adpage:postV' %}">ㅇㅇ님과 교환후기</a></td>
-              <td>ㅁㅁ</td>
-              <td>2025-06-25</td>
-              <td>3</td>
-              <td>대기</td>
-            </tr>
-            <tr>
-              <td><input type="checkbox" class="row-checkbox"></td>
-              <td>gijklmnop</td>
-              <td>동행</td>
-              <td><a href="{% url 'adpage:postV' %}">ㅇㅇ콘 동행구해요</a></td>
-              <td>ㅁㄴㅇㄹ</td>
-              <td>2025-06-25</td>
-              <td>0</td>
-              <td>정상</td>
-            </tr>
-            <tr>
-              <td><input type="checkbox" class="row-checkbox"></td>
-              <td>giop</td>
-              <td>동행</td>
-              <td><a href="{% url 'adpage:postV' %}">ㅇㅇ콘 동행구해요</a></td>
-              <td>ㅁㄴㅇㄹ</td>
-              <td>2025-06-25</td>
-              <td>0</td>
-              <td>정상</td>
-            </tr>
-            <tr>
-              <td><input type="checkbox" class="row-checkbox"></td>
-              <td>gip</td>
-              <td>동행</td>
-              <td><a href="{% url 'adpage:postV' %}">ㅇㅇ콘 동행구해요</a></td>
-              <td>ㅁㄴㅇㄹ</td>
-              <td>2025-06-25</td>
-              <td>0</td>
-              <td>정상</td>
-            </tr>
-            <tr>
-              <td><input type="checkbox" class="row-checkbox"></td>
-              <td>gop</td>
-              <td>동행</td>
-              <td><a href="{% url 'adpage:postV' %}">ㅇㅇ콘 동행구해요</a></td>
-              <td>ㅁㄴㅇㄹ</td>
-              <td>2025-06-25</td>
-              <td>0</td>
-              <td>정상</td>
-            </tr>
-          </tbody>
+  {% for post in posts %}
+  <tr>
+    <td><input type="checkbox" class="row-checkbox"></td>
+    <td>{{ post.id }}</td>
+    <td>
+      {# board 값은 'review', 'sharing', ... 로 전달됨 #}
+      {% if post.board == 'review' %}교환후기{% elif post.board == 'sharing' %}나눔{% elif post.board == 'proxy' %}대리구매{% elif post.board == 'companion' %}동행{% elif post.board == 'status' %}현황공유{% endif %}
+    </td>
+    <td>
+      <a href="{% url 'adpage:postV' post.board post.id %}">
+        {{ post.title }}
+      </a>
+    </td>
+    <td>{{ post.writer }}</td>
+    <td>{{ post.created_at }}</td>
+    <td>{{ post.report_count }}</td>
+    <td>{{ post.status }}</td>
+  </tr>
+  {% empty %}
+  <tr>
+    <td colspan="8">신고된 게시글이 없습니다.</td>
+  </tr>
+  {% endfor %}
+</tbody>
         </table>
 
         <div class="bottom-bar">

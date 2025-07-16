@@ -34,4 +34,17 @@ urlpatterns = [
     path('status/<int:pk>/', views.statusview, name='statusview'),
     
     path('mypage_community_list/', views.mypage_community_list, name='mypage_community_list'),
+    #신고버튼누르면카운트db저장
+    path('report_post/<str:post_type>/<int:post_id>/', views.report_post, name='report_post'),
+    #  차단/해제 토글 API
+    path('block/companion/<int:post_id>/', views.toggle_block_companion, name='toggle_block_companion'),
+    path('block/sharing/<int:post_id>/', views.toggle_block_sharing, name='toggle_block_sharing'),
+    path('block/proxy/<int:post_id>/', views.toggle_block_proxy, name='toggle_block_proxy'),
+    path('block/status/<int:post_id>/', views.toggle_block_status, name='toggle_block_status'),
+    path('block/review/<int:post_id>/', views.toggle_block_review, name='toggle_block_review'),
+
+    #  마이페이지 차단목록 조회 API
+    path('mypage/blocked/api/', views.mypage_blocked_list_api, name='mypage_blocked_api'),
+
+
 ]

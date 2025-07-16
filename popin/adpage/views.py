@@ -213,7 +213,7 @@ def block_user(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-###########
+#############################################
 
 def post(request):
     user_id = request.session.get('user_id')
@@ -255,12 +255,12 @@ def post(request):
 
     # 신고된 게시글만 추출
     posts = (
-        get_reported_posts(ExchangeReview.objects.all(), '교환후기') +
-        get_reported_posts(SharingPost.objects.all(), '나눔') +
-        get_reported_posts(ProxyPost.objects.all(), '대리구매') +
-        get_reported_posts(CompanionPost.objects.all(), '동행') +
-        get_reported_posts(StatusPost.objects.all(), '현황공유')
-    )
+    get_reported_posts(ExchangeReview.objects.all(), 'review') +
+    get_reported_posts(SharingPost.objects.all(), 'sharing') +
+    get_reported_posts(ProxyPost.objects.all(), 'proxy') +
+    get_reported_posts(CompanionPost.objects.all(), 'companion') +
+    get_reported_posts(StatusPost.objects.all(), 'status')
+)
 
     # 통계 계산용
     all_count = (
@@ -296,15 +296,13 @@ def post(request):
     return render(request, 'admin/managePost.html', context)
     
 
-
-
 def postV(request, board, pk):
     board_map = {
-        '교환후기': ExchangeReview,
-        '나눔': SharingPost,
-        '대리구매': ProxyPost,
-        '동행': CompanionPost,
-        '현황공유': StatusPost,
+        'review': ExchangeReview,
+        'sharing': SharingPost,
+        'proxy': ProxyPost,
+        'companion': CompanionPost,
+        'status': StatusPost,
     }
 
     model = board_map.get(board)
@@ -333,6 +331,10 @@ def postV(request, board, pk):
     }
 
     return render(request, "admin/managePost_view.html", context)
+
+
+
+############################################################################
 
 def notice(request) :
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
